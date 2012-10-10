@@ -23,19 +23,35 @@ namespace ActionGame
         const int resolutionHeight = 800;
         const bool fullscreen = false;
 
-        Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)resolutionWidth / (float)resolutionHeight, float.Epsilon, 1000);
-        Matrix worldMatrix = Matrix.Identity;
 
         Player player;
 
         Camera camera;
         Debug debug;
+        Drawer drawer;
 
-        List<SpatialObject> DrawableObjects = new List<SpatialObject>();
-
+        /// <summary>
+        /// Gets the game SpriteBatch.
+        /// </summary>
         public SpriteBatch SpriteBatch
         {
             get { return spriteBatch; }
+        }
+
+        /// <summary>
+        /// Gets the game camera component.
+        /// </summary>
+        public Camera Camera
+        {
+            get { return camera; }
+        }
+
+        /// <summary>
+        /// Gets active player.
+        /// </summary>
+        public Player Player
+        {
+            get { return player; }
         }
 
         public ActionGame()
@@ -50,7 +66,9 @@ namespace ActionGame
             player = new Player();
             camera = new Camera(player, this);
             debug = new Debug(this);
+            drawer = new Drawer(this, resolutionWidth, resolutionHeight);
             Components.Add(camera);
+            Components.Add(drawer);
             Components.Add(debug);
         }
 
@@ -73,21 +91,22 @@ namespace ActionGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, worldMatrix);
+            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
             Model grassModel = Content.Load<Model>("Objects/Flat/grass");
             for (int x = 0; x < 10; x++)
             {
                 for (int y = 0; y < 10; y++)
                 {
-                    SpatialObject grass = new SpatialObject(grassModel, new Vector3(x * grassModel.GetSize(worldMatrix).X, 0, y * grassModel.GetSize(worldMatrix).Z), 0, worldMatrix);
-                    DrawableObjects.Add(grass);
+                    SpatialObject grass = new SpatialObject(grassModel, new Vector3(x * grassModel.GetSize(drawer.WorldTransformMatrix).X, 0, y * grassModel.GetSize(drawer.WorldTransformMatrix).Z), 0, drawer.WorldTransformMatrix);
+                    drawer.StartDrawingObject(grass, true);
                 }
             }
 
-            SpatialObject house = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(5, 0, 5), 0, worldMatrix);
+            SpatialObject house0 = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(5, 0, 5), 0, drawer.WorldTransformMatrix);
+            SpatialObject house1 = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(20, 0, 20), 0, drawer.WorldTransformMatrix);
 
-            DrawableObjects.Add(player);
-            DrawableObjects.Add(house);
+            drawer.StartDrawingObject(house0, false);
+            drawer.StartDrawingObject(house1, false);
         }
 
         /// <summary>
@@ -123,9 +142,6 @@ namespace ActionGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            DrawableObjects.ForEach(obj => obj.Draw(camera.ViewMatrix, projectionMatrix, worldMatrix));
-            
 
             base.Draw(gameTime);
         }

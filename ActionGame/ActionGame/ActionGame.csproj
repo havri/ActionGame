@@ -112,6 +112,7 @@
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
     <Compile Include="Components\Drawer\DrawingOrderComparer.cs" />
+    <Compile Include="Space\AxisDirection.cs" />
     <Compile Include="Space\Human.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Space\Player.cs" />
@@ -122,6 +123,8 @@
     <Compile Include="ActionGame.cs" />
     <Compile Include="Space\Quadrangle.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Space\RectangleF.cs" />
+    <Compile Include="TownQuatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -154,6 +157,9 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SpacePartitioning\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

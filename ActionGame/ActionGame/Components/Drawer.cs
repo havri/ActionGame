@@ -50,6 +50,8 @@ namespace ActionGame
                 groundDrawableObjects.Add(o);
             else
                 drawableObjects.Add(o);
+
+            Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
         }
 
         /// <summary>

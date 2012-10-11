@@ -92,10 +92,14 @@ namespace ActionGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
-            Model grassModel = Content.Load<Model>("Objects/Flat/grass");
-            for (int x = 0; x < 10; x++)
+
+            TownQuatter quatter = new TownQuatter(new Vector2(100, 70), 0, Content, drawer.WorldTransformMatrix);
+            quatter.FillDrawer(drawer);
+
+            /*Model grassModel = Content.Load<Model>("Objects/Flat/grass");
+            for (int x = 0; x < 20; x++)
             {
-                for (int y = 0; y < 10; y++)
+                for (int y = 0; y < 20; y++)
                 {
                     SpatialObject grass = new SpatialObject(grassModel, new Vector3(x * grassModel.GetSize(drawer.WorldTransformMatrix).X, 0, y * grassModel.GetSize(drawer.WorldTransformMatrix).Z), 0, drawer.WorldTransformMatrix);
                     drawer.StartDrawingObject(grass, true);
@@ -106,7 +110,7 @@ namespace ActionGame
             SpatialObject house1 = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(20, 0, 20), 0, drawer.WorldTransformMatrix);
 
             drawer.StartDrawingObject(house0, false);
-            drawer.StartDrawingObject(house1, false);
+            drawer.StartDrawingObject(house1, false);*/
         }
 
         /// <summary>

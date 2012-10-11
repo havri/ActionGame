@@ -5,9 +5,8 @@ using System.Text;
 
 namespace ActionGame
 {
-    enum CameraMode
+    public enum AxisDirection
     {
-        FirstPersonLook,
-        ThirdPersonLook
+        Horizontal, Vertical
     }
 }

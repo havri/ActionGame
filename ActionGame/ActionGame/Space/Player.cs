@@ -11,6 +11,7 @@ namespace ActionGame
     public class Player : Human
     {
         static readonly TimeSpan movingKeyTimeOut = new TimeSpan(0, 0, 0, 0, 50);
+        const float YRotateQ = 0.8f;
 
         Keys left = Keys.A;
         Keys right = Keys.D;
@@ -58,8 +59,12 @@ namespace ActionGame
                     if (keyboardState.IsKeyDown(turnRIght))
                         Rotate(false);
 
-                    azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth/2) ) * Human.RotateAngle;
-                    lookingAtHeight -= ((float)(mouseState.Y - (windowHeight / 2)) / (float)(windowHeight / 2));
+                    if (Math.Abs(mouseState.X - (windowWidth / 2)) > windowWidth / 10)
+                        azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth/2) ) * Human.RotateAngle;
+
+                    ///TODO: Make this work.
+                    /*if (Math.Abs(mouseState.Y - (windowHeight / 2)) > windowHeight / 10)
+                        lookingAtHeight -= (((float)(mouseState.Y - (windowHeight / 2)) / (float)(windowHeight / 2))) * Player.YRotateQ;*/
                 }
             }
 

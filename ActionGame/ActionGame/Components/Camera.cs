@@ -46,9 +46,6 @@ namespace ActionGame
                         mode = CameraMode.ThirdPersonLook;
                         break;
                     case CameraMode.ThirdPersonLook:
-                        mode = CameraMode.BirdPerspective;
-                        break;
-                    case CameraMode.BirdPerspective:
                         mode = CameraMode.FirstPersonLook;
                         break;
                     default:
@@ -68,10 +65,6 @@ namespace ActionGame
                 case CameraMode.ThirdPersonLook:
                     cameraPosition = holdingHuman.ThirdHeadPosition;
                     cameraSubjectPosition = holdingHuman.LookingAt;
-                    break;
-                case CameraMode.BirdPerspective:
-                    cameraPosition = holdingHuman.Position + new Vector3(0, birdZPosition, 0);
-                    cameraSubjectPosition = holdingHuman.Position;
                     break;
                 default:
                     cameraPosition = Vector3.Zero;

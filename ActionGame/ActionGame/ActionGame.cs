@@ -93,15 +93,15 @@ namespace ActionGame
 
             player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
 
-            TownQuatter quatter = new TownQuatter(new Vector2(100, 70), 0, Content, drawer.WorldTransformMatrix);
+            TownQuatter quatter = new TownQuatter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             quatter.FillDrawer(drawer);
 
             /*Model grassModel = Content.Load<Model>("Objects/Flat/grass");
-            for (int x = 0; x < 20; x++)
+            for (int rx = 0; rx < 20; rx++)
             {
-                for (int y = 0; y < 20; y++)
+                for (int ry = 0; ry < 20; ry++)
                 {
-                    SpatialObject grass = new SpatialObject(grassModel, new Vector3(x * grassModel.GetSize(drawer.WorldTransformMatrix).X, 0, y * grassModel.GetSize(drawer.WorldTransformMatrix).Z), 0, drawer.WorldTransformMatrix);
+                    SpatialObject grass = new SpatialObject(grassModel, new Vector3(rx * grassModel.GetSize(drawer.WorldTransformMatrix).X, 0, ry * grassModel.GetSize(drawer.WorldTransformMatrix).Z), 0, drawer.WorldTransformMatrix);
                     drawer.StartDrawingObject(grass, true);
                 }
             }
@@ -148,6 +148,16 @@ namespace ActionGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);
+        }
+
+        public int WindowWidth
+        {
+            get { return resolutionWidth; }
+        }
+
+        public int WindowHeight
+        {
+            get { return resolutionHeight; }
         }
     }
 }

@@ -22,8 +22,8 @@ namespace ActionGame
         /// <summary>
         /// Decides whether the first object is in front of the second or not.
         /// </summary>
-        /// <param name="x">First object</param>
-        /// <param name="y">Second object</param>
+        /// <param name="rx">First object</param>
+        /// <param name="ry">Second object</param>
         /// <returns>Returns 1 if the firt object is in front of the second one.</returns>
         public int Compare(SpatialObject x, SpatialObject y)
         {

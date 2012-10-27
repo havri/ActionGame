@@ -11,7 +11,7 @@ namespace ActionGame
     {
         /// <summary>
         /// Creates BoundingBox of this model.
-        /// From: http://gamedev.stackexchange.com/questions/2438/how-do-x-create-bounding-boxes-with-xna-4-0
+        /// From: http://gamedev.stackexchange.com/questions/2438/how-do-rx-create-bounding-boxes-with-xna-4-0
         /// </summary>
         /// <param name="worldTransform">World transform matrix</param>
         /// <returns></returns>

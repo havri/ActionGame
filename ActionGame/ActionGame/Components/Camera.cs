@@ -28,7 +28,7 @@ namespace ActionGame
         }
 
         /// <summary>
-        /// Gets current camera position.
+        /// Gets current camera side.
         /// </summary>
         public Vector3 Position
         {

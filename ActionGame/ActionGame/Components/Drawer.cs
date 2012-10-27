@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame
 {
@@ -17,6 +19,7 @@ namespace ActionGame
         DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
+        Texture2D quatterMapPicture;
 
         /// <summary>
         /// Constructs new drawing component.
@@ -69,6 +72,9 @@ namespace ActionGame
         {
             base.Update(gameTime);
 
+            ///TODO: Maybe this should be called from other Update. For ex. Player's.
+            this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
+
             ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
             drawableObjects.Sort(objectComparer);
         }
@@ -86,8 +92,22 @@ namespace ActionGame
             {
                 ob.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
             }
-
             game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+
+            game.SpriteBatch.Begin();
+            if (ShowQuatterMap && quatterMapPicture != null)
+            {
+                game.SpriteBatch.Draw(quatterMapPicture, new Vector2((game.WindowWidth - quatterMapPicture.Width) / 2, (game.WindowHeight - quatterMapPicture.Height) / 2), Color.White);
+            }
+            game.SpriteBatch.End();
         }
+
+        public Texture2D QuatterMapPicture
+        {
+            set { quatterMapPicture = value; }
+        }
+
+        public bool ShowQuatterMap
+        { get; set; }
     }
 }

@@ -22,10 +22,14 @@ namespace ActionGame
         /// </summary>
         const int PictureMapRoadWidth = 20;
 
+        const float BetweenBuildingSpace = 3f;
+
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
         LinkedList<SpatialObject> groundObjects = new LinkedList<SpatialObject>();
+
+        LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
 
         /// <summary>
         /// Picture map of this quatter.
@@ -42,8 +46,9 @@ namespace ActionGame
         /// <param name="graphicsDevice">Graphics device for creating textures</param>
         public TownQuatter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
-            ///TODO: Make help bitmap for grid to recognize X crossroads.
+            ///TODO: Use bitmap to deny X crossroads.
             
+            ///TODO: Load models from central repository
             Model roadModel = content.Load<Model>("Objects/Flat/road0");
             float roadModelWidth = roadModel.GetSize(worldTransform).X;
             Model sidewalkModel = content.Load<Model>("Objects/Flat/sidewalk0");
@@ -70,12 +75,70 @@ namespace ActionGame
 
             Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(ref size, ref worldTransform, roadModel, roadModelWidth, mapBitmap, xSize, ySize);
             List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(ref worldTransform, roadModel, roadModelWidth, emptyRectangleInBorderRoadCyrcle, mapBitmap, xSize, ySize);
+            List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectangles.Count);
             foreach (Rectangle emptyRect in emptyRectangles)
             {
-                GenerateSidewalks(emptyRect, sidewalkModel, sidewalkModelWidth, ref worldTransform, mapBitmap, xSize, ySize);
+                emptyRectaglesInsideSidewalks.Add(
+                    GenerateSidewalks(emptyRect, sidewalkModel, sidewalkModelWidth, ref worldTransform, mapBitmap, xSize, ySize)
+                );
             }
 
             GenerateMapPicture(graphicsDevice, xSize, ySize, mapBitmap);
+
+            GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform, ref roadModelWidth);
+        }
+
+
+        private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks, ContentManager content, Matrix worldTransofrm, ref float roadSquareWidth)
+        {
+            ///TODO: Build central model repository
+            Model[] buildingModels = new Model[]
+            {
+                content.Load<Model>("Objects/Buildings/house1")
+            };
+
+            foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
+            {
+                float realWidth = emptyRect.Width * roadSquareWidth,
+                    realHeight = emptyRect.Height * roadSquareWidth;
+
+                RectangleF realEmptyRectangle = new RectangleF(emptyRect.X * roadSquareWidth, emptyRect.Y * roadSquareWidth, realWidth, realHeight);
+                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, realEmptyRectangle);
+            }
+        }
+
+        private void FillByBuildings(Matrix worldTransofrm, ref float roadSquareWidth, Model[] buildingModels, RectangleF target)
+        {
+            Random rand = new Random();
+            float horizontalSpace = (float)(rand.NextDouble() * 0.5 + 0.5) * BetweenBuildingSpace;
+            float verticalSpace = (float)(rand.NextDouble() * 0.5 + 0.5) * BetweenBuildingSpace;
+
+            
+            IEnumerable<Model> modelCandidates = from model in buildingModels
+                               where model.GetSize(worldTransofrm).X + horizontalSpace <= target.Width && model.GetSize(worldTransofrm).Z + verticalSpace <= target.Height
+                               orderby rand.Next()
+                               select model;
+            if(modelCandidates.Any())
+            {
+                Model usedModel = modelCandidates.First();
+
+                SpatialObject building = new SpatialObject(usedModel, new Vector3(target.X + horizontalSpace/2f, 0, target.Y + verticalSpace/2f), 0, worldTransofrm);
+                solidObjects.AddLast(building);
+                RectangleF nextRect = new RectangleF(
+                    target.X + usedModel.GetSize(worldTransofrm).X + horizontalSpace,
+                    target.Y,
+                    target.Width - usedModel.GetSize(worldTransofrm).X - horizontalSpace,
+                    usedModel.GetSize(worldTransofrm).Z + verticalSpace);
+
+                RectangleF downRect = new RectangleF(
+                    target.X,
+                    target.Y + usedModel.GetSize(worldTransofrm).Z + verticalSpace,
+                    target.Width,
+                    target.Height - usedModel.GetSize(worldTransofrm).Z - verticalSpace);
+
+                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, nextRect);
+                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, downRect);
+            }
         }
 
         /// <summary>
@@ -478,6 +541,10 @@ namespace ActionGame
             foreach (SpatialObject o in groundObjects)
             {
                 drawer.StartDrawingObject(o, true);
+            }
+            foreach (SpatialObject o in solidObjects)
+            {
+                drawer.StartDrawingObject(o, false);
             }
             drawer.QuatterMapPicture = map;
         }

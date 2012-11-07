@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
-    class TownQuatter
+    class TownQuarter
     {
         /// <summary>
         /// Block without road width. In road square count.
@@ -20,31 +20,34 @@ namespace ActionGame
         /// <summary>
         /// Width of road or sidewalk in pictured map. In pixels.
         /// </summary>
-        const int PictureMapRoadWidth = 20;
+        const int PictureMapRoadWidth = 15;
 
-        const float BetweenBuildingSpace = 3f;
+        const float BetweenBuildingSpace = 4f;
 
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
         LinkedList<SpatialObject> groundObjects = new LinkedList<SpatialObject>();
 
+        /// <summary>
+        /// Really spatial objects - buildings, etc.
+        /// </summary>
         LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
 
         /// <summary>
-        /// Picture map of this quatter.
+        /// Picture map of this quarter.
         /// </summary>
         Texture2D map;
 
         /// <summary>
-        /// Creates new town quatter as map fragment. Generates roads, buildings, etc.
+        /// Creates new town quarter as map fragment. Generates roads, buildings, etc.
         /// </summary>
-        /// <param name="size">Size of quatter without joining interface</param>
-        /// <param name="degree">Number of quatter's interfaces (joining streets)</param>
+        /// <param name="size">Size of quarter without joining interface</param>
+        /// <param name="degree">Number of quarter's interfaces (joining streets)</param>
         /// <param name="content">ContentManager for loading objects</param>
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="graphicsDevice">Graphics device for creating textures</param>
-        public TownQuatter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+        public TownQuarter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             ///TODO: Use bitmap to deny X crossroads.
             
@@ -71,7 +74,7 @@ namespace ActionGame
             for (int i = 0; i < mapBitmap.Length; i++)
                 mapBitmap[i] = MapFillType.Empty;
 
-            GenerateInterfaces(degree, mapBitmap, xSize, ySize, roadModel, roadModelWidth, sidewalkModel, sidewalkModelWidth, worldTransform);
+            GenerateInterfaces(degree, mapBitmap, xSize, ySize, roadModel, roadModelWidth, sidewalkModel, sidewalkModelWidth, worldTransform, content);
 
             Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(ref size, ref worldTransform, roadModel, roadModelWidth, mapBitmap, xSize, ySize);
             List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(ref worldTransform, roadModel, roadModelWidth, emptyRectangleInBorderRoadCyrcle, mapBitmap, xSize, ySize);
@@ -94,7 +97,10 @@ namespace ActionGame
             ///TODO: Build central model repository
             Model[] buildingModels = new Model[]
             {
-                content.Load<Model>("Objects/Buildings/house1")
+                content.Load<Model>("Objects/Buildings/panelak"),
+                content.Load<Model>("Objects/Buildings/panelak2"),
+                content.Load<Model>("Objects/Buildings/house1"),
+                content.Load<Model>("Objects/Decorations/bin")
             };
 
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
@@ -110,8 +116,8 @@ namespace ActionGame
         private void FillByBuildings(Matrix worldTransofrm, ref float roadSquareWidth, Model[] buildingModels, RectangleF target)
         {
             Random rand = new Random();
-            float horizontalSpace = (float)(rand.NextDouble() * 0.5 + 0.5) * BetweenBuildingSpace;
-            float verticalSpace = (float)(rand.NextDouble() * 0.5 + 0.5) * BetweenBuildingSpace;
+            float horizontalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
+            float verticalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
 
             
             IEnumerable<Model> modelCandidates = from model in buildingModels
@@ -142,36 +148,36 @@ namespace ActionGame
         }
 
         /// <summary>
-        /// Generates road and sidewalks interfaces - street for joining with other quatters.
+        /// Generates road and sidewalks interfaces - street for joining with other quarters.
         /// </summary>
-        /// <param name="degree">Number of'quatters neigbors - degree of vertex</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Width of quatter bitmap</param>
-        /// <param name="ySize">Height of quatter bitmap</param>
+        /// <param name="degree">Number of'quarters neigbors - degree of vertex</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Width of quarter bitmap</param>
+        /// <param name="ySize">Height of quarter bitmap</param>
         /// <param name="roadModel">Used road model</param>
         /// <param name="roadModelWidth">Road model width</param>
         /// <param name="sidewalkModel">Used sidewalk model</param>
         /// <param name="sidewalkModelWidth">Sidewalk model width</param>
         /// <param name="worldTransform">World transform matrix</param>
-        private void GenerateInterfaces(int degree, MapFillType[] mapBitmap, int xSize, int ySize, Model roadModel, float roadModelWidth, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform)
+        private void GenerateInterfaces(int degree, MapFillType[] mapBitmap, int xSize, int ySize, Model roadModel, float roadModelWidth, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform, ContentManager content)
         {
-            Dictionary<TownQuatterInterfacePosition, List<Range>> emptyRanges = new Dictionary<TownQuatterInterfacePosition, List<Range>>(4);
-            emptyRanges.Add(TownQuatterInterfacePosition.Top, new List<Range>(new Range[] { new Range(BlockWidth + 1, xSize - BlockWidth - 1) }));
-            emptyRanges.Add(TownQuatterInterfacePosition.Bottom,  new List<Range>(new Range[] {new Range(BlockWidth + 1, xSize - BlockWidth - 1) }));
-            emptyRanges.Add(TownQuatterInterfacePosition.Left,  new List<Range>(new Range[] { new Range(BlockWidth + 1, ySize - BlockWidth - 1) }));
-            emptyRanges.Add(TownQuatterInterfacePosition.Right,  new List<Range>(new Range[] { new Range(BlockWidth + 1, ySize - BlockWidth - 1) }));
+            Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges = new Dictionary<TownQuarterInterfacePosition, List<Range>>(4);
+            emptyRanges.Add(TownQuarterInterfacePosition.Top, new List<Range>(new Range[] { new Range(BlockWidth + 1, xSize - BlockWidth - 1) }));
+            emptyRanges.Add(TownQuarterInterfacePosition.Bottom,  new List<Range>(new Range[] {new Range(BlockWidth + 1, xSize - BlockWidth - 1) }));
+            emptyRanges.Add(TownQuarterInterfacePosition.Left,  new List<Range>(new Range[] { new Range(BlockWidth + 1, ySize - BlockWidth - 1) }));
+            emptyRanges.Add(TownQuarterInterfacePosition.Right,  new List<Range>(new Range[] { new Range(BlockWidth + 1, ySize - BlockWidth - 1) }));
 
             Random rand = new Random();
             for (int i = 0; i < degree; i++)
             {
-                TownQuatterInterfacePosition side;
-                List<TownQuatterInterfacePosition> possibleSides = new List<TownQuatterInterfacePosition>(
+                TownQuarterInterfacePosition side;
+                List<TownQuarterInterfacePosition> possibleSides = new List<TownQuarterInterfacePosition>(
                     from key in emptyRanges.Keys where emptyRanges[key].Count(rangeItem => rangeItem.Length > 2 * BlockWidth + 1) > 0 select key
                     );
 
                 if (possibleSides.Count < 1)
                 {
-                    throw new ArgumentException("This quatter has already full all sides of interfaces. Degree argument is too big.");
+                    throw new ArgumentException("This quarter has already full all sides of interfaces. Degree argument is too big.");
                 }
 
                 side = possibleSides[rand.Next(0, possibleSides.Count - 1)];
@@ -190,7 +196,7 @@ namespace ActionGame
                 emptyRanges[side].Add(new Range(position + 1, range.End));
 
                 AxisDirection direction
-                    = (side == TownQuatterInterfacePosition.Right || side == TownQuatterInterfacePosition.Left) ? AxisDirection.Horizontal : AxisDirection.Vertical;
+                    = (side == TownQuarterInterfacePosition.Right || side == TownQuarterInterfacePosition.Left) ? AxisDirection.Horizontal : AxisDirection.Vertical;
 
                 for (int p = 0; p < BlockWidth; p++)
                 {
@@ -198,7 +204,7 @@ namespace ActionGame
                     switch (direction)
                     {
                         case AxisDirection.Horizontal:
-                            rx = (p + (side == TownQuatterInterfacePosition.Left ? 0 : xSize - BlockWidth));
+                            rx = (p + (side == TownQuarterInterfacePosition.Left ? 0 : xSize - BlockWidth));
                             ry = position;
                             slx = rx;
                             srx = rx;
@@ -207,7 +213,7 @@ namespace ActionGame
                             break;
                         case AxisDirection.Vertical:
                             rx = position;
-                            ry = (p + (side == TownQuatterInterfacePosition.Top ? 0 : ySize - BlockWidth));
+                            ry = (p + (side == TownQuarterInterfacePosition.Top ? 0 : ySize - BlockWidth));
                             slx = rx - 1;
                             srx = rx + 1;
                             sly = ry;
@@ -231,19 +237,129 @@ namespace ActionGame
             }
 
             GenerateRestOfBorderSidewalks(emptyRanges, mapBitmap, xSize, ySize, sidewalkModel, sidewalkModelWidth, worldTransform);
+
+            GenerateBorderBuildings(content, emptyRanges, roadModelWidth, worldTransform, xSize, ySize);
+        }
+
+        private void GenerateBorderBuildings(ContentManager content, Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, float roadModelWidth, Matrix worldTransform, int bitmapSizeX, int bitmapSizeY)
+        {
+            //expand corner ranges
+            foreach (var ranges in emptyRanges)
+            {
+                for (int i = 0; i < ranges.Value.Count; i++ )
+                {
+                    if (ranges.Value[i].Begin == BlockWidth + 1)
+                    {
+                        Range r = ranges.Value[i];
+                        ranges.Value.RemoveAt(i);
+                        r.Begin = BlockWidth - 2; // road corner, sidewlak
+                        ranges.Value.Insert(i, r);
+                    }
+                    if (
+                        (ranges.Value[i].End == bitmapSizeX - BlockWidth - 1 && ( ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom) )
+                        || (ranges.Value[i].End == bitmapSizeY - BlockWidth - 1 && (ranges.Key == TownQuarterInterfacePosition.Left || ranges.Key == TownQuarterInterfacePosition.Right))
+                        )
+                    {
+                        Range r = ranges.Value[i];
+                        ranges.Value.RemoveAt(i);
+                        if (ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom)
+                        {
+                            r.End = bitmapSizeX - BlockWidth + 1;
+                        }
+                        else
+                        {
+                            r.End = bitmapSizeY - BlockWidth + 1;
+                        }
+                        ranges.Value.Insert(i, r);
+                    }
+                }
+            }
+
+            ///TODO: Build central model repository
+            Model[] buildingModels = new Model[]
+            {
+                content.Load<Model>("Objects/Buildings/borderBuilding"),
+                content.Load<Model>("Objects/Buildings/borderBuilding10"),
+                content.Load<Model>("Objects/Buildings/borderBuilding8"),
+                content.Load<Model>("Objects/Buildings/borderBuilding4"),
+                content.Load<Model>("Objects/Buildings/borderBuilding1"),
+                content.Load<Model>("Objects/Buildings/fence1")
+            };
+            Random rand = new Random();
+            foreach (var ranges in emptyRanges)
+            {
+                foreach (var range in ranges.Value)
+                {
+                    FillEmptyBorderRange(roadModelWidth, worldTransform, buildingModels, rand, ranges.Key, range, 0f, bitmapSizeX, bitmapSizeY);
+                }
+            }
+        }
+
+        private void FillEmptyBorderRange(float roadModelWidth, Matrix worldTransform, Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset, int bitmapSizeX, int bitmapSizeY)
+        {
+            float emptySpace = (range.Length - 1) * roadModelWidth - offset;
+            IEnumerable<Model> modelCandidates = from model in buildingModels
+                                                 where Math.Max(model.GetSize(worldTransform).X, model.GetSize(worldTransform).Z) <= emptySpace
+                                                 orderby rand.Next()
+                                                 select model;
+            if (modelCandidates.Any())
+            {
+                Model usedModel = modelCandidates.First();
+                Vector3 usedModelSize = usedModel.GetSize(worldTransform);
+                float angle = 0;
+                if (
+                    ((borderPosition == TownQuarterInterfacePosition.Left || borderPosition == TownQuarterInterfacePosition.Right)
+                    && usedModelSize.X > usedModelSize.Z)
+                    ||
+                    ((borderPosition == TownQuarterInterfacePosition.Top || borderPosition == TownQuarterInterfacePosition.Bottom)
+                    && usedModelSize.X < usedModelSize.Z)
+                    )
+                {
+                    angle = 0;
+                }
+
+                Vector3 position = Vector3.Zero;
+                float newOffset = offset + usedModelSize.X;
+                switch (borderPosition)
+                {
+                    case TownQuarterInterfacePosition.Top:
+                        position = new Vector3(range.Begin * roadModelWidth + roadModelWidth + offset, 0, BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.Z);
+                        break;
+                    case TownQuarterInterfacePosition.Right:
+                        position = new Vector3(BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.X / 2 + usedModelSize.Z / 2 + +(bitmapSizeX - 2 * (BlockWidth - 1)) * roadModelWidth, 0, range.Begin * roadModelWidth + roadModelWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                        angle = MathHelper.PiOver2;
+                        break;
+                    case TownQuarterInterfacePosition.Bottom:
+                        position = new Vector3(range.Begin * roadModelWidth + roadModelWidth + offset, 0, BlockWidth * roadModelWidth - roadModelWidth + (bitmapSizeY - 2 * (BlockWidth - 1)) * roadModelWidth);
+                        break;
+                    case TownQuarterInterfacePosition.Left:
+                        position = new Vector3(BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.X / 2 - usedModelSize.Z / 2, 0, range.Begin * roadModelWidth + roadModelWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                        angle = MathHelper.PiOver2;
+                        break;
+                    default:
+                        break;
+                }
+
+                SpatialObject borderBuilding = new SpatialObject(usedModel, position, angle, worldTransform);
+                solidObjects.AddLast(borderBuilding);
+
+                FillEmptyBorderRange(roadModelWidth, worldTransform, buildingModels, rand, borderPosition, range, newOffset, bitmapSizeX, bitmapSizeY);
+            }
+            else 
+            { }
         }
 
         /// <summary>
-        /// Generates sidewalks what surround quatter border road and weren't generated by interfaces.
+        /// Generates sidewalks what surround quarter border road and weren't generated by interfaces.
         /// </summary>
         /// <param name="emptyRanges">Ranges for sidewalks placement</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Width of quatter bitmap</param>
-        /// <param name="ySize">Height of quatter bitmap</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Width of quarter bitmap</param>
+        /// <param name="ySize">Height of quarter bitmap</param>
         /// <param name="sidewalkModel">Used sidewalk model</param>
         /// <param name="sidewalkModelWidth">Sidewalk model width</param>
         /// <param name="worldTransform">World transform matrix</param>
-        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuatterInterfacePosition, List<Range>> emptyRanges, MapFillType[] mapBitmap, int xSize, int ySize, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform)
+        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, MapFillType[] mapBitmap, int xSize, int ySize, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform)
         {
             // Corners
             foreach (Tuple<int, int> p in new Tuple<int, int>[]
@@ -272,7 +388,7 @@ namespace ActionGame
             }
 
             // Ranges
-            foreach (KeyValuePair<TownQuatterInterfacePosition, List<Range>> sideRanges in emptyRanges)
+            foreach (KeyValuePair<TownQuarterInterfacePosition, List<Range>> sideRanges in emptyRanges)
             {
                 foreach (Range range in sideRanges.Value)
                 {
@@ -281,24 +397,24 @@ namespace ActionGame
                         int x, y;
                         switch (sideRanges.Key)
                         {
-                            case TownQuatterInterfacePosition.Top:
+                            case TownQuarterInterfacePosition.Top:
                                 x = range.Begin + i;
                                 y = BlockWidth - 1;
                                 break;
-                            case TownQuatterInterfacePosition.Right:
+                            case TownQuarterInterfacePosition.Right:
                                 x = xSize - BlockWidth;
                                 y = range.Begin + i;
                                 break;
-                            case TownQuatterInterfacePosition.Bottom:
+                            case TownQuarterInterfacePosition.Bottom:
                                 x = range.Begin + i;
                                 y = ySize - BlockWidth;
                                 break;
-                            case TownQuatterInterfacePosition.Left:
+                            case TownQuarterInterfacePosition.Left:
                                 x = BlockWidth - 1;
                                 y = range.Begin + i;
                                 break;
                             default:
-                                throw new InvalidOperationException("Unknown TownQuatterInterfacePosition value.");
+                                throw new InvalidOperationException("Unknown TownQuarterInterfacePosition value.");
                         }
 
                         mapBitmap[x * ySize + y] = MapFillType.Sidewalk;
@@ -310,12 +426,12 @@ namespace ActionGame
         }
 
         /// <summary>
-        /// Creates picture of quatter map and saves as Texture2D
+        /// Creates picture of quarter map and saves as Texture2D
         /// </summary>
         /// <param name="graphicsDevice">Device for texture store</param>
-        /// <param name="xSize">Quatter bitmap width</param>
-        /// <param name="ySize">Quatter bitmap height</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
+        /// <param name="xSize">Quarter bitmap width</param>
+        /// <param name="ySize">Quarter bitmap height</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
         private void GenerateMapPicture(GraphicsDevice graphicsDevice, int xSize, int ySize, MapFillType[] mapBitmap)
         {
             System.Drawing.Image mapPicture = (System.Drawing.Image)(new System.Drawing.Bitmap((2 * BlockWidth + xSize) * PictureMapRoadWidth, (2 * BlockWidth + ySize) * PictureMapRoadWidth));
@@ -357,9 +473,9 @@ namespace ActionGame
         /// <param name="roadModel">Road square model</param>
         /// <param name="roadModelWidth">Road square size</param>
         /// <param name="emptyRectangle">Target rectangle</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Quatter bitmap width</param>
-        /// <param name="ySize">Quatter bitmap height</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Quarter bitmap width</param>
+        /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Another list of empty rectangles for next filling</returns>
         private List<Rectangle> GenerateInnerRoadNetwork(ref Matrix worldTransform, Model roadModel, float roadModelWidth, Rectangle emptyRectangle, MapFillType[] mapBitmap, int xSize, int ySize)
         {
@@ -393,9 +509,9 @@ namespace ActionGame
         /// <param name="roadModel">Road model</param>
         /// <param name="roadModelWidth">Road model size</param>
         /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Quatter bitmap width</param>
-        /// <param name="ySize">Quatter bitmap height</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Quarter bitmap width</param>
+        /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Array of new empty rectangles inside the splited rectangle</returns>
         private Rectangle[] AddSplittingRoad(ref Rectangle target, Model roadModel, float roadModelWidth,ref Matrix worldTransform, MapFillType[] mapBitmap, int xSize, int ySize)
         {
@@ -453,13 +569,13 @@ namespace ActionGame
         /// <summary>
         /// Generates border road network.
         /// </summary>
-        /// <param name="size">Size of quatter</param>
+        /// <param name="size">Size of quarter</param>
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="roadModel">Road model</param>
         /// <param name="roadModelWidth">Road square size</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Width of the quatter</param>
-        /// <param name="ySize">Height of the quatter</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Width of the quarter</param>
+        /// <param name="ySize">Height of the quarter</param>
         /// <returns>Empty rectangle inside the bitmap</returns>
         private Rectangle GenerateBorderRoads(ref Vector2 size, ref Matrix worldTransform, Model roadModel, float roadModelWidth, MapFillType[] mapBitmap, int xSize, int ySize)
         {
@@ -500,9 +616,9 @@ namespace ActionGame
         /// <param name="sidewalkModel">Used model</param>
         /// <param name="sidewalkModelWidth">Used sidewalk size</param>
         /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="mapBitmap">Quatter bitmap</param>
-        /// <param name="xSize">Quatter bitmap width</param>
-        /// <param name="ySize">Quatter bitmap height</param>
+        /// <param name="mapBitmap">Quarter bitmap</param>
+        /// <param name="xSize">Quarter bitmap width</param>
+        /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Rest of the target rectangle what's empty</returns>
         private Rectangle GenerateSidewalks(Rectangle target, Model sidewalkModel, float sidewalkModelWidth, ref Matrix worldTransform, MapFillType[] mapBitmap, int xSize, int ySize)
         {
@@ -533,7 +649,7 @@ namespace ActionGame
         }
 
         /// <summary>
-        /// Configures drawer for drawing this quatter.
+        /// Configures drawer for drawing this quarter.
         /// </summary>
         /// <param name="drawer">Display drawer</param>
         public void FillDrawer(Drawer drawer)
@@ -546,7 +662,7 @@ namespace ActionGame
             {
                 drawer.StartDrawingObject(o, false);
             }
-            drawer.QuatterMapPicture = map;
+            drawer.QuarterMapPicture = map;
         }
     }
 }

@@ -19,8 +19,8 @@ namespace ActionGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        const int resolutionWidth = 1024;
-        const int resolutionHeight = 800;
+        const int resolutionWidth = 1680;
+        const int resolutionHeight = 1024;
         const bool fullscreen = false;
 
 
@@ -91,9 +91,9 @@ namespace ActionGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
+            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(200, 0, 0), 0, drawer.WorldTransformMatrix);
 
-            TownQuatter quatter = new TownQuatter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             quatter.FillDrawer(drawer);
 
             /*Model grassModel = Content.Load<Model>("Objects/Flat/grass");

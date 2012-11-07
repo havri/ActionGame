@@ -34,7 +34,7 @@ namespace ActionGame
         {
             Matrix[] transforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(transforms);
-
+            
             foreach(ModelMesh mesh in model.Meshes)
             {
                 foreach(BasicEffect effect in mesh.Effects)

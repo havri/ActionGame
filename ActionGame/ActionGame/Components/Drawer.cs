@@ -19,7 +19,7 @@ namespace ActionGame
         DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
-        Texture2D quatterMapPicture;
+        Texture2D quarterMapPicture;
 
         /// <summary>
         /// Constructs new drawing component.
@@ -75,6 +75,7 @@ namespace ActionGame
             ///TODO: Maybe this should be called from other Update. For ex. Player's.
             this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
 
+            ///TODO: Sorting  objects must be by nearest corner!
             ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
             drawableObjects.Sort(objectComparer);
         }
@@ -95,16 +96,16 @@ namespace ActionGame
             game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
             game.SpriteBatch.Begin();
-            if (ShowQuatterMap && quatterMapPicture != null)
+            if (ShowQuatterMap && quarterMapPicture != null)
             {
-                game.SpriteBatch.Draw(quatterMapPicture, new Vector2((game.WindowWidth - quatterMapPicture.Width) / 2, (game.WindowHeight - quatterMapPicture.Height) / 2), Color.White);
+                game.SpriteBatch.Draw(quarterMapPicture, new Vector2((game.WindowWidth - quarterMapPicture.Width) / 2, (game.WindowHeight - quarterMapPicture.Height) / 2), Color.White);
             }
             game.SpriteBatch.End();
         }
 
-        public Texture2D QuatterMapPicture
+        public Texture2D QuarterMapPicture
         {
-            set { quatterMapPicture = value; }
+            set { quarterMapPicture = value; }
         }
 
         public bool ShowQuatterMap

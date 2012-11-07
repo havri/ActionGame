@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ActionGame
 {
-    enum TownQuatterInterfacePosition
+    enum TownQuarterInterfacePosition
     {
         Top, Right, Bottom, Left
     }

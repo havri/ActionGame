@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
-    public class SpatialObject : GameObject
+    public class SpatialObject : GameObject, IDisposable
     {
         Model model;
         float verticalPosition;
@@ -62,6 +62,11 @@ namespace ActionGame
         protected new Vector3 size
         {
             get { return base.size.ToVector3(verticalSize); }
+        }
+
+        public void Dispose()
+        {
+            model = null;
         }
     }
 }

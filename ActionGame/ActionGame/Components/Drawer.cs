@@ -14,12 +14,12 @@ namespace ActionGame
     class Drawer : DrawableGameComponent
     {
         ActionGame game;
-        List<SpatialObject> drawableObjects;
-        List<SpatialObject> groundDrawableObjects;
+        LinkedList<DrawedTownQuarter> drawedQuarters = new LinkedList<DrawedTownQuarter>();
         DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
         Texture2D quarterMapPicture;
+        Texture2D townGraphPicture;
 
         /// <summary>
         /// Constructs new drawing component.
@@ -42,30 +42,9 @@ namespace ActionGame
             get { return worldMatrix; }
         }
 
-        /// <summary>
-        /// Adds new object for drawing.
-        /// </summary>
-        /// <param name="o">The object</param>
-        /// <param name="ground">Ground mark - specifates whether the object is flat ground</param>
-        public void StartDrawingObject(SpatialObject o, bool ground)
+        public void StartDrawingQuarter(TownQuarter quarter, TownQuarterInterfacePosition position, Vector2 delta)
         {
-            if(ground)
-                groundDrawableObjects.Add(o);
-            else
-                drawableObjects.Add(o);
-
-            Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
-        }
-
-        /// <summary>
-        /// Removes specificated drawable object from drowing collection.
-        /// </summary>
-        /// <param name="o">The object</param>
-        public void StopDrowingObject(SpatialObject o)
-        {
-            ///TODO: Make this faster.
-            drawableObjects.Remove(o);
-            groundDrawableObjects.Remove(o);
+            drawedQuarters.AddLast(new DrawedTownQuarter { TownQuarter = quarter, JoiningInterfacePosition = position, Delta = delta });
         }
 
         public override void Update(GameTime gameTime)
@@ -74,6 +53,7 @@ namespace ActionGame
 
             ///TODO: Maybe this should be called from other Update. For ex. Player's.
             this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
+            this.ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
 
             ///TODO: Sorting  objects must be by nearest corner!
             ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
@@ -100,6 +80,10 @@ namespace ActionGame
             {
                 game.SpriteBatch.Draw(quarterMapPicture, new Vector2((game.WindowWidth - quarterMapPicture.Width) / 2, (game.WindowHeight - quarterMapPicture.Height) / 2), Color.White);
             }
+            if (ShowTownGraph && townGraphPicture != null)
+            {
+                game.SpriteBatch.Draw(townGraphPicture, new Vector2((game.WindowWidth - townGraphPicture.Width) / 2, (game.WindowHeight - townGraphPicture.Height) / 2), Color.White);
+            }
             game.SpriteBatch.End();
         }
 
@@ -108,7 +92,18 @@ namespace ActionGame
             set { quarterMapPicture = value; }
         }
 
+        public Texture2D TownGraphPicture
+        { 
+            set
+            {
+            	townGraphPicture = value;
+            }
+        }
+
         public bool ShowQuatterMap
+        { get; set; }
+
+        public bool ShowTownGraph
         { get; set; }
     }
 }

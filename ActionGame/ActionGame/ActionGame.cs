@@ -93,6 +93,9 @@ namespace ActionGame
 
             player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(200, 0, 0), 0, drawer.WorldTransformMatrix);
 
+            Town town = new Town(5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            drawer.TownGraphPicture = town.Map;
+            /*
             TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             quatter.FillDrawer(drawer);
 

@@ -113,6 +113,8 @@
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
     <Compile Include="Components\Drawer\DrawingOrderComparer.cs" />
+    <Compile Include="DrawedTownQuarter.cs" />
+    <Compile Include="Exceptions\NoSpaceForInterfaceException.cs" />
     <Compile Include="Space\AxisDirection.cs" />
     <Compile Include="Space\Human.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
@@ -128,7 +130,10 @@
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Space\RectangleF.cs" />
     <Compile Include="Space\TownQuatterInterfacePosition.cs" />
-    <Compile Include="TownQuatter.cs" />
+    <Compile Include="Town.cs" />
+    <Compile Include="TownQuarter.Generator.cs" />
+    <Compile Include="TownQuarterInterface.cs" />
+    <Compile Include="TownQuarter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

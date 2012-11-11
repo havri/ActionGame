@@ -29,6 +29,8 @@ namespace ActionGame
             int xSize = (int)Math.Floor(size.X / roadModelWidth);
             int ySize = (int)Math.Floor(size.Y / roadModelWidth);
 
+            squareWidth = roadModelWidth;
+
             if (xSize < 4 * BlockWidth || ySize < 4 * BlockWidth)
             {
                 throw new ArgumentOutOfRangeException("Specified size is to small.");
@@ -40,45 +42,45 @@ namespace ActionGame
             for (int i = 0; i < mapBitmap.Length; i++)
                 mapBitmap[i] = MapFillType.Empty;
 
-            GenerateInterfaces(degree, mapBitmap, roadModel, roadModelWidth, sidewalkModel, sidewalkModelWidth, worldTransform, content);
+            GenerateInterfaces(degree, mapBitmap, roadModel, sidewalkModel, worldTransform, content);
 
-            Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(ref size, ref worldTransform, roadModel, roadModelWidth, mapBitmap);
-            List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(ref worldTransform, roadModel, roadModelWidth, emptyRectangleInBorderRoadCyrcle, mapBitmap);
+            Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(ref size, ref worldTransform, roadModel, mapBitmap);
+            List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(ref worldTransform, roadModel, emptyRectangleInBorderRoadCyrcle, mapBitmap);
             List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectangles.Count);
             foreach (Rectangle emptyRect in emptyRectangles)
             {
                 emptyRectaglesInsideSidewalks.Add(
-                    GenerateSidewalks(emptyRect, sidewalkModel, sidewalkModelWidth, ref worldTransform, mapBitmap)
+                    GenerateSidewalks(emptyRect, sidewalkModel, ref worldTransform, mapBitmap)
                 );
             }
 
             GenerateMapPicture(graphicsDevice, mapBitmap);
 
-            GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform, ref roadModelWidth);
+            GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform);
         }
         
-        private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks, ContentManager content, Matrix worldTransofrm, ref float roadSquareWidth)
+        private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks, ContentManager content, Matrix worldTransofrm)
         {
             ///TODO: Build central model repository
             Model[] buildingModels = new Model[]
             {
                 content.Load<Model>("Objects/Buildings/panelak"),
                 content.Load<Model>("Objects/Buildings/panelak2"),
-                content.Load<Model>("Objects/Buildings/house1"),
-                content.Load<Model>("Objects/Decorations/bin")
+                content.Load<Model>("Objects/Buildings/house1")/*,
+                content.Load<Model>("Objects/Decorations/bin")*/
             };
 
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
             {
-                float realWidth = emptyRect.Width * roadSquareWidth,
-                    realHeight = emptyRect.Height * roadSquareWidth;
+                float realWidth = emptyRect.Width * squareWidth,
+                    realHeight = emptyRect.Height * squareWidth;
 
-                RectangleF realEmptyRectangle = new RectangleF(emptyRect.X * roadSquareWidth, emptyRect.Y * roadSquareWidth, realWidth, realHeight);
-                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, realEmptyRectangle);
+                RectangleF realEmptyRectangle = new RectangleF(emptyRect.X * squareWidth, emptyRect.Y * squareWidth, realWidth, realHeight);
+                FillByBuildings(worldTransofrm, buildingModels, realEmptyRectangle);
             }
         }
 
-        private void FillByBuildings(Matrix worldTransofrm, ref float roadSquareWidth, Model[] buildingModels, RectangleF target)
+        private void FillByBuildings(Matrix worldTransofrm, Model[] buildingModels, RectangleF target)
         {
             Random rand = new Random();
             float horizontalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
@@ -107,8 +109,8 @@ namespace ActionGame
                     target.Width,
                     target.Height - usedModel.GetSize(worldTransofrm).Z - verticalSpace);
 
-                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, nextRect);
-                FillByBuildings(worldTransofrm, ref roadSquareWidth, buildingModels, downRect);
+                FillByBuildings(worldTransofrm, buildingModels, nextRect);
+                FillByBuildings(worldTransofrm, buildingModels, downRect);
             }
         }
 
@@ -122,7 +124,7 @@ namespace ActionGame
         /// <param name="sidewalkModel">Used sidewalk model</param>
         /// <param name="sidewalkModelWidth">Sidewalk model width</param>
         /// <param name="worldTransform">World transform matrix</param>
-        private void GenerateInterfaces(int degree, MapFillType[] mapBitmap, Model roadModel, float roadModelWidth, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform, ContentManager content)
+        private void GenerateInterfaces(int degree, MapFillType[] mapBitmap, Model roadModel, Model sidewalkModel, Matrix worldTransform, ContentManager content)
         {
             Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges = new Dictionary<TownQuarterInterfacePosition, List<Range>>(4);
             emptyRanges.Add(TownQuarterInterfacePosition.Top, new List<Range>(new Range[] { new Range(BlockWidth + 1, bitmapSize.Width - BlockWidth - 1) }));
@@ -152,7 +154,7 @@ namespace ActionGame
                 emptyRanges[side].Remove(range);
 
                 int position = range.Begin
-                    + (int)((0.35 + rand.NextDouble() * 0.3) // percentage position in rangle
+                    + (int)((0.35 + rand.NextDouble() * 0.3) // percentage position in range
                     * range.Length);
 
                 emptyRanges[side].Add(new Range(range.Begin, position - 1));
@@ -195,9 +197,9 @@ namespace ActionGame
                     mapBitmap[rx * bitmapSize.Height + ry] = MapFillType.StraightRoad;
                     mapBitmap[slx * bitmapSize.Height + sly] = MapFillType.Sidewalk;
                     mapBitmap[srx * bitmapSize.Height + sry] = MapFillType.Sidewalk;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(rx * roadModelWidth, 0, ry * roadModelWidth), 0, worldTransform);
-                    SpatialObject sidewalkL = new SpatialObject(sidewalkModel, new Vector3(slx * sidewalkModelWidth, 0, sly * sidewalkModelWidth), 0, worldTransform);
-                    SpatialObject sidewalkR = new SpatialObject(sidewalkModel, new Vector3(srx * sidewalkModelWidth, 0, sry * sidewalkModelWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, new Vector3(rx * squareWidth, 0, ry * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalkL = new SpatialObject(sidewalkModel, new Vector3(slx * squareWidth, 0, sly * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalkR = new SpatialObject(sidewalkModel, new Vector3(srx * squareWidth, 0, sry * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                     groundObjects.AddLast(sidewalkL);
                     groundObjects.AddLast(sidewalkR);
@@ -205,12 +207,12 @@ namespace ActionGame
                 this.interfaces.Add(iface);
             }
 
-            GenerateRestOfBorderSidewalks(emptyRanges, mapBitmap, sidewalkModel, sidewalkModelWidth, worldTransform);
+            GenerateRestOfBorderSidewalks(emptyRanges, mapBitmap, sidewalkModel, worldTransform);
 
-            GenerateBorderBuildings(content, emptyRanges, roadModelWidth, worldTransform);
+            GenerateBorderBuildings(content, emptyRanges, worldTransform);
         }
 
-        private void GenerateBorderBuildings(ContentManager content, Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, float roadModelWidth, Matrix worldTransform)
+        private void GenerateBorderBuildings(ContentManager content, Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, Matrix worldTransform)
         {
             //expand corner ranges
             foreach (var ranges in emptyRanges)
@@ -259,7 +261,7 @@ namespace ActionGame
             {
                 foreach (var range in ranges.Value)
                 {
-                    FillEmptyBorderRange(roadModelWidth, worldTransform, buildingModels, rand, ranges.Key, range, 0f);
+                    FillEmptyBorderRange(worldTransform, buildingModels, rand, ranges.Key, range, 0f);
                 }
             }
         }
@@ -276,9 +278,9 @@ namespace ActionGame
         /// <param name="offset">Already filled part of range</param>
         /// <param name="bitmapSizeX">Town quarter width in road squares</param>
         /// <param name="bitmapSizeY">Town quarter height in road squares</param>
-        private void FillEmptyBorderRange(float roadModelWidth, Matrix worldTransform, Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset)
+        private void FillEmptyBorderRange(Matrix worldTransform, Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset)
         {
-            float emptySpace = (range.Length - 1) * roadModelWidth - offset;
+            float emptySpace = (range.Length - 1) * squareWidth - offset;
             IEnumerable<Model> modelCandidates = from model in buildingModels
                                                  where model.GetSize(worldTransform).X <= emptySpace
                                                  orderby rand.Next()
@@ -295,17 +297,17 @@ namespace ActionGame
                 switch (borderPosition)
                 {
                     case TownQuarterInterfacePosition.Top:
-                        position = new Vector3(range.Begin * roadModelWidth + roadModelWidth + offset, 0, BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.Z);
+                        position = new Vector3(range.Begin * squareWidth + squareWidth + offset, 0, BlockWidth * squareWidth - squareWidth - usedModelSize.Z);
                         break;
                     case TownQuarterInterfacePosition.Right:
-                        position = new Vector3(BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.X / 2 + usedModelSize.Z / 2 + +(bitmapSize.Width - 2 * (BlockWidth - 1)) * roadModelWidth, 0, range.Begin * roadModelWidth + roadModelWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                        position = new Vector3(BlockWidth * squareWidth - squareWidth - usedModelSize.X / 2 + usedModelSize.Z / 2 + +(bitmapSize.Width - 2 * (BlockWidth - 1)) * squareWidth, 0, range.Begin * squareWidth + squareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
                         angle = MathHelper.PiOver2;
                         break;
                     case TownQuarterInterfacePosition.Bottom:
-                        position = new Vector3(range.Begin * roadModelWidth + roadModelWidth + offset, 0, BlockWidth * roadModelWidth - roadModelWidth + (bitmapSize.Height - 2 * (BlockWidth - 1)) * roadModelWidth);
+                        position = new Vector3(range.Begin * squareWidth + squareWidth + offset, 0, BlockWidth * squareWidth - squareWidth + (bitmapSize.Height - 2 * (BlockWidth - 1)) * squareWidth);
                         break;
                     case TownQuarterInterfacePosition.Left:
-                        position = new Vector3(BlockWidth * roadModelWidth - roadModelWidth - usedModelSize.X / 2 - usedModelSize.Z / 2, 0, range.Begin * roadModelWidth + roadModelWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                        position = new Vector3(BlockWidth * squareWidth - squareWidth - usedModelSize.X / 2 - usedModelSize.Z / 2, 0, range.Begin * squareWidth + squareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
                         angle = MathHelper.PiOver2;
                         break;
                     default:
@@ -315,7 +317,7 @@ namespace ActionGame
                 SpatialObject borderBuilding = new SpatialObject(usedModel, position, angle, worldTransform);
                 solidObjects.AddLast(borderBuilding);
 
-                FillEmptyBorderRange(roadModelWidth, worldTransform, buildingModels, rand, borderPosition, range, newOffset);
+                FillEmptyBorderRange(worldTransform, buildingModels, rand, borderPosition, range, newOffset);
             }
             else
             { }
@@ -331,7 +333,7 @@ namespace ActionGame
         /// <param name="sidewalkModel">Used sidewalk model</param>
         /// <param name="sidewalkModelWidth">Sidewalk model width</param>
         /// <param name="worldTransform">World transform matrix</param>
-        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, MapFillType[] mapBitmap, Model sidewalkModel, float sidewalkModelWidth, Matrix worldTransform)
+        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, MapFillType[] mapBitmap, Model sidewalkModel, Matrix worldTransform)
         {
             // Corners
             foreach (Tuple<int, int> p in new Tuple<int, int>[]
@@ -355,7 +357,7 @@ namespace ActionGame
             {
                 int x = p.Item1, y = p.Item2;
                 mapBitmap[x * bitmapSize.Height + y] = MapFillType.Sidewalk;
-                SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * sidewalkModelWidth, 0, y * sidewalkModelWidth), 0, worldTransform);
+                SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
                 groundObjects.AddLast(sidewalk);
             }
 
@@ -390,7 +392,7 @@ namespace ActionGame
                         }
 
                         mapBitmap[x * bitmapSize.Height + y] = MapFillType.Sidewalk;
-                        SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * sidewalkModelWidth, 0, y * sidewalkModelWidth), 0, worldTransform);
+                        SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
                         groundObjects.AddLast(sidewalk);
                     }
                 }
@@ -449,7 +451,7 @@ namespace ActionGame
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Another list of empty rectangles for next filling</returns>
-        private List<Rectangle> GenerateInnerRoadNetwork(ref Matrix worldTransform, Model roadModel, float roadModelWidth, Rectangle emptyRectangle, MapFillType[] mapBitmap)
+        private List<Rectangle> GenerateInnerRoadNetwork(ref Matrix worldTransform, Model roadModel, Rectangle emptyRectangle, MapFillType[] mapBitmap)
         {
             List<Rectangle> result = new List<Rectangle>();
             int erSize = Math.Max(emptyRectangle.Width, emptyRectangle.Height);
@@ -457,12 +459,12 @@ namespace ActionGame
             double nextSplittingProbability = rand.NextDouble();
             if (nextSplittingProbability * erSize > 2 * BlockWidth + 1) // Splitting isn't sure when it's possible.
             {
-                Rectangle[] newEmptyRectangles = AddSplittingRoad(ref emptyRectangle, roadModel, roadModelWidth, ref worldTransform, mapBitmap);
+                Rectangle[] newEmptyRectangles = AddSplittingRoad(ref emptyRectangle, roadModel, ref worldTransform, mapBitmap);
                 foreach (Rectangle emptyRect in newEmptyRectangles)
                 {
                     ///TODO: This can be faster. Using linked list simply join results...
                     result.AddRange(
-                        GenerateInnerRoadNetwork(ref worldTransform, roadModel, roadModelWidth, emptyRect, mapBitmap)
+                        GenerateInnerRoadNetwork(ref worldTransform, roadModel, emptyRect, mapBitmap)
                         );
                 }
             }
@@ -485,7 +487,7 @@ namespace ActionGame
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Array of new empty rectangles inside the splited rectangle</returns>
-        private Rectangle[] AddSplittingRoad(ref Rectangle target, Model roadModel, float roadModelWidth, ref Matrix worldTransform, MapFillType[] mapBitmap)
+        private Rectangle[] AddSplittingRoad(ref Rectangle target, Model roadModel, ref Matrix worldTransform, MapFillType[] mapBitmap)
         {
             AxisDirection direction = AxisDirection.Vertical;
             if (target.Width < target.Height)
@@ -506,11 +508,11 @@ namespace ActionGame
                 switch (direction)
                 {
                     case AxisDirection.Horizontal:
-                        position = new Vector3((i + target.X) * roadModelWidth, 0, (splitPosition + target.Y) * roadModelWidth);
+                        position = new Vector3((i + target.X) * squareWidth, 0, (splitPosition + target.Y) * squareWidth);
                         bitmapIndex = (i + target.X) * bitmapSize.Height + (splitPosition + target.Y);
                         break;
                     case AxisDirection.Vertical:
-                        position = new Vector3((splitPosition + target.X) * roadModelWidth, 0, (i + target.Y) * roadModelWidth);
+                        position = new Vector3((splitPosition + target.X) * squareWidth, 0, (i + target.Y) * squareWidth);
                         bitmapIndex = (splitPosition + target.X) * bitmapSize.Height + (i + target.Y);
                         break;
                     default:
@@ -549,7 +551,7 @@ namespace ActionGame
         /// <param name="xSize">Width of the quarter</param>
         /// <param name="ySize">Height of the quarter</param>
         /// <returns>Empty rectangle inside the bitmap</returns>
-        private Rectangle GenerateBorderRoads(ref Vector2 size, ref Matrix worldTransform, Model roadModel, float roadModelWidth, MapFillType[] mapBitmap)
+        private Rectangle GenerateBorderRoads(ref Vector2 size, ref Matrix worldTransform, Model roadModel, MapFillType[] mapBitmap)
         {
             int xOffset = BlockWidth;
             int yOffset = BlockWidth;
@@ -563,7 +565,7 @@ namespace ActionGame
                 {
                     int Y = y + yOffset;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * roadModelWidth, 0, Y * roadModelWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                 }
             }
@@ -574,7 +576,7 @@ namespace ActionGame
                 {
                     int X = x + xOffset;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * roadModelWidth, 0, Y * roadModelWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                 }
             }
@@ -592,7 +594,7 @@ namespace ActionGame
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Rest of the target rectangle what's empty</returns>
-        private Rectangle GenerateSidewalks(Rectangle target, Model sidewalkModel, float sidewalkModelWidth, ref Matrix worldTransform, MapFillType[] mapBitmap)
+        private Rectangle GenerateSidewalks(Rectangle target, Model sidewalkModel, ref Matrix worldTransform, MapFillType[] mapBitmap)
         {
             for (int x = 0; x < target.Width; x++)
             {
@@ -601,7 +603,7 @@ namespace ActionGame
                     int X = target.X + x;
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
-                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * sidewalkModelWidth, 0, Y * sidewalkModelWidth), 0, worldTransform);
+                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddFirst(sidewalk);
                 }
             }
@@ -612,7 +614,7 @@ namespace ActionGame
                     int X = target.X + x;
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
-                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * sidewalkModelWidth, 0, Y * sidewalkModelWidth), 0, worldTransform);
+                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddFirst(sidewalk);
                 }
             }

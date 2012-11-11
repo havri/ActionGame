@@ -113,7 +113,7 @@
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
     <Compile Include="Components\Drawer\DrawingOrderComparer.cs" />
-    <Compile Include="DrawedTownQuarter.cs" />
+    <Compile Include="DrawedSpatialObject.cs" />
     <Compile Include="Exceptions\NoSpaceForInterfaceException.cs" />
     <Compile Include="Space\AxisDirection.cs" />
     <Compile Include="Space\Human.cs" />

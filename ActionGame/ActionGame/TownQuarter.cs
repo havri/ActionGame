@@ -35,12 +35,28 @@ namespace ActionGame
         LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
 
         List<TownQuarterInterface> interfaces;
-        public IEnumerable<TownQuarterInterface> Interfaces { get { return interfaces; } }
+        public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
         /// <summary>
         /// Picture map of this quarter.
         /// </summary>
         Texture2D map;
         Size bitmapSize;
+        public Size BitmapSize
+        {
+            get
+            {
+                return bitmapSize;
+            }
+        }
+        float squareWidth;
+        public float SquareWidth
+        {
+            get
+            {
+                return squareWidth;
+            }
+        }
+
 
         /// <summary>
         /// Quarter name
@@ -83,7 +99,7 @@ namespace ActionGame
         /// <param name="drawer">Display drawer</param>
         public void FillDrawer(Drawer drawer)
         {
-            FillDrawer(drawer, TownQuarterInterfacePosition.Top, Vector2.Zero);
+            FillDrawer(drawer, 0, Vector2.Zero);
         }
 
         /// <summary>
@@ -92,15 +108,15 @@ namespace ActionGame
         /// <param name="drawer">Display drawer</param>
         /// <param name="delta">Defines difference of quarter placement from drawing center</param>
         /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
-        public void FillDrawer(Drawer drawer, TownQuarterInterfacePosition position, Vector2 delta)
+        public void FillDrawer(Drawer drawer, float angle, Vector2 delta)
         {
             foreach (SpatialObject o in groundObjects)
             {
-                drawer.StartDrawingObject(o, true);
+                drawer.StartDrawingSpatialObject(o, angle, delta, true);
             }
             foreach (SpatialObject o in solidObjects)
             {
-                drawer.StartDrawingObject(o, false);
+                drawer.StartDrawingSpatialObject(o, angle, delta, false);
             }
             drawer.QuarterMapPicture = map;
         }

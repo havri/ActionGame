@@ -11,10 +11,11 @@ namespace ActionGame
     /// <summary>
     /// Drawing component provides rendering right drawing of drawable objects.
     /// </summary>
-    class Drawer : DrawableGameComponent
+    public class Drawer : DrawableGameComponent
     {
         ActionGame game;
-        LinkedList<DrawedTownQuarter> drawedQuarters = new LinkedList<DrawedTownQuarter>();
+        List<DrawedSpatialObject> drawableObjects;
+        List<DrawedSpatialObject> groundDrawableObjects;
         DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
@@ -31,8 +32,8 @@ namespace ActionGame
             : base(game)
         {
             this.game = game;
-            drawableObjects = new List<SpatialObject>();
-            groundDrawableObjects = new List<SpatialObject>();
+            drawableObjects = new List<DrawedSpatialObject>();
+            groundDrawableObjects = new List<DrawedSpatialObject>();
             objectComparer = new DrawingOrderComparer(game.Camera);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, float.Epsilon, 1000);
         }
@@ -42,9 +43,15 @@ namespace ActionGame
             get { return worldMatrix; }
         }
 
-        public void StartDrawingQuarter(TownQuarter quarter, TownQuarterInterfacePosition position, Vector2 delta)
+        public void StartDrawingSpatialObject(SpatialObject obj, float azimuthDelta, Vector2 positionDelta, bool ground)
         {
-            drawedQuarters.AddLast(new DrawedTownQuarter { TownQuarter = quarter, JoiningInterfacePosition = position, Delta = delta });
+            DrawedSpatialObject dObj = new DrawedSpatialObject(obj, azimuthDelta, positionDelta );
+            if (ground)
+                groundDrawableObjects.Add(dObj);
+            else
+                drawableObjects.Add(dObj);
+
+            
         }
 
         public override void Update(GameTime gameTime)
@@ -58,22 +65,24 @@ namespace ActionGame
             ///TODO: Sorting  objects must be by nearest corner!
             ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
             drawableObjects.Sort(objectComparer);
+
+            Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
         }
 
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
 
-            foreach (SpatialObject ob in groundDrawableObjects)
+            foreach (DrawedSpatialObject dObj in groundDrawableObjects)
             {
-                ob.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+                dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
 
-            foreach (SpatialObject ob in drawableObjects)
+            foreach (DrawedSpatialObject dObj in drawableObjects)
             {
-                ob.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+                dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
-            game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+            game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix,  worldMatrix);
 
             game.SpriteBatch.Begin();
             if (ShowQuatterMap && quarterMapPicture != null)

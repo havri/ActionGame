@@ -37,13 +37,22 @@ namespace ActionGame
         {
             get { return spriteBatch; }
         }
-
         /// <summary>
         /// Gets the game camera component.
         /// </summary>
         public Camera Camera
         {
             get { return camera; }
+        }
+        /// <summary>
+        /// Gets the game drawer component.
+        /// </summary>
+        public Drawer Drawer
+        {
+            get
+            {
+                return drawer;
+            }
         }
 
         /// <summary>
@@ -93,11 +102,11 @@ namespace ActionGame
 
             player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(200, 0, 0), 0, drawer.WorldTransformMatrix);
 
-            Town town = new Town(5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            Town town = new Town(this, 5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             drawer.TownGraphPicture = town.Map;
-            /*
-            TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
-            quatter.FillDrawer(drawer);
+            
+            /*TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            quatter.FillDrawer(drawer, MathHelper.Pi, new Vector2(10,10));*/
 
             /*Model grassModel = Content.Load<Model>("Objects/Flat/grass");
             for (int rx = 0; rx < 20; rx++)

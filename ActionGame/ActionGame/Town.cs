@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
-    class Town : IDisposable
+    class Town : GameComponent, IDisposable
     {
         /// <summary>
         /// Maximum interface count per one quarter
@@ -26,12 +26,15 @@ namespace ActionGame
         const float MinQuarterSideLength = 100;
 
         public Texture2D Map;
-
         TownQuarter[] quarters;
+        int currentQuarterIndex;
         
-        public Town(int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+        public Town(ActionGame game, int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+            : base(game)
         {
             quarters = new TownQuarter[quarterCount];
+
+            //Town graph creation
             int[] degrees = new int[quarterCount];
             bool[,] edges = new bool[quarterCount,quarterCount]; // Graph is unoriented (symetric). edges[i, j] can be true only if i<j!
             for (int i = 0; i < quarterCount-1; i++) // First is made path through all. Graph has to have only one component.
@@ -58,6 +61,7 @@ namespace ActionGame
                 }
             }
 
+            //Quarter creating by degrees
             for (int i = 0; i < quarterCount; i++)
             {
                 float perimeterLength = MinSideLengthPerInterface * Math.Max(degrees[i], 4); // Even interface isn't needed the side must be there
@@ -85,6 +89,8 @@ namespace ActionGame
                 while (quarters[i] == null);
             }
 
+
+            //Joining interfaces
             for (int i = 0; i < quarterCount; i++)
             {
                 for (int j = i + 1; j < quarterCount; j++)
@@ -99,6 +105,7 @@ namespace ActionGame
                 }
             }
 
+            //Town graph raster map creation
             Bitmap mapRaster = new Bitmap(MapImageWidth, MapImageHeight);
             using (Graphics graphics = Graphics.FromImage(mapRaster))
             {
@@ -137,6 +144,75 @@ namespace ActionGame
                 mapRaster.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 Map = Texture2D.FromStream(graphicsDevice, ms);
             }
+
+            //Selecting starting quarter
+            currentQuarterIndex = 0;
+        }
+
+        protected new ActionGame Game
+        {
+            get
+            {
+                return (ActionGame)base.Game;
+            }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            TownQuarter currentQuarter = quarters[currentQuarterIndex];
+            float squareWidth = currentQuarter.SquareWidth;
+            foreach (TownQuarterInterface iface in currentQuarter.Interfaces) 
+            {
+                float angle = 0;
+                Vector2 delta = Vector2.Zero;
+                if (
+                       (iface.SidePosition == TownQuarterInterfacePosition.Top && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Bottom)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Right && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Left)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Bottom && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Top)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Left && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Right)
+                    )
+                {
+                    angle = 0;
+                }
+                else if (
+                       (iface.SidePosition == TownQuarterInterfacePosition.Top && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Right)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Right && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Bottom)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Bottom && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Left)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Left && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Top)
+                    )
+                {
+                    angle = MathHelper.PiOver2;
+                }
+                else if (
+                       (iface.SidePosition == TownQuarterInterfacePosition.Top && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Top)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Right && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Right)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Bottom && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Bottom)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Left && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Left)
+                    )
+                {
+                    angle = MathHelper.Pi;
+                }
+                else if (
+                       (iface.SidePosition == TownQuarterInterfacePosition.Top && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Left)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Right && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Top)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Bottom && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Right)
+                    || (iface.SidePosition == TownQuarterInterfacePosition.Left && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Bottom)
+                    )
+                {
+                    angle = 3f*MathHelper.PiOver2;
+                }
+
+                if (
+                       (iface.SidePosition == TownQuarterInterfacePosition.Top && iface.OppositeInterface.SidePosition == TownQuarterInterfacePosition.Bottom)
+                    )
+                {
+                    delta.Y = -( iface.OppositeInterface.Quarter.BitmapSize.Height * squareWidth);
+                    delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                }
+            }
+            
         }
 
         public void Dispose()

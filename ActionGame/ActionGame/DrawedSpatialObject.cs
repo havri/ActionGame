@@ -18,7 +18,7 @@ namespace ActionGame
             this.@object = @object;
             this.azimuthDelta = azimuthDelta;
             this.positionDelta = positionDelta;
-            transformMatrix = Matrix.CreateRotationY(azimuthDelta) * Matrix.CreateTranslation(positionDelta.ToVector3(0));
+            transformMatrix = Matrix.CreateRotationY(-azimuthDelta) * Matrix.CreateTranslation(positionDelta.ToVector3(0)); //azimuth is clockwise
         }
 
         public SpatialObject Object { get { return @object; } }

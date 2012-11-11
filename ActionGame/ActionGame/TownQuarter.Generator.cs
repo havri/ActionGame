@@ -190,9 +190,9 @@ namespace ActionGame
                     }
 
                     if (direction == AxisDirection.Horizontal)
-                        iface.BitmapPosition = rx;
-                    if (direction == AxisDirection.Vertical)
                         iface.BitmapPosition = ry;
+                    if (direction == AxisDirection.Vertical)
+                        iface.BitmapPosition = rx;
 
                     mapBitmap[rx * bitmapSize.Height + ry] = MapFillType.StraightRoad;
                     mapBitmap[slx * bitmapSize.Height + sly] = MapFillType.Sidewalk;

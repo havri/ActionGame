@@ -29,6 +29,7 @@ namespace ActionGame
         Camera camera;
         Debug debug;
         Drawer drawer;
+        Town town;
 
         /// <summary>
         /// Gets the game SpriteBatch.
@@ -100,10 +101,12 @@ namespace ActionGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(200, 0, 0), 0, drawer.WorldTransformMatrix);
+            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
 
-            Town town = new Town(this, 5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            town = new Town(this, 5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             drawer.TownGraphPicture = town.Map;
+            Components.Add(town);
+
             
             /*TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             quatter.FillDrawer(drawer, MathHelper.Pi, new Vector2(10,10));*/

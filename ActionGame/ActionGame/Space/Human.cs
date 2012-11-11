@@ -9,7 +9,7 @@ namespace ActionGame
 {
     public class Human : SpatialObject
     {
-        public static readonly float StepLength = 0.05f;
+        const float StepLength = 0.5f;
         public static readonly double RotateAngle = MathHelper.Pi / 50f;
         public static readonly float ThirdHeadHorizontalDistance = 1.5f;
         public static readonly float ThirdHeadVerticalDistance = 0.1f;

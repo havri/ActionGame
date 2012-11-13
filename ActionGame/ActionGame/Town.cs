@@ -28,6 +28,7 @@ namespace ActionGame
         public Texture2D Map;
         TownQuarter[] quarters;
         int currentQuarterIndex;
+        bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
         
         public Town(ActionGame game, int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
@@ -162,6 +163,8 @@ namespace ActionGame
         {
             base.Update(gameTime);
 
+            ///TODO: change and redraw current quarter
+
             TownQuarter currentQuarter = quarters[currentQuarterIndex];
 
             int nearestInterfaceIndex = -2;
@@ -178,7 +181,10 @@ namespace ActionGame
 
             if (nearestInterfaceIndex != lastNearestInterfaceIndex)
             {
-
+                if (lastNearestInterfaceIndex >= 0)
+                {
+                    currentQuarter.Interfaces[lastNearestInterfaceIndex].OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
+                }
                 lastNearestInterfaceIndex = nearestInterfaceIndex;
                 FillDrawer(nearestInterfaceIndex);
             }
@@ -194,7 +200,11 @@ namespace ActionGame
             iface.OppositeInterface.Quarter.FillDrawer(Game.Drawer, angle, delta);
             
             //currentQuarter.FillDrawer(Game.Drawer, MathHelper.Pi, new Vector2(50, 50));
-            currentQuarter.FillDrawer(Game.Drawer);
+            if (!currentQuarterDrawed)
+            {
+                currentQuarter.FillDrawer(Game.Drawer);
+                currentQuarterDrawed = true;
+            }
         }
 
         private static Vector2 ResolveQuarterPositionDelta(float squareWidth, TownQuarterInterface iface)

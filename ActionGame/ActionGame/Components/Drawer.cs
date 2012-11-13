@@ -49,9 +49,19 @@ namespace ActionGame
             if (ground)
                 groundDrawableObjects.Add(dObj);
             else
-                drawableObjects.Add(dObj);
+                drawableObjects.Add(dObj);   
+        }
 
-            
+        public void StopDrawingSpatialObject(SpatialObject obj, bool ground)
+        {
+            if (ground)
+            {
+                groundDrawableObjects.RemoveAll(x => x.Object == obj);
+            }
+            else
+            {
+                drawableObjects.RemoveAll(x => x.Object == obj);
+            }
         }
 
         public override void Update(GameTime gameTime)

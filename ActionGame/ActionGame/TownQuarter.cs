@@ -121,6 +121,18 @@ namespace ActionGame
             drawer.QuarterMapPicture = map;
         }
 
+        public void RemoveFromDrawer(Drawer drawer)
+        {
+            foreach (SpatialObject o in groundObjects)
+            {
+                drawer.StopDrawingSpatialObject(o, true);
+            }
+            foreach (SpatialObject o in solidObjects)
+            {
+                drawer.StopDrawingSpatialObject(o, false);
+            }
+        }
+
         public void Dispose()
         {
             foreach (var obj in groundObjects)

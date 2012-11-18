@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame
 {
-    class TownQuarterInterface
+    public class TownQuarterInterface
     {
         /// <summary>
         /// Specifies side of rectangle where is interface located.

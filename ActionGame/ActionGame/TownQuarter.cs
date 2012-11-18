@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
-    partial class TownQuarter : IDisposable
+    public partial class TownQuarter : IDisposable
     {
         /// <summary>
         /// Block without road width. In road square count.
@@ -66,6 +66,7 @@ namespace ActionGame
         readonly static List<string> nameRepository = new List<string>(new string[] {
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side"
         });
+        readonly static string emptyName = "Unnamed";
 
         /// <summary>
         /// Creates new town quarter as map fragment. Generates roads, buildings, etc.
@@ -78,7 +79,7 @@ namespace ActionGame
         public TownQuarter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             interfaces = new List<TownQuarterInterface>(degree);
-            Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
+            
 
             if (nameRepository.Count > 0)
             {
@@ -89,7 +90,23 @@ namespace ActionGame
             }
             else
             {
-                Name = "Unnamed";
+                Name = emptyName;
+            }
+
+            //Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
+
+            
+            try
+            {
+                Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
+            }
+            catch (Exception ex)
+            {
+                if (Name != emptyName)
+                {
+                    nameRepository.Add(Name);
+                }
+                throw ex;
             }
         }
 
@@ -118,7 +135,6 @@ namespace ActionGame
             {
                 drawer.StartDrawingSpatialObject(o, angle, delta, false);
             }
-            drawer.QuarterMapPicture = map;
         }
 
         public void RemoveFromDrawer(Drawer drawer)
@@ -130,6 +146,19 @@ namespace ActionGame
             foreach (SpatialObject o in solidObjects)
             {
                 drawer.StopDrawingSpatialObject(o, false);
+            }
+        }
+
+        public Texture2D Map
+        {
+            get { return map; }
+        }
+
+        public Vector2 QuarterSize
+        {
+            get 
+            {
+                return new Vector2(BitmapSize.Width * SquareWidth, BitmapSize.Height * SquareWidth);
             }
         }
 

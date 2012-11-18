@@ -19,8 +19,10 @@ namespace ActionGame
         DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
-        Texture2D quarterMapPicture;
         Texture2D townGraphPicture;
+        Texture2D playerIcon;
+        TownQuarter currentQuarter;
+
 
         /// <summary>
         /// Constructs new drawing component.
@@ -95,9 +97,16 @@ namespace ActionGame
             game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix,  worldMatrix);
 
             game.SpriteBatch.Begin();
-            if (ShowQuatterMap && quarterMapPicture != null)
+            if (ShowQuatterMap)
             {
-                game.SpriteBatch.Draw(quarterMapPicture, new Vector2((game.WindowWidth - quarterMapPicture.Width) / 2, (game.WindowHeight - quarterMapPicture.Height) / 2), Color.White);
+                Vector2 mapPosition = new Vector2((game.WindowWidth - currentQuarter.Map.Width) / 2, (game.WindowHeight - currentQuarter.Map.Height) / 2);
+                game.SpriteBatch.Draw(currentQuarter.Map,mapPosition , Color.White);
+
+                Vector2 playerPosition = new Vector2(
+                    currentQuarter.Map.Width * (game.Player.Position.X / currentQuarter.QuarterSize.X) - playerIcon.Width / 2,
+                    currentQuarter.Map.Height * (game.Player.Position.Z / currentQuarter.QuarterSize.Y) - playerIcon.Height / 2);
+                playerPosition += mapPosition;
+                game.SpriteBatch.Draw(playerIcon, playerPosition, null, Color.White, (float)game.Player.Azimuth, new Vector2(playerIcon.Width / 2, playerIcon.Height / 2), 1, SpriteEffects.None, 0);
             }
             if (ShowTownGraph && townGraphPicture != null)
             {
@@ -106,9 +115,10 @@ namespace ActionGame
             game.SpriteBatch.End();
         }
 
-        public Texture2D QuarterMapPicture
+
+        public TownQuarter CurrentQuarter
         {
-            set { quarterMapPicture = value; }
+            set { currentQuarter = value; }
         }
 
         public Texture2D TownGraphPicture
@@ -124,5 +134,22 @@ namespace ActionGame
 
         public bool ShowTownGraph
         { get; set; }
+
+        protected override void LoadContent()
+        {
+            base.LoadContent();
+
+            playerIcon = Game.Content.Load<Texture2D>("Textures/player");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (townGraphPicture != null)
+                townGraphPicture.Dispose();
+
+            playerIcon.Dispose();
+        }
     }
 }

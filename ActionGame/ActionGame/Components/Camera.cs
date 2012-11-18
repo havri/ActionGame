@@ -9,7 +9,7 @@ namespace ActionGame
 {
     public class Camera : GameComponent
     {
-        static readonly float birdZPosition = 0.5f;
+        const float birdZPosition = 0.5f;
         static readonly TimeSpan changeTimeOut = new TimeSpan(0, 0, 0, 0, 140);
 
         public Matrix ViewMatrix {get;set;}

@@ -10,6 +10,10 @@ namespace ActionGame
     {
         public static Vector2 Rotate(this Vector2 vector, double radians, Vector2 pivot)
         {
+            /*return Vector3.Transform(vector.ToVector3(0), Matrix.CreateTranslation(vector.ToVector3(0))
+                        * Matrix.CreateTranslation((-pivot).ToVector3(0))
+                        * Matrix.CreateRotationY(-(float)radians)
+                        * Matrix.CreateTranslation(pivot.ToVector3(0))).XZToVector2();*/
             Vector2 rotatedVector = new Vector2()
             {
                 X =

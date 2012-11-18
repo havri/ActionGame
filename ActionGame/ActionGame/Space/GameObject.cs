@@ -37,6 +37,9 @@ namespace ActionGame
             }
         }
 
+        public double Azimuth
+        { get { return azimuth_; } }
+
         public Vector2 Pivot
         {
             get { return position + (size * 0.5f); }
@@ -60,6 +63,12 @@ namespace ActionGame
         public override Vector2 LowerRightCorner
         {
             get { return (position + size).Rotate(azimuth, Pivot); }
+        }
+
+        public void MoveTo(Vector2 newPosition, double azimuth)
+        {
+            position = newPosition;
+            azimuth_ = azimuth;
         }
 
     }

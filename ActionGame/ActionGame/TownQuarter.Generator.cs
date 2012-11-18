@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
-    partial class TownQuarter : IDisposable
+    public partial class TownQuarter : IDisposable
     {
 
         private void Generate(ref Vector2 size, int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
@@ -408,7 +408,8 @@ namespace ActionGame
         /// <param name="mapBitmap">Quarter bitmap</param>
         private void GenerateMapPicture(GraphicsDevice graphicsDevice, MapFillType[] mapBitmap)
         {
-            System.Drawing.Image mapPicture = (System.Drawing.Image)(new System.Drawing.Bitmap((2 * BlockWidth + bitmapSize.Width) * PictureMapRoadWidth, (2 * BlockWidth + bitmapSize.Height) * PictureMapRoadWidth));
+            const int namePixelHeight = 14;
+            System.Drawing.Bitmap mapPicture = new System.Drawing.Bitmap(bitmapSize.Width * PictureMapRoadWidth,bitmapSize.Height * PictureMapRoadWidth + namePixelHeight);
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(mapPicture);
             for (int x = 0; x < bitmapSize.Width; x++)
             {
@@ -428,11 +429,14 @@ namespace ActionGame
                             break;
                         default:
                             throw new InvalidOperationException("Unknown MapFillType given.");
-                            break;
                     }
-                    g.FillRectangle(new System.Drawing.SolidBrush(c), (BlockWidth + x) * PictureMapRoadWidth, (BlockWidth + y) * PictureMapRoadWidth, PictureMapRoadWidth, PictureMapRoadWidth);
+                    g.FillRectangle(new System.Drawing.SolidBrush(c), x * PictureMapRoadWidth, y * PictureMapRoadWidth, PictureMapRoadWidth, PictureMapRoadWidth);
                 }
             }
+
+            System.Drawing.Font font = new System.Drawing.Font("Tahoma", namePixelHeight);
+            g.DrawString(Name, font, System.Drawing.Brushes.Black, 0, 0);
+
             using (MemoryStream ms = new MemoryStream())
             {
                 mapPicture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);

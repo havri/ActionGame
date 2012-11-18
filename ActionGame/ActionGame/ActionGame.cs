@@ -25,12 +25,18 @@ namespace ActionGame
 
 
         Player player;
-
         Camera camera;
         Debug debug;
         Drawer drawer;
         Town town;
 
+        /// <summary>
+        /// Gets active player.
+        /// </summary>
+        public Player Player
+        {
+            get { return player; }
+        }
         /// <summary>
         /// Gets the game SpriteBatch.
         /// </summary>
@@ -54,14 +60,6 @@ namespace ActionGame
             {
                 return drawer;
             }
-        }
-
-        /// <summary>
-        /// Gets active player.
-        /// </summary>
-        public Player Player
-        {
-            get { return player; }
         }
 
         public ActionGame()
@@ -101,9 +99,9 @@ namespace ActionGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(0, 0, 0), 0, drawer.WorldTransformMatrix);
+            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(10, 0, 10), 0, drawer.WorldTransformMatrix);
 
-            town = new Town(this, 5, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
             drawer.TownGraphPicture = town.Map;
             Components.Add(town);
 
@@ -173,6 +171,17 @@ namespace ActionGame
         public int WindowHeight
         {
             get { return resolutionHeight; }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            player.Dispose();
+            town.Dispose();
+            drawer.Dispose();
+            camera.Dispose();
+            debug.Dispose();
         }
     }
 }

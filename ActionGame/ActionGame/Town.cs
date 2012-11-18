@@ -27,7 +27,7 @@ namespace ActionGame
 
         public Texture2D Map;
         TownQuarter[] quarters;
-        int currentQuarterIndex;
+        TownQuarter currentQuarter;
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
         
@@ -148,7 +148,7 @@ namespace ActionGame
             }
 
             //Selecting starting quarter
-            currentQuarterIndex = 0;
+            currentQuarter = quarters[0];
         }
 
         protected new ActionGame Game
@@ -159,14 +159,52 @@ namespace ActionGame
             }
         }
 
+        static readonly TimeSpan quarterChangeTimeOut = new TimeSpan(0, 0, 1);
+        TimeSpan lastQuarterChange;
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            ///TODO: change and redraw current quarter
+            Debug.Write("Current quarter", currentQuarter.Name);
 
-            TownQuarter currentQuarter = quarters[currentQuarterIndex];
+            Vector2 playerPosition = Game.Player.Position.XZToVector2();
+            Vector2 quarterSize = new Vector2(currentQuarter.BitmapSize.Width * currentQuarter.SquareWidth, currentQuarter.BitmapSize.Height * currentQuarter.SquareWidth);
+            if (gameTime.TotalGameTime - lastQuarterChange > quarterChangeTimeOut
+                && ((playerPosition.X > quarterSize.X || playerPosition.Y > quarterSize.Y) || (playerPosition.X < 0 || playerPosition.Y < 0))
+                && lastNearestInterfaceIndex >= 0)
+            {
+                TownQuarterInterface usedInterface = currentQuarter.Interfaces[lastNearestInterfaceIndex];
 
+                //Remove drawed quaeters from drawer
+                usedInterface.OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
+                currentQuarter.RemoveFromDrawer(Game.Drawer);
+
+                //Moves player into new current quarter
+                float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
+                Vector2 delta = ResolveQuarterPositionDelta(currentQuarter.SquareWidth, usedInterface);
+                Game.Player.MoveTo(
+                    Vector3.Transform(Game.Player.Position, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2(), // reverse transform of nearest quarter
+                    Game.Player.Azimuth - angle
+                    );
+
+                //Changes current quarter
+                currentQuarter = usedInterface.OppositeInterface.Quarter;
+
+                //Restart for drawing
+                lastNearestInterfaceIndex = -1;
+                currentQuarterDrawed = false;
+
+                lastQuarterChange = gameTime.TotalGameTime;
+            }
+            
+
+            
+            FillDrawer();
+            
+        }
+
+        void FillDrawer()
+        {
             int nearestInterfaceIndex = -2;
             float length = float.MaxValue;
             for (int i = 0; i < currentQuarter.Interfaces.Count; i++)
@@ -186,24 +224,19 @@ namespace ActionGame
                     currentQuarter.Interfaces[lastNearestInterfaceIndex].OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
                 }
                 lastNearestInterfaceIndex = nearestInterfaceIndex;
-                FillDrawer(nearestInterfaceIndex);
-            }
-        }
 
-        void FillDrawer(int nearestInterfaceIndex)
-        {
-            TownQuarter currentQuarter = quarters[currentQuarterIndex];
-            float squareWidth = currentQuarter.SquareWidth;
-            TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
-            Vector2 delta = ResolveQuarterPositionDelta(squareWidth, iface);
-            float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);
-            iface.OppositeInterface.Quarter.FillDrawer(Game.Drawer, angle, delta);
-            
-            //currentQuarter.FillDrawer(Game.Drawer, MathHelper.Pi, new Vector2(50, 50));
-            if (!currentQuarterDrawed)
-            {
-                currentQuarter.FillDrawer(Game.Drawer);
-                currentQuarterDrawed = true;
+                float squareWidth = currentQuarter.SquareWidth;
+                TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
+                Vector2 delta = ResolveQuarterPositionDelta(squareWidth, iface);
+                float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);
+                iface.OppositeInterface.Quarter.FillDrawer(Game.Drawer, angle, delta);
+
+                if (!currentQuarterDrawed)
+                {
+                    Game.Drawer.CurrentQuarter = currentQuarter;
+                    currentQuarter.FillDrawer(Game.Drawer);
+                    currentQuarterDrawed = true;
+                }
             }
         }
 

@@ -54,9 +54,9 @@ namespace ActionGame
                 );
             }
 
-            GenerateMapPicture(graphicsDevice, mapBitmap);
-
             GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform);
+
+            GenerateMapPicture(graphicsDevice, mapBitmap);
         }
         
         private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks, ContentManager content, Matrix worldTransofrm)
@@ -436,6 +436,18 @@ namespace ActionGame
 
             System.Drawing.Font font = new System.Drawing.Font("Tahoma", namePixelHeight);
             g.DrawString(Name, font, System.Drawing.Brushes.Black, 0, 0);
+
+            foreach (SpatialObject obj in solidObjects)
+            {
+                System.Drawing.PointF[] points = new System.Drawing.PointF[]
+                {
+                    (obj.UpperLeftCorner * ( PictureMapRoadWidth / squareWidth ) ).ToPointF(),
+                    (obj.UpperRightCorner * ( PictureMapRoadWidth / squareWidth ) ).ToPointF(),
+                    (obj.LowerRightCorner * ( PictureMapRoadWidth / squareWidth ) ).ToPointF(),
+                    (obj.LowerLeftCorner * ( PictureMapRoadWidth / squareWidth ) ).ToPointF()
+                };
+                g.FillPolygon(System.Drawing.Brushes.SaddleBrown, points);
+            }
 
             using (MemoryStream ms = new MemoryStream())
             {

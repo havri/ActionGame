@@ -40,6 +40,11 @@ namespace ActionGame
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, float.Epsilon, 1000);
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+        }
+
         public Matrix WorldTransformMatrix
         {
             get { return worldMatrix; }
@@ -76,13 +81,17 @@ namespace ActionGame
 
             ///TODO: Sorting  objects must be by nearest corner!
             ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
-            drawableObjects.Sort(objectComparer);
+            //drawableObjects.Sort(objectComparer);
 
             Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
         }
 
         public override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+
             base.Draw(gameTime);
 
             foreach (DrawedSpatialObject dObj in groundDrawableObjects)

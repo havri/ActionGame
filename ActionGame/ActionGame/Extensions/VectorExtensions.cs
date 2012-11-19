@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -40,5 +41,11 @@ namespace ActionGame
         {
             return new Vector3(vector.X, y, vector.Y);
         }
+
+        public static PointF ToPointF(this Vector2 vector)
+        {
+            return new PointF(vector.X, vector.Y);
+        }
+
     }
 }

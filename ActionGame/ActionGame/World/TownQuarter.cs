@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ActionGame.Components;
+using ActionGame.Space;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace ActionGame
+namespace ActionGame.World
 {
     public partial class TownQuarter : IDisposable
     {

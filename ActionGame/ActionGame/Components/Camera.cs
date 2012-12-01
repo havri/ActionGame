@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.People;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 

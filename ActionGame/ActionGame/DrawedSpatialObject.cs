@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.Space;
+using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 
 namespace ActionGame

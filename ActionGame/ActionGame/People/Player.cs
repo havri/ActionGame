@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace ActionGame
+namespace ActionGame.People
 {
     public class Player : Human
     {
@@ -27,16 +28,20 @@ namespace ActionGame
         TimeSpan lastMove = new TimeSpan(0);
 
         public Player()
-            :base(null, Vector3.Zero, 0, Matrix.Identity)
+            :base(null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         { 
 
         }
 
-        public void Load(Model model, Vector3 position, double azimuth, Matrix worldTransform)
+        public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
-            base.load(model, position, azimuth, worldTransform);
+            base.load(model, position, 0, azimuth, worldTransform);
         }
 
+        public override void Update()
+        {
+            throw new InvalidOperationException("This Update overload is denied!");
+        }
 
         public void Update(GameTime gameTime, int windowWidth, int windowHeight)
         {
@@ -68,13 +73,8 @@ namespace ActionGame
                 }
             }
 
-            Debug.Write("Player", Position.ToString());
-            Debug.Write("Player size", size.ToString());
-            Debug.Write("Player pivot", Pivot.ToString());
-            Debug.Write("Player UpperLeftCorner", UpperLeftCorner.ToString());
-            Debug.Write("Player UpperRightCorner", UpperRightCorner.ToString());
-            Debug.Write("Player LowerLeftCorner", LowerLeftCorner.ToString());
-            Debug.Write("Player LowerRightCorner", LowerRightCorner.ToString());
+            Debug.Write("Player", PositionInQuarter.ToString());
+            Debug.Write("Player azimuth", Azimuth.ToString());
         }
     }
 }

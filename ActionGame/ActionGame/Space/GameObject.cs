@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.World;
+using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 
-namespace ActionGame
+namespace ActionGame.Space
 {
     public class GameObject : Quadrangle
     {
-        protected Vector2 position;
+        protected PositionInTown position;
         double azimuth_;
         protected Vector2 size;
 
-        public GameObject(Vector2 position, double azimuth, Vector2 size)
+        public GameObject(PositionInTown position, double azimuth, Vector2 size)
         {
             load(position, azimuth, size);
         }
 
-        protected void load(Vector2 position, double azimuth, Vector2 size)
+        protected void load(PositionInTown position, double azimuth, Vector2 size)
         {
             this.position = position;
             this.azimuth = azimuth;
@@ -40,36 +42,56 @@ namespace ActionGame
         public double Azimuth
         { get { return azimuth_; } }
 
-        public Vector2 Pivot
+        public PositionInTown Pivot
         {
-            get { return position + (size * 0.5f); }
+            get
+            {
+                return new PositionInTown(position.Quarter, position.PositionInQuarter + (size * 0.5f));
+            }
         }
 
         public override Vector2 UpperLeftCorner
         {
-            get { return position.Rotate(azimuth, Pivot); }
+            get { return position.PositionInQuarter.Rotate(azimuth, Pivot.PositionInQuarter); }
         }
 
         public override Vector2 UpperRightCorner
         {
-            get { return (position + new Vector2(size.X, 0)).Rotate(azimuth, Pivot); }
+            get { return (position.PositionInQuarter + new Vector2(size.X, 0)).Rotate(azimuth, Pivot.PositionInQuarter); }
         }
 
         public override Vector2 LowerLeftCorner
         {
-            get { return (position + new Vector2(0, size.Y)).Rotate(azimuth, Pivot); }
+            get { return (position.PositionInQuarter + new Vector2(0, size.Y)).Rotate(azimuth, Pivot.PositionInQuarter); }
         }
 
         public override Vector2 LowerRightCorner
         {
-            get { return (position + size).Rotate(azimuth, Pivot); }
+            get { return (position.PositionInQuarter + size).Rotate(azimuth, Pivot.PositionInQuarter); }
         }
 
-        public void MoveTo(Vector2 newPosition, double azimuth)
+        public void MoveTo(PositionInTown newPosition, double azimuth)
         {
             position = newPosition;
             azimuth_ = azimuth;
         }
 
+        public void MoveTo(Vector2 newPositionInQuarter, double azimuth)
+        {
+            position.PositionInQuarter = newPositionInQuarter;
+            azimuth_ = azimuth;
+        }
+
+        public PositionInTown Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+            }
+        }
     }
 }

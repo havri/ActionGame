@@ -4,11 +4,12 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ActionGame
+namespace ActionGame.World
 {
     class Town : GameComponent, IDisposable
     {
@@ -167,7 +168,7 @@ namespace ActionGame
 
             Debug.Write("Current quarter", currentQuarter.Name);
 
-            Vector2 playerPosition = Game.Player.Position.XZToVector2();
+            Vector2 playerPosition = Game.Player.PositionInQuarter.XZToVector2();
             Vector2 quarterSize = new Vector2(currentQuarter.BitmapSize.Width * currentQuarter.SquareWidth, currentQuarter.BitmapSize.Height * currentQuarter.SquareWidth);
             if (gameTime.TotalGameTime - lastQuarterChange > quarterChangeTimeOut
                 && ((playerPosition.X > quarterSize.X || playerPosition.Y > quarterSize.Y) || (playerPosition.X < 0 || playerPosition.Y < 0))
@@ -183,7 +184,7 @@ namespace ActionGame
                 float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
                 Vector2 delta = ResolveQuarterPositionDelta(currentQuarter.SquareWidth, usedInterface);
                 Game.Player.MoveTo(
-                    Vector3.Transform(Game.Player.Position, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2(), // reverse transform of nearest quarter
+                    Vector3.Transform(Game.Player.PositionInQuarter, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2(), // reverse transform of nearest quarter
                     Game.Player.Azimuth - angle
                     );
 

@@ -37,6 +37,8 @@ namespace ActionGame
 
         public override void Draw(GameTime gameTime)
         {
+            base.Draw(gameTime);
+
             game.SpriteBatch.Begin();
             int i = 0;
             foreach (var writing in writings)
@@ -45,8 +47,6 @@ namespace ActionGame
                 i++;
             }
             game.SpriteBatch.End();
-            
-            base.Draw(gameTime);
         }
     }
 }

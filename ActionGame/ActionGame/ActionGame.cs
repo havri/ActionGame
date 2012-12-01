@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using ActionGame.World;
+using ActionGame.People;
+using ActionGame.Components;
 
 namespace ActionGame
 {
@@ -79,7 +82,6 @@ namespace ActionGame
             Components.Add(drawer);
             Components.Add(debug);
         }
-
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -90,7 +92,6 @@ namespace ActionGame
         {
             base.Initialize();
         }
-
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -99,33 +100,12 @@ namespace ActionGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new Vector3(10, 0, 10), 0, drawer.WorldTransformMatrix);
 
             town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
+            player.Load(Content.Load<Model>("Objects/Humans/robot0"), new PositionInTown(null, new Vector2(10, 10)), 0, drawer.WorldTransformMatrix);
             drawer.TownGraphPicture = town.Map;
             Components.Add(town);
-
-            
-            /*TownQuarter quatter = new TownQuarter(new Vector2(200, 170), 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
-            quatter.FillDrawer(drawer, MathHelper.Pi, new Vector2(10,10));*/
-
-            /*Model grassModel = Content.Load<Model>("Objects/Flat/grass");
-            for (int rx = 0; rx < 20; rx++)
-            {
-                for (int ry = 0; ry < 20; ry++)
-                {
-                    SpatialObject grass = new SpatialObject(grassModel, new Vector3(rx * grassModel.GetSize(drawer.WorldTransformMatrix).X, 0, ry * grassModel.GetSize(drawer.WorldTransformMatrix).Z), 0, drawer.WorldTransformMatrix);
-                    drawer.StartDrawingObject(grass, true);
-                }
-            }
-
-            SpatialObject house0 = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(5, 0, 5), 0, drawer.WorldTransformMatrix);
-            SpatialObject house1 = new SpatialObject(Content.Load<Model>("Objects/Buildings/house0"), new Vector3(20, 0, 20), 0, drawer.WorldTransformMatrix);
-
-            drawer.StartDrawingObject(house0, false);
-            drawer.StartDrawingObject(house1, false);*/
         }
-
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
@@ -135,7 +115,6 @@ namespace ActionGame
             // TODO: Unload any non ContentManager content here
             base.UnloadContent();
         }
-
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -151,7 +130,6 @@ namespace ActionGame
 
             base.Update(gameTime);
         }
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -159,7 +137,6 @@ namespace ActionGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer ,Color.CornflowerBlue, 1, 1);
-
             base.Draw(gameTime);
         }
 

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.Space;
+using ActionGame.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace ActionGame
+namespace ActionGame.Components
 {
     /// <summary>
     /// Drawing component provides rendering right drawing of drawable objects.
@@ -16,11 +18,11 @@ namespace ActionGame
         ActionGame game;
         List<DrawedSpatialObject> drawableObjects;
         List<DrawedSpatialObject> groundDrawableObjects;
-        DrawingOrderComparer objectComparer;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
         Texture2D townGraphPicture;
         Texture2D playerIcon;
+        Texture2D townPanorama;
         TownQuarter currentQuarter;
 
 
@@ -36,8 +38,7 @@ namespace ActionGame
             this.game = game;
             drawableObjects = new List<DrawedSpatialObject>();
             groundDrawableObjects = new List<DrawedSpatialObject>();
-            objectComparer = new DrawingOrderComparer(game.Camera);
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, float.Epsilon, 1000);
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 500);
         }
 
         public override void Initialize()
@@ -79,20 +80,16 @@ namespace ActionGame
             this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
             this.ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
 
-            ///TODO: Sorting  objects must be by nearest corner!
-            ///TODO: This uses QuickSort - too slow. Object are almost sorted... Make it faster (Bubble, Insert).
-            //drawableObjects.Sort(objectComparer);
-
             Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
         }
 
         public override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
             base.Draw(gameTime);
+
+            DrawPanoramaBackground();
+
+            Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             foreach (DrawedSpatialObject dObj in groundDrawableObjects)
             {
@@ -103,17 +100,24 @@ namespace ActionGame
             {
                 dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
-            game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix,  worldMatrix);
+            game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
+            DrawMaps();
+        }
+        /// <summary>
+        /// If the boolean flag is set draw town graph scheme or current quarter map.
+        /// </summary>
+        private void DrawMaps()
+        {
             game.SpriteBatch.Begin();
             if (ShowQuatterMap)
             {
                 Vector2 mapPosition = new Vector2((game.WindowWidth - currentQuarter.Map.Width) / 2, (game.WindowHeight - currentQuarter.Map.Height) / 2);
-                game.SpriteBatch.Draw(currentQuarter.Map,mapPosition , Color.White);
+                game.SpriteBatch.Draw(currentQuarter.Map, mapPosition, Color.White);
 
                 Vector2 playerPosition = new Vector2(
-                    currentQuarter.Map.Width * (game.Player.Position.X / currentQuarter.QuarterSize.X) - playerIcon.Width / 2,
-                    currentQuarter.Map.Height * (game.Player.Position.Z / currentQuarter.QuarterSize.Y) - playerIcon.Height / 2);
+                    currentQuarter.Map.Width * (game.Player.PositionInQuarter.X / currentQuarter.QuarterSize.X) - playerIcon.Width / 2,
+                    currentQuarter.Map.Height * (game.Player.PositionInQuarter.Z / currentQuarter.QuarterSize.Y) - playerIcon.Height / 2);
                 playerPosition += mapPosition;
                 game.SpriteBatch.Draw(playerIcon, playerPosition, null, Color.White, (float)game.Player.Azimuth, new Vector2(playerIcon.Width / 2, playerIcon.Height / 2), 1, SpriteEffects.None, 0);
             }
@@ -123,13 +127,34 @@ namespace ActionGame
             }
             game.SpriteBatch.End();
         }
-
-
+        /// <summary>
+        /// Draws panoramatic town background.
+        /// </summary>
+        private void DrawPanoramaBackground()
+        {
+            game.SpriteBatch.Begin();
+            float ratio = townPanorama.Height / (game.WindowHeight * 0.5f);
+            double percentAngle = game.Player.Azimuth / MathHelper.TwoPi;
+            game.SpriteBatch.Draw(townPanorama,
+                new Rectangle(-(int)(percentAngle * game.WindowWidth), 0, game.WindowWidth, game.WindowHeight / 2),
+                new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
+                Color.White);
+            game.SpriteBatch.Draw(townPanorama,
+                new Rectangle(-(int)((percentAngle - 1) * game.WindowWidth), 0, game.WindowWidth, game.WindowHeight / 2),
+                new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
+                Color.White);
+            game.SpriteBatch.End();
+        }
+        /// <summary>
+        /// Sets current quarter.
+        /// </summary>
         public TownQuarter CurrentQuarter
         {
             set { currentQuarter = value; }
         }
-
+        /// <summary>
+        /// Sets town graph scheme picture.
+        /// </summary>
         public Texture2D TownGraphPicture
         { 
             set
@@ -149,6 +174,7 @@ namespace ActionGame
             base.LoadContent();
 
             playerIcon = Game.Content.Load<Texture2D>("Textures/player");
+            townPanorama = Game.Content.Load<Texture2D>("Textures/panorama");
         }
 
         protected override void Dispose(bool disposing)
@@ -159,6 +185,7 @@ namespace ActionGame
                 townGraphPicture.Dispose();
 
             playerIcon.Dispose();
+            townPanorama.Dispose();
         }
     }
 }

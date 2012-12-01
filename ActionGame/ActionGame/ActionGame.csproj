@@ -112,14 +112,17 @@
     <Compile Include="Components\Camera\CameraMode.cs" />
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
-    <Compile Include="Components\Drawer\DrawingOrderComparer.cs" />
     <Compile Include="DrawedSpatialObject.cs" />
     <Compile Include="Exceptions\NoSpaceForInterfaceException.cs" />
     <Compile Include="Space\AxisDirection.cs" />
-    <Compile Include="Space\Human.cs" />
+    <Compile Include="People\Human.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
-    <Compile Include="Space\MapFillType.cs" />
-    <Compile Include="Space\Player.cs" />
+    <Compile Include="Tasks\KillTask.cs" />
+    <Compile Include="Tasks\MoveTask.cs" />
+    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="Tasks\WayPoint.cs" />
+    <Compile Include="World\MapFillType.cs" />
+    <Compile Include="People\Player.cs" />
     <Compile Include="Space\Range.cs" />
     <Compile Include="Space\SpatialObject.cs" />
     <Compile Include="Space\GameObject.cs" />
@@ -129,11 +132,12 @@
     <Compile Include="Space\Quadrangle.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Space\RectangleF.cs" />
-    <Compile Include="Space\TownQuatterInterfacePosition.cs" />
-    <Compile Include="Town.cs" />
-    <Compile Include="TownQuarter.Generator.cs" />
-    <Compile Include="TownQuarterInterface.cs" />
-    <Compile Include="TownQuarter.cs" />
+    <Compile Include="World\PositionInTown.cs" />
+    <Compile Include="World\TownQuatterInterfacePosition.cs" />
+    <Compile Include="World\Town.cs" />
+    <Compile Include="World\TownQuarter.Generator.cs" />
+    <Compile Include="World\TownQuarterInterface.cs" />
+    <Compile Include="World\TownQuarter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -167,9 +171,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SpacePartitioning\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ActionGame.Space;
+using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ActionGame
+namespace ActionGame.World
 {
     public partial class TownQuarter : IDisposable
     {
@@ -95,7 +97,12 @@ namespace ActionGame
             {
                 Model usedModel = modelCandidates.First();
 
-                SpatialObject building = new SpatialObject(usedModel, new Vector3(target.X + horizontalSpace / 2f, 0, target.Y + verticalSpace / 2f), 0, worldTransofrm);
+                SpatialObject building = new SpatialObject(
+                    usedModel,
+                    this,
+                    new Vector3(target.X + horizontalSpace / 2f, 0, target.Y + verticalSpace / 2f),
+                    0,
+                    worldTransofrm);
                 solidObjects.AddLast(building);
                 RectangleF nextRect = new RectangleF(
                     target.X + usedModel.GetSize(worldTransofrm).X + horizontalSpace,
@@ -197,9 +204,9 @@ namespace ActionGame
                     mapBitmap[rx * bitmapSize.Height + ry] = MapFillType.StraightRoad;
                     mapBitmap[slx * bitmapSize.Height + sly] = MapFillType.Sidewalk;
                     mapBitmap[srx * bitmapSize.Height + sry] = MapFillType.Sidewalk;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(rx * squareWidth, 0, ry * squareWidth), 0, worldTransform);
-                    SpatialObject sidewalkL = new SpatialObject(sidewalkModel, new Vector3(slx * squareWidth, 0, sly * squareWidth), 0, worldTransform);
-                    SpatialObject sidewalkR = new SpatialObject(sidewalkModel, new Vector3(srx * squareWidth, 0, sry * squareWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, this, new Vector3(rx * squareWidth, 0, ry * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalkL = new SpatialObject(sidewalkModel, this, new Vector3(slx * squareWidth, 0, sly * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalkR = new SpatialObject(sidewalkModel, this, new Vector3(srx * squareWidth, 0, sry * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                     groundObjects.AddLast(sidewalkL);
                     groundObjects.AddLast(sidewalkR);
@@ -314,7 +321,7 @@ namespace ActionGame
                         break;
                 }
 
-                SpatialObject borderBuilding = new SpatialObject(usedModel, position, angle, worldTransform);
+                SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, worldTransform);
                 solidObjects.AddLast(borderBuilding);
 
                 FillEmptyBorderRange(worldTransform, buildingModels, rand, borderPosition, range, newOffset);
@@ -357,7 +364,7 @@ namespace ActionGame
             {
                 int x = p.Item1, y = p.Item2;
                 mapBitmap[x * bitmapSize.Height + y] = MapFillType.Sidewalk;
-                SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
+                SpatialObject sidewalk = new SpatialObject(sidewalkModel, this, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
                 groundObjects.AddLast(sidewalk);
             }
 
@@ -392,7 +399,7 @@ namespace ActionGame
                         }
 
                         mapBitmap[x * bitmapSize.Height + y] = MapFillType.Sidewalk;
-                        SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
+                        SpatialObject sidewalk = new SpatialObject(sidewalkModel, this, new Vector3(x * squareWidth, 0, y * squareWidth), 0, worldTransform);
                         groundObjects.AddLast(sidewalk);
                     }
                 }
@@ -537,7 +544,7 @@ namespace ActionGame
                 }
 
                 mapBitmap[bitmapIndex] = MapFillType.StraightRoad;
-                SpatialObject road = new SpatialObject(roadModel, position, 0, worldTransform);
+                SpatialObject road = new SpatialObject(roadModel, this, position, 0, worldTransform);
                 groundObjects.AddLast(road);
             }
 
@@ -581,7 +588,7 @@ namespace ActionGame
                 {
                     int Y = y + yOffset;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, this, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                 }
             }
@@ -592,7 +599,7 @@ namespace ActionGame
                 {
                     int X = x + xOffset;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
-                    SpatialObject road = new SpatialObject(roadModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
+                    SpatialObject road = new SpatialObject(roadModel, this, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddLast(road);
                 }
             }
@@ -619,7 +626,7 @@ namespace ActionGame
                     int X = target.X + x;
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
-                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, this, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddFirst(sidewalk);
                 }
             }
@@ -630,7 +637,7 @@ namespace ActionGame
                     int X = target.X + x;
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
-                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
+                    SpatialObject sidewalk = new SpatialObject(sidewalkModel, this, new Vector3(X * squareWidth, 0, Y * squareWidth), 0, worldTransform);
                     groundObjects.AddFirst(sidewalk);
                 }
             }

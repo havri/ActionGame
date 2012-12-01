@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace ActionGame
+namespace ActionGame.Extensions
 {
     static class VectorExtensions
     {
         public static Vector2 Rotate(this Vector2 vector, double radians, Vector2 pivot)
         {
-            /*return Vector3.Transform(vector.ToVector3(0), Matrix.CreateTranslation(vector.ToVector3(0))
-                        * Matrix.CreateTranslation((-pivot).ToVector3(0))
-                        * Matrix.CreateRotationY(-(float)radians)
-                        * Matrix.CreateTranslation(pivot.ToVector3(0))).XZToVector2();*/
+            //return Vector3.Transform(vector.ToVector3(0), Matrix.CreateTranslation(vector.ToVector3(0))
+            //            * Matrix.CreateTranslation((-pivot).ToVector3(0))
+            //            * Matrix.CreateRotationY(-(float)radians)
+            //            * Matrix.CreateTranslation(pivot.ToVector3(0))).XZToVector2();
             Vector2 rotatedVector = new Vector2()
             {
                 X =
@@ -46,6 +46,14 @@ namespace ActionGame
         {
             return new PointF(vector.X, vector.Y);
         }
-
+        /// <summary>
+        /// Computes angle between this vector and Y axis. Angle is clockwise.
+        /// </summary>
+        /// <param name="vector">This vector</param>
+        /// <returns>Angle in radians</returns>
+        public static double GetAngle(this Vector2 vector)
+        {
+            return Math.Atan(vector.X / vector.Y);
+        }
     }
 }

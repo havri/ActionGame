@@ -18,7 +18,6 @@ namespace ActionGame.Space
         readonly VertexPositionNormalTexture[] vertices;
         readonly short[] indexes;
         readonly BasicEffect quadEffect;
-        readonly Matrix positionTranslate;
 
         public FlatObject(PositionInTown position, double azimuth, Vector2 size, Texture2D texture)
             : base(position, azimuth, size)
@@ -37,13 +36,13 @@ namespace ActionGame.Space
                 vertices[i].Normal = Vector3.Up;
             }
 
-            vertices[0].Position = LowerLeftCorner.ToVector3(zPosition);
+            vertices[0].Position = LowerLeftCorner.ToVector3(vertikalPosition);
             vertices[0].TextureCoordinate = textureLowerLeft;
-            vertices[1].Position = UpperLeftCorner.ToVector3(zPosition);
+            vertices[1].Position = UpperLeftCorner.ToVector3(vertikalPosition);
             vertices[1].TextureCoordinate = textureUpperLeft;
-            vertices[2].Position = LowerRightCorner.ToVector3(zPosition);
+            vertices[2].Position = LowerRightCorner.ToVector3(vertikalPosition);
             vertices[2].TextureCoordinate = textureLowerRight;
-            vertices[3].Position = UpperRightCorner.ToVector3(zPosition);
+            vertices[3].Position = UpperRightCorner.ToVector3(vertikalPosition);
             vertices[3].TextureCoordinate = textureUpperRight;
 
             indexes[0] = 0;
@@ -57,15 +56,11 @@ namespace ActionGame.Space
             quadEffect.EnableDefaultLighting();
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
-            positionTranslate = Matrix.CreateTranslation(position.PositionInQuarter.ToVector3(zPosition))
-                * Matrix.CreateTranslation((-Pivot.PositionInQuarter).ToVector3(zPosition))
-                * Matrix.CreateRotationY(-(float)azimuth)
-                * Matrix.CreateTranslation(Pivot.PositionInQuarter.ToVector3(zPosition));
         }
 
         public void Draw(Matrix view, Matrix projection, Matrix world)
         {
-            quadEffect.World = positionTranslate * world;
+            quadEffect.World = world;
             quadEffect.View = view;
             quadEffect.Projection = projection;
             foreach (EffectPass pass in quadEffect.CurrentTechnique.Passes)
@@ -81,7 +76,7 @@ namespace ActionGame.Space
             quadEffect.Dispose();
         }
 
-        private float zPosition
+        private float vertikalPosition
         {
             get
             {

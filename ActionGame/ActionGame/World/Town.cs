@@ -107,6 +107,10 @@ namespace ActionGame.World
                     }
                 }
             }
+            foreach (var quarter in quarters)
+            {
+                quarter.BuildInterfaceRoadSigns(content);
+            }
 
             //Town graph raster map creation
             Bitmap mapRaster = new Bitmap(MapImageWidth, MapImageHeight);

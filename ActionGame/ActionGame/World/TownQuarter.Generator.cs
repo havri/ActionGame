@@ -15,14 +15,14 @@ namespace ActionGame.World
     public partial class TownQuarter : IDisposable
     {
 
-        private void Generate(ref Vector2 size, int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
+        private void Generate(Vector2 size, int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
-
             ///TODO: Use bitmap to deny X crossroads.
 
-            ///TODO: Load models from central repository
+            ///TODO: Load textures from central repository
             Texture2D roadTexture = content.Load<Texture2D>("Textures/Ground/road0");
             Texture2D sidewalkTexture = content.Load<Texture2D>("Textures/Ground/sidewalk0");
+            Texture2D grassTexture = content.Load<Texture2D>("Textures/Ground/grass0");
 
             int xSize = (int)Math.Floor(size.X / SquareWidth);
             int ySize = (int)Math.Floor(size.Y / SquareWidth);
@@ -42,7 +42,6 @@ namespace ActionGame.World
 
             Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(roadTexture, mapBitmap);
             List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(roadTexture, emptyRectangleInBorderRoadCyrcle, mapBitmap);
-
             IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectangles);
 
             List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectangles.Count);
@@ -53,11 +52,63 @@ namespace ActionGame.World
                 );
             }
 
+            GenerateGrass(grassTexture, emptyRectaglesInsideSidewalks);
+
             GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform);
-
             GenerateMapPicture(graphicsDevice, mapBitmap);
-
+            GenerateRoadSignPicture(graphicsDevice, content);
             GenerateWalkers(pathVertecies, content, ref worldTransform);
+        }
+
+        private void GenerateRoadSignPicture(GraphicsDevice graphicsDevice, ContentManager content)
+        {
+            Texture2D bgTex = content.Load<Texture2D>("Textures/roadSign");
+            using (MemoryStream bgStream = new MemoryStream())
+            {
+                bgTex.SaveAsPng(bgStream, 768, 256);
+                bgStream.Position = 0;
+                using (System.Drawing.Image signImg = System.Drawing.Image.FromStream(bgStream))
+                {
+                    using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(signImg))
+                    {
+                        float em = 14;
+                        var font = new System.Drawing.Font("Tahoma", em);
+                        while (g.MeasureString(Name, font).Width < 768 - 300)
+                        {
+                            font = new System.Drawing.Font("Tahoma", em);
+                            em++;
+                        }
+                        g.DrawString(Name, font, System.Drawing.Brushes.White, new System.Drawing.RectangleF(150, 30, 768 - 150, 256 - 30));
+                        g.Flush();
+                    }
+                    using (MemoryStream imgStream = new MemoryStream())
+                    {
+                        signImg.Save(imgStream, System.Drawing.Imaging.ImageFormat.Png);
+                        imgStream.Position = 0;
+                        roadSignTexture = Texture2D.FromStream(graphicsDevice, imgStream);
+                    }
+                }
+            }
+        }
+
+        private void GenerateGrass(Texture2D grassTexture, List<Rectangle> emptyRectaglesInsideSidewalks)
+        {
+            float grassWidth = 13.5f; //m
+            foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
+            {
+                int xCount = (int)(emptyRect.Width * SquareWidth / grassWidth);
+                int yCount = (int)(emptyRect.Height * SquareWidth / grassWidth);
+                Vector2 size = new Vector2(emptyRect.Width * SquareWidth / xCount, emptyRect.Height * SquareWidth / yCount);
+                for (int x = 0; x < xCount; x++)
+                {
+                    for (int y = 0; y < yCount; y++)
+                    {
+                        Vector2 position = new Vector2(emptyRect.X * SquareWidth + x * size.X, emptyRect.Y * SquareWidth + y * size.Y);
+                        FlatObject grass = new FlatObject(new PositionInTown(this, position), 0, size, grassTexture);
+                        groundObjects.AddFirst(grass);
+                    }
+                }
+            }
         }
 
         void GenerateWalkers(IList<PathGraphVertex> pathVertecies, ContentManager content, ref Matrix worldTransform)
@@ -277,6 +328,52 @@ namespace ActionGame.World
                     groundObjects.AddLast(sidewalkL);
                     groundObjects.AddLast(sidewalkR);
                 }
+
+                //wall generator
+                {
+                    ///TODO: load textures from central repository
+                    Texture2D wallTexture = content.Load<Texture2D>("Textures/Spatial/wall0");
+                    float wallWidth = 6f; //m
+                    float wallHeight = 4.5f;
+                    int count = (int)((BlockWidth - 1) * SquareWidth / wallWidth); //minus sidewalk
+                    wallWidth = (BlockWidth - 1) * SquareWidth / count;
+                    for (int p = 0; p < count; p++)
+                    {
+                        Vector2 beginL, endL, beginR, endR;
+                        switch (direction)
+                        {
+                            case AxisDirection.Horizontal:
+                                beginL.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
+                                beginL.Y = (position - 1) * SquareWidth;
+                                endL.X = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
+                                endL.Y = (position - 1) * SquareWidth;
+
+                                beginR.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
+                                beginR.Y = (position + 2) * SquareWidth;
+                                endR.X = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
+                                endR.Y = (position + 2) * SquareWidth;
+                                break;
+                            case AxisDirection.Vertical:
+                                beginL.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
+                                beginL.X = (position - 1) * SquareWidth;
+                                endL.Y = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
+                                endL.X = (position - 1) * SquareWidth;
+
+                                beginR.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
+                                beginR.X = (position + 2) * SquareWidth;
+                                endR.Y = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
+                                endR.X = (position + 2) * SquareWidth;
+                                break;
+                            default:
+                                throw new InvalidOperationException("Unknown AxisDirection value.");
+                        }
+                        Plate wallL = new Plate(this, beginL.ToVector3(wallHeight), endL.ToVector3(wallHeight), beginL.ToVector3(0), endL.ToVector3(0), wallTexture, wallTexture);
+                        solidPlates.AddLast(wallL);
+                        Plate wallr = new Plate(this, beginR.ToVector3(wallHeight), endR.ToVector3(wallHeight), beginR.ToVector3(0), endR.ToVector3(0), wallTexture, wallTexture);
+                        solidPlates.AddLast(wallr);
+                    }
+                }
+
                 interfaces.Add(iface);
             }
 
@@ -300,19 +397,19 @@ namespace ActionGame.World
                         ranges.Value.Insert(i, r);
                     }
                     if (
-                        (ranges.Value[i].End == bitmapSize.Width - BlockWidth - 1 && (ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom))
-                        || (ranges.Value[i].End == bitmapSize.Height - BlockWidth - 1 && (ranges.Key == TownQuarterInterfacePosition.Left || ranges.Key == TownQuarterInterfacePosition.Right))
+                        (ranges.Value[i].End== bitmapSize.Width - BlockWidth - 1 && (ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom))
+                        || (ranges.Value[i].End== bitmapSize.Height - BlockWidth - 1 && (ranges.Key == TownQuarterInterfacePosition.Left || ranges.Key == TownQuarterInterfacePosition.Right))
                         )
                     {
                         Range r = ranges.Value[i];
                         ranges.Value.RemoveAt(i);
                         if (ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom)
                         {
-                            r.End = bitmapSize.Width - BlockWidth + 1;
+                            r.End= bitmapSize.Width - BlockWidth + 1;
                         }
                         else
                         {
-                            r.End = bitmapSize.Height - BlockWidth + 1;
+                            r.End= bitmapSize.Height - BlockWidth + 1;
                         }
                         ranges.Value.Insert(i, r);
                     }
@@ -678,7 +775,7 @@ namespace ActionGame.World
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
                     FlatObject sidewalk = new FlatObject(new PositionInTown(this, new Vector2(X * SquareWidth, Y * SquareWidth)), 0, new Vector2(SquareWidth, SquareWidth), sidewalkTexture);
-                    groundObjects.AddFirst(sidewalk);
+                    groundObjects.AddLast(sidewalk);
                 }
             }
             for (int y = 1; y < (target.Height - 1); y++)
@@ -689,12 +786,58 @@ namespace ActionGame.World
                     int Y = target.Y + y;
                     mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Sidewalk;
                     FlatObject sidewalk = new FlatObject(new PositionInTown(this, new Vector2(X * SquareWidth, Y * SquareWidth)), 0, new Vector2(SquareWidth, SquareWidth), sidewalkTexture);
-                    groundObjects.AddFirst(sidewalk);
+                    groundObjects.AddLast(sidewalk);
                 }
             }
 
             return new Rectangle(target.X + 1, target.Y + 1, target.Width - 2, target.Height - 2);
         }
 
+        public void BuildInterfaceRoadSigns(ContentManager content)
+        {
+            float vPosition = 8;
+            float height = 2f;
+            float width = 6f;
+            foreach (TownQuarterInterface iface in interfaces)
+            { 
+                Vector3 upperLeft = iface.Position().ToVector3(vPosition);
+                Vector3 upperRight = upperLeft;
+                switch (iface.SidePosition)
+	            {
+		            case TownQuarterInterfacePosition.Top:
+                        upperLeft.X -= width / 2;
+                        upperRight.X += width / 2;
+                        upperLeft.Z += (BlockWidth - 2) * SquareWidth;
+                        upperRight.Z += (BlockWidth - 2) * SquareWidth;
+                         break;
+                                case TownQuarterInterfacePosition.Right:
+                         upperLeft.Z -= width / 2;
+                         upperRight.Z += width / 2;
+                        upperLeft.X -= (BlockWidth - 2) * SquareWidth;
+                        upperRight.X -= (BlockWidth - 2) * SquareWidth;
+                         break;
+                                case TownQuarterInterfacePosition.Bottom:
+                         upperLeft.X += width / 2;
+                         upperRight.X -= width / 2;
+                        upperLeft.Z -= (BlockWidth - 2) * SquareWidth;
+                        upperRight.Z -= (BlockWidth - 2) * SquareWidth;
+                         break;
+                        case TownQuarterInterfacePosition.Left:
+                                    upperLeft.Z += width / 2;
+                                    upperRight.Z -= width / 2;
+                        upperLeft.X += (BlockWidth - 2) * SquareWidth;
+                        upperRight.X += (BlockWidth - 2) * SquareWidth;
+                         break;
+                        default:
+                         break;
+	            }
+                Vector3 lowerLeft = upperLeft, lowerRight = upperRight;
+                lowerLeft.Y -= height;
+                lowerRight.Y -= height;
+                Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, content.Load<Texture2D>("Textures/metal"));
+                solidPlates.AddLast(signPlate);
+            }
+
+        }
     }
 }

@@ -43,6 +43,7 @@ namespace ActionGame.World
         /// Really spatial objects - buildings, etc.
         /// </summary>
         LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
+        LinkedList<Plate> solidPlates = new LinkedList<Plate>();
 
         List<TownQuarterInterface> interfaces;
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
@@ -68,9 +69,10 @@ namespace ActionGame.World
         /// Quarter name
         /// </summary>
         public string Name;
+        Texture2D roadSignTexture;
 
         readonly static List<string> nameRepository = new List<string>(new string[] {
-            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side"
+            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
         });
         readonly static string emptyName = "Unnamed";
 
@@ -101,10 +103,9 @@ namespace ActionGame.World
 
             //Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
 
-            
             try
             {
-                Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
+                Generate(size, degree, content, ref worldTransform, graphicsDevice);
             }
             catch (Exception ex)
             {
@@ -135,16 +136,20 @@ namespace ActionGame.World
         {
             foreach (FlatObject o in groundObjects)
             {
-                drawer.StartDrawingSpatialObject(o, angle, delta, true);
+                drawer.StartDrawingObject(o, angle, delta);
             }
             foreach (SpatialObject o in solidObjects)
             {
-                drawer.StartDrawingSpatialObject(o, angle, delta, false);
+                drawer.StartDrawingObject(o, angle, delta);
+            }
+            foreach (Plate o in solidPlates)
+            {
+                drawer.StartDrawingObject(o, angle, delta);
             }
 
             foreach (var walker in walkers)
             {
-                drawer.StartDrawingSpatialObject(walker, angle, delta, false);
+                drawer.StartDrawingObject(walker, angle, delta);
             }
         }
 
@@ -152,15 +157,15 @@ namespace ActionGame.World
         {
             foreach (FlatObject o in groundObjects)
             {
-                drawer.StopDrawingSpatialObject(o, true);
+                drawer.StopDrawingObject(o);
             }
             foreach (SpatialObject o in solidObjects)
             {
-                drawer.StopDrawingSpatialObject(o, false);
+                drawer.StopDrawingObject(o);
             }
             foreach (var walker in walkers)
             {
-                drawer.StopDrawingSpatialObject(walker, false);
+                drawer.StopDrawingObject(walker);
             }
         }
 
@@ -186,12 +191,18 @@ namespace ActionGame.World
             map.Dispose();
             foreach (var walker in walkers)
                 walker.Dispose();
+            roadSignTexture.Dispose();
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (var walker in walkers)
                 walker.Update(gameTime);
+        }
+
+        public Texture2D RoadSignTexture
+        {
+            get { return roadSignTexture; }
         }
     }
 }

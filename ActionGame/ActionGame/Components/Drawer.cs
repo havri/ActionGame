@@ -17,7 +17,6 @@ namespace ActionGame.Components
     {
         ActionGame game;
         List<DrawedObject> objects;
-        List<DrawedObject> groundObjects;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
         Texture2D townGraphPicture;
@@ -37,7 +36,6 @@ namespace ActionGame.Components
         {
             this.game = game;
             objects = new List<DrawedObject>();
-            groundObjects = new List<DrawedObject>();
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 500);
         }
 
@@ -51,25 +49,15 @@ namespace ActionGame.Components
             get { return worldMatrix; }
         }
 
-        public void StartDrawingSpatialObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta, bool ground)
+        public void StartDrawingObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta)
         {
             DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta );
-            if (ground)
-                groundObjects.Add(dObj);
-            else
-                objects.Add(dObj);   
+            objects.Add(dObj);   
         }
 
-        public void StopDrawingSpatialObject(IDrawableObject obj, bool ground)
+        public void StopDrawingObject(IDrawableObject obj)
         {
-            if (ground)
-            {
-                groundObjects.RemoveAll(x => x.Object == obj);
-            }
-            else
-            {
-                objects.RemoveAll(x => x.Object == obj);
-            }
+            objects.RemoveAll(x => x.Object == obj);
         }
 
         public override void Update(GameTime gameTime)
@@ -80,7 +68,7 @@ namespace ActionGame.Components
             this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
             this.ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
 
-            Debug.Write("Drawed objects", (groundObjects.Count + objects.Count).ToString());
+            Debug.Write("Drawed objects", objects.Count.ToString());
         }
 
         public override void Draw(GameTime gameTime)
@@ -91,11 +79,6 @@ namespace ActionGame.Components
 
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            foreach (DrawedObject dObj in groundObjects)
-            {
-                dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
-            }
 
             foreach (DrawedObject dObj in objects)
             {

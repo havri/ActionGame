@@ -114,6 +114,7 @@
     <Compile Include="Components\Drawer.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
+    <Compile Include="Space\Plate.cs" />
     <Compile Include="Tasks\InfinityWalkingTask.cs" />
     <Compile Include="World\PathGraphVertex.cs" />
     <Compile Include="World\PathGraph.cs" />

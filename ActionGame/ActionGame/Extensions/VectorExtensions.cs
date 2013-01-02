@@ -51,9 +51,11 @@ namespace ActionGame.Extensions
         /// </summary>
         /// <param name="vector">This vector</param>
         /// <returns>Angle in radians</returns>
-        public static double GetAngle(this Vector2 vector)
+        public static float GetAngle(this Vector2 vector)
         {
-            return Math.Atan(vector.X / vector.Y);
+            float atan = (float)Math.Atan2(vector.Y, vector.X);
+            if (atan < 0) atan += MathHelper.TwoPi;
+            return atan;
         }
     }
 }

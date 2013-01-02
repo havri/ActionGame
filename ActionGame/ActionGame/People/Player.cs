@@ -38,7 +38,7 @@ namespace ActionGame.People
             base.load(model, position, 0, azimuth, worldTransform);
         }
 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
             throw new InvalidOperationException("This Update overload is denied!");
         }
@@ -65,7 +65,9 @@ namespace ActionGame.People
                         Rotate(false);
 
                     if (Math.Abs(mouseState.X - (windowWidth / 2)) > windowWidth / 10)
-                        azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth/2) ) * Human.RotateAngle;
+                    {
+                        azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth / 2)) * Human.RotateAngle;
+                    }
 
                     ///TODO: Make this work.
                     /*if (Math.Abs(mouseState.Y - (windowHeight / 2)) > windowHeight / 10)
@@ -75,6 +77,8 @@ namespace ActionGame.People
 
             Debug.Write("Player", PositionInQuarter.ToString());
             Debug.Write("Player azimuth", Azimuth.ToString());
+
+            //base.Update(gameTime);
         }
     }
 }

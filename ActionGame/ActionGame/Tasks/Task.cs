@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using Microsoft.Xna.Framework;
 
 namespace ActionGame.Tasks
 {
@@ -11,15 +12,18 @@ namespace ActionGame.Tasks
         protected Human holder;
         protected Queue<WayPoint> wayPoints;
 
+        TimeSpan lastStepMade;
+
         public Task(Human holder)
         {
             this.holder = holder;
             this.wayPoints = new Queue<WayPoint>();
+            lastStepMade = new TimeSpan(0,0,0);
         }
 
         public abstract bool IsComplete();
 
-        public virtual void Update()
+        public virtual void Update(GameTime gameTime)
         {
             if (wayPoints.Count > 0)
             {
@@ -30,8 +34,9 @@ namespace ActionGame.Tasks
                 }
             }
 
-            if (wayPoints.Count > 0)
+            if (wayPoints.Count > 0 && gameTime.TotalGameTime - lastStepMade > Human.StepTimeOut)
             {
+                lastStepMade = gameTime.TotalGameTime;
                 WayPoint nextWayPoint = wayPoints.Peek();
                 holder.GoThisWay(nextWayPoint.Point);
             }

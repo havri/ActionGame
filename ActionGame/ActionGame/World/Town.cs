@@ -169,7 +169,7 @@ namespace ActionGame.World
             Debug.Write("Current quarter", currentQuarter.Name);
 
             Vector2 playerPosition = Game.Player.PositionInQuarter.XZToVector2();
-            Vector2 quarterSize = new Vector2(currentQuarter.BitmapSize.Width * currentQuarter.SquareWidth, currentQuarter.BitmapSize.Height * currentQuarter.SquareWidth);
+            Vector2 quarterSize = new Vector2(currentQuarter.BitmapSize.Width * TownQuarter.SquareWidth, currentQuarter.BitmapSize.Height * TownQuarter.SquareWidth);
             if (gameTime.TotalGameTime - lastQuarterChange > quarterChangeTimeOut
                 && ((playerPosition.X > quarterSize.X || playerPosition.Y > quarterSize.Y) || (playerPosition.X < 0 || playerPosition.Y < 0))
                 && lastNearestInterfaceIndex >= 0)
@@ -182,7 +182,7 @@ namespace ActionGame.World
 
                 //Moves player into new current quarter
                 float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
-                Vector2 delta = ResolveQuarterPositionDelta(currentQuarter.SquareWidth, usedInterface);
+                Vector2 delta = ResolveQuarterPositionDelta(TownQuarter.SquareWidth, usedInterface);
                 Game.Player.MoveTo(
                     Vector3.Transform(Game.Player.PositionInQuarter, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2(), // reverse transform of nearest quarter
                     Game.Player.Azimuth - angle
@@ -198,10 +198,9 @@ namespace ActionGame.World
                 lastQuarterChange = gameTime.TotalGameTime;
             }
             
-
-            
             FillDrawer();
-            
+
+            currentQuarter.Update(gameTime);
         }
 
         void FillDrawer()
@@ -226,7 +225,7 @@ namespace ActionGame.World
                 }
                 lastNearestInterfaceIndex = nearestInterfaceIndex;
 
-                float squareWidth = currentQuarter.SquareWidth;
+                float squareWidth = TownQuarter.SquareWidth;
                 TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
                 Vector2 delta = ResolveQuarterPositionDelta(squareWidth, iface);
                 float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);

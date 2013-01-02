@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.Space
 {
-    public class SpatialObject : GameObject, IDisposable
+    public class SpatialObject : GameObject, IDisposable, IDrawableObject
     {
         Model model;
         float verticalPosition;
@@ -64,10 +64,13 @@ namespace ActionGame.Space
             }
         }
 
+
+
         public Vector3 PositionInQuarter
-        { 
-            get { return base.position.PositionInQuarter.ToVector3(verticalPosition);  }
+        {
+            get { return base.position.PositionInQuarter.ToVector3(verticalPosition); }
         }
+
         public PositionInTown Position
         {
             get

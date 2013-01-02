@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using ActionGame.World;
 using ActionGame.People;
 using ActionGame.Components;
+using ActionGame.Tasks;
 
 namespace ActionGame
 {
@@ -102,8 +103,9 @@ namespace ActionGame
 
 
             town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
-            player.Load(Content.Load<Model>("Objects/Humans/robot0"), new PositionInTown(null, new Vector2(10, 10)), 0, drawer.WorldTransformMatrix);
+            player.Load(Content.Load<Model>("Objects/Humans/human0"), new PositionInTown(null, new Vector2(00, 00)), MathHelper.PiOver2, drawer.WorldTransformMatrix);
             drawer.TownGraphPicture = town.Map;
+            player.AddTask(new MoveTask(player, new PositionInTown(null, new Vector2(40,40))));
             Components.Add(town);
         }
         /// <summary>

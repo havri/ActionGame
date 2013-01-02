@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionGame", "ActionGame\ActionGame\ActionGame.csproj", "{4F0900A4-445D-438E-9762-ECAECCFD69FC}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "ActionGameContent", "ActionGame\ActionGameContent\ActionGameContent.contentproj", "{71CB652E-D8DF-437B-8290-858DA47CD7B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionGameContent", "ActionGame\ActionGameContent\ActionGameContent.contentproj", "{71CB652E-D8DF-437B-8290-858DA47CD7B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

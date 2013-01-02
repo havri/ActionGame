@@ -16,8 +16,8 @@ namespace ActionGame.Components
     public class Drawer : DrawableGameComponent
     {
         ActionGame game;
-        List<DrawedSpatialObject> drawableObjects;
-        List<DrawedSpatialObject> groundDrawableObjects;
+        List<DrawedObject> objects;
+        List<DrawedObject> groundObjects;
         Matrix projectionMatrix;
         Matrix worldMatrix = Matrix.Identity;
         Texture2D townGraphPicture;
@@ -36,8 +36,8 @@ namespace ActionGame.Components
             : base(game)
         {
             this.game = game;
-            drawableObjects = new List<DrawedSpatialObject>();
-            groundDrawableObjects = new List<DrawedSpatialObject>();
+            objects = new List<DrawedObject>();
+            groundObjects = new List<DrawedObject>();
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 500);
         }
 
@@ -51,24 +51,24 @@ namespace ActionGame.Components
             get { return worldMatrix; }
         }
 
-        public void StartDrawingSpatialObject(SpatialObject obj, float azimuthDelta, Vector2 positionDelta, bool ground)
+        public void StartDrawingSpatialObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta, bool ground)
         {
-            DrawedSpatialObject dObj = new DrawedSpatialObject(obj, azimuthDelta, positionDelta );
+            DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta );
             if (ground)
-                groundDrawableObjects.Add(dObj);
+                groundObjects.Add(dObj);
             else
-                drawableObjects.Add(dObj);   
+                objects.Add(dObj);   
         }
 
-        public void StopDrawingSpatialObject(SpatialObject obj, bool ground)
+        public void StopDrawingSpatialObject(IDrawableObject obj, bool ground)
         {
             if (ground)
             {
-                groundDrawableObjects.RemoveAll(x => x.Object == obj);
+                groundObjects.RemoveAll(x => x.Object == obj);
             }
             else
             {
-                drawableObjects.RemoveAll(x => x.Object == obj);
+                objects.RemoveAll(x => x.Object == obj);
             }
         }
 
@@ -80,7 +80,7 @@ namespace ActionGame.Components
             this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
             this.ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
 
-            Debug.Write("Drawed objects", (groundDrawableObjects.Count + drawableObjects.Count).ToString());
+            Debug.Write("Drawed objects", (groundObjects.Count + objects.Count).ToString());
         }
 
         public override void Draw(GameTime gameTime)
@@ -89,18 +89,20 @@ namespace ActionGame.Components
 
             DrawPanoramaBackground();
 
+
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            foreach (DrawedSpatialObject dObj in groundDrawableObjects)
+            foreach (DrawedObject dObj in groundObjects)
             {
                 dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
 
-            foreach (DrawedSpatialObject dObj in drawableObjects)
+            foreach (DrawedObject dObj in objects)
             {
                 dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
             game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+
 
             DrawMaps();
         }

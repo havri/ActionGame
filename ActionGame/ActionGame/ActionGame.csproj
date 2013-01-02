@@ -112,7 +112,12 @@
     <Compile Include="Components\Camera\CameraMode.cs" />
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
-    <Compile Include="DrawedSpatialObject.cs" />
+    <Compile Include="Space\FlatObject.cs" />
+    <Compile Include="Space\IDrawableObject.cs" />
+    <Compile Include="Tasks\InfinityWalkingTask.cs" />
+    <Compile Include="World\PathGraphVertex.cs" />
+    <Compile Include="World\PathGraph.cs" />
+    <Compile Include="World\DrawedSpatialObject.cs" />
     <Compile Include="Exceptions\NoSpaceForInterfaceException.cs" />
     <Compile Include="Space\AxisDirection.cs" />
     <Compile Include="People\Human.cs" />
@@ -171,7 +176,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="People\girl0.fbx" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

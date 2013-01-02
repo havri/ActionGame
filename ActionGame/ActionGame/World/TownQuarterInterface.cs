@@ -31,7 +31,7 @@ namespace ActionGame.World
         public Vector2 Position()
         {
             Vector2 ret = Vector2.Zero;
-            float sideLength = BitmapPosition * Quarter.SquareWidth + Quarter.SquareWidth/2f;
+            float sideLength = BitmapPosition * TownQuarter.SquareWidth + TownQuarter.SquareWidth/2f;
             switch (SidePosition)
             {
                 case TownQuarterInterfacePosition.Top:
@@ -39,12 +39,12 @@ namespace ActionGame.World
                     ret.Y = 0;
                     break;
                 case TownQuarterInterfacePosition.Right:
-                    ret.X = Quarter.BitmapSize.Width * Quarter.SquareWidth;
+                    ret.X = Quarter.BitmapSize.Width * TownQuarter.SquareWidth;
                     ret.Y = sideLength;
                     break;
                 case TownQuarterInterfacePosition.Bottom:
                     ret.X = sideLength;
-                    ret.Y = Quarter.BitmapSize.Height * Quarter.SquareWidth;
+                    ret.Y = Quarter.BitmapSize.Height * TownQuarter.SquareWidth;
                     break;
                 case TownQuarterInterfacePosition.Left:
                     ret.X = 0;

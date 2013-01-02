@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ActionGame.World;
 using ActionGame.People;
+using Microsoft.Xna.Framework;
 
 namespace ActionGame.Tasks
 {
@@ -17,10 +18,24 @@ namespace ActionGame.Tasks
             : base(holder)
         {
             this.destination = destination;
-            computeWayPoints();
         }
-         
+
+        public override void Update(GameTime gameTime)
+        {
+            if (wayPoints.Count == 0 && !IsComplete())
+            {
+                computeWayPoints();
+            }
+
+            base.Update(gameTime);
+        }
+
         void computeWayPoints()
+        {
+            computeWayPointsFrom(holder.Position);
+        }
+
+        void computeWayPointsFrom(PositionInTown from)
         {
             this.wayPoints.Clear();
             this.wayPoints.Enqueue(new WayPoint(destination));

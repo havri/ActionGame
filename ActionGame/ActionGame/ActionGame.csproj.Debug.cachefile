@@ -1,8 +1,5 @@
 Content\Objects\Humans\human0.xnb
 Content\Fonts\SpriteFont1.xnb
-Content\Objects\Flat\grass.xnb
-Content\Objects\Flat\road0.xnb
-Content\Objects\Flat\sidewalk0.xnb
 Content\Objects\Buildings\house1.xnb
 Content\Textures\house1\Brick_Rough_Dark.xnb
 Content\Textures\house1\Roofing_Shingles_Wood.xnb
@@ -41,4 +38,6 @@ Content\Textures\borderBuilding1\Brick_Antique_0.xnb
 Content\Textures\borderBuilding1\_Brick_Antique_1_0.xnb
 Content\Textures\player.xnb
 Content\Textures\panorama.xnb
-Content\Objects\Flat\sidewalk0\sidewalk0.xnb
+Content\Textures\Ground\grass0.xnb
+Content\Textures\Ground\sidewalk0.xnb
+Content\Textures\Ground\road0.xnb

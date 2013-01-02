@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ActionGame.Components;
+using ActionGame.People;
 using ActionGame.Space;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -18,7 +19,14 @@ namespace ActionGame.World
         /// Block without road width. In road square count.
         /// </summary>
         const int BlockWidth = 5;
-
+        /// <summary>
+        /// Number of walkers in  quarter.
+        /// </summary>
+        const int WalkerCount = 10;
+        /// <summary>
+        /// Number of each walker waypoints.
+        /// </summary>
+        const int WalkerWayPointCount = 4;
         /// <summary>
         /// Width of road or sidewalk in pictured map. In pixels.
         /// </summary>
@@ -29,8 +37,8 @@ namespace ActionGame.World
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
-        LinkedList<SpatialObject> groundObjects = new LinkedList<SpatialObject>();
-
+        LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
+        LinkedList<Human> walkers = new LinkedList<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
         /// </summary>
@@ -50,14 +58,10 @@ namespace ActionGame.World
                 return bitmapSize;
             }
         }
-        float squareWidth;
-        public float SquareWidth
-        {
-            get
-            {
-                return squareWidth;
-            }
-        }
+        /// <summary>
+        /// Width of road and sidewalk. In meters.
+        /// </summary>
+        public const float SquareWidth = 4.5f;
 
 
         /// <summary>
@@ -129,7 +133,7 @@ namespace ActionGame.World
         /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
         public void FillDrawer(Drawer drawer, float angle, Vector2 delta)
         {
-            foreach (SpatialObject o in groundObjects)
+            foreach (FlatObject o in groundObjects)
             {
                 drawer.StartDrawingSpatialObject(o, angle, delta, true);
             }
@@ -137,17 +141,26 @@ namespace ActionGame.World
             {
                 drawer.StartDrawingSpatialObject(o, angle, delta, false);
             }
+
+            foreach (var walker in walkers)
+            {
+                drawer.StartDrawingSpatialObject(walker, angle, delta, false);
+            }
         }
 
         public void RemoveFromDrawer(Drawer drawer)
         {
-            foreach (SpatialObject o in groundObjects)
+            foreach (FlatObject o in groundObjects)
             {
                 drawer.StopDrawingSpatialObject(o, true);
             }
             foreach (SpatialObject o in solidObjects)
             {
                 drawer.StopDrawingSpatialObject(o, false);
+            }
+            foreach (var walker in walkers)
+            {
+                drawer.StopDrawingSpatialObject(walker, false);
             }
         }
 
@@ -171,6 +184,14 @@ namespace ActionGame.World
             foreach (var obj in solidObjects)
                 obj.Dispose();
             map.Dispose();
+            foreach (var walker in walkers)
+                walker.Dispose();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            foreach (var walker in walkers)
+                walker.Update(gameTime);
         }
     }
 }

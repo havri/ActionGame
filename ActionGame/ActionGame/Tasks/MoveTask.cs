@@ -37,8 +37,9 @@ namespace ActionGame.Tasks
 
         void computeWayPointsFrom(PositionInTown from)
         {
-            this.wayPoints.Clear();
-            this.wayPoints.Enqueue(new WayPoint(destination));
+            wayPoints.Clear();
+            ///TODO: Find closest path vertices and find shortest path.
+            wayPoints.Enqueue(new WayPoint(destination));
         }
 
         public override bool IsComplete()

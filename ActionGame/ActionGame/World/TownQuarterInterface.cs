@@ -19,7 +19,7 @@ namespace ActionGame.World
         public int BitmapPosition { get; set; }
 
         /// <summary>
-        /// Querter where this interface belongs.
+        /// Querter where is this interface located.
         /// </summary>
         public TownQuarter Quarter { get; set; }
 
@@ -27,6 +27,8 @@ namespace ActionGame.World
         /// Interface connected
         /// </summary>
         public TownQuarterInterface OppositeInterface { get; set; }
+        public PathGraphVertex LeftPathGraphVertex { get; set; }
+        public PathGraphVertex RightPathGraphVertex { get; set; }
 
         public Vector2 Position()
         {

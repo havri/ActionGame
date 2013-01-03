@@ -23,8 +23,8 @@ namespace ActionGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        const int resolutionWidth = 1680;
-        const int resolutionHeight = 1024;
+        const int resolutionWidth = 1660;
+        const int resolutionHeight = 1010;
         const bool fullscreen = false;
 
 

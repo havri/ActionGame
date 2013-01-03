@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ActionGame.Space;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
@@ -65,8 +64,8 @@ namespace ActionGame.Components
             base.Update(gameTime);
 
             ///TODO: Maybe this should be called from other Update. For ex. Player's.
-            this.ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
-            this.ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
+            ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
+            ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
 
             Debug.Write("Drawed objects", objects.Count.ToString());
         }
@@ -117,6 +116,7 @@ namespace ActionGame.Components
         /// </summary>
         private void DrawPanoramaBackground()
         {
+            ///TODO: Respect player vertical moves.
             game.SpriteBatch.Begin();
             float ratio = townPanorama.Height / (game.WindowHeight * 0.5f);
             double percentAngle = game.Player.Azimuth / MathHelper.TwoPi;

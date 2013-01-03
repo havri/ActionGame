@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Tasks;
 using ActionGame.People;
+using ActionGame.Exceptions;
 
 namespace ActionGame.World
 {
@@ -41,16 +42,49 @@ namespace ActionGame.World
             GenerateInterfaces(degree, mapBitmap, roadTexture, sidewalkTexture, worldTransform, content);
 
             Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(roadTexture, mapBitmap);
-            List<Rectangle> emptyRectangles = GenerateInnerRoadNetwork(roadTexture, emptyRectangleInBorderRoadCyrcle, mapBitmap);
-            IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectangles);
 
-            List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectangles.Count);
-            foreach (Rectangle emptyRect in emptyRectangles)
+            List<Rectangle> emptyRectanglesInsideRoads = GenerateInnerRoadNetwork(roadTexture, emptyRectangleInBorderRoadCyrcle, mapBitmap);
+            List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectanglesInsideRoads.Count);
+            foreach (Rectangle emptyRect in emptyRectanglesInsideRoads)
             {
                 emptyRectaglesInsideSidewalks.Add(
                     GenerateSidewalks(emptyRect, sidewalkTexture, mapBitmap)
                 );
             }
+            IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectanglesInsideRoads, mapBitmap);
+            if (!PathGraph.IsConnected(pathVertecies))
+            {
+                throw new PathGraphNotConnectedException("Path graph generated inside this town quarter has two or more components.");
+            }
+            //showing path graph
+            foreach (var v in pathVertecies)
+            {
+                const float pointHeight = 0.01f;
+                Plate vplate = new Plate(
+                        this,
+                        v.Position.PositionInQuarter.Go(0.2f, 0).ToVector3(pointHeight),
+                        v.Position.PositionInQuarter.Go(0.2f, MathHelper.PiOver2).ToVector3(pointHeight),
+                        v.Position.PositionInQuarter.Go(0.2f, -MathHelper.PiOver2).ToVector3(pointHeight),
+                        v.Position.PositionInQuarter.Go(0.2f, MathHelper.Pi).ToVector3(pointHeight),
+                        content.Load<Texture2D>("Textures/blue"),
+                        content.Load<Texture2D>("Textures/blue"));
+                magicPlates.AddLast(vplate);
+                foreach (var n in v.Neighbors)
+                { 
+                    const float height = 0.3f;//m
+                    Plate plate = new Plate(
+                        this,
+                        v.Position.PositionInQuarter.ToVector3(height),
+                        n.Position.PositionInQuarter.ToVector3(height),
+                        v.Position.PositionInQuarter.ToVector3(0),
+                        n.Position.PositionInQuarter.ToVector3(0),
+                        content.Load<Texture2D>("Textures/blue"),
+                        content.Load<Texture2D>("Textures/blue"));
+                    magicPlates.AddLast(plate);
+                }
+            }
+
+            
 
             GenerateGrass(grassTexture, emptyRectaglesInsideSidewalks);
 
@@ -62,6 +96,7 @@ namespace ActionGame.World
 
         private void GenerateRoadSignPicture(GraphicsDevice graphicsDevice, ContentManager content)
         {
+            //Stuff from Content Manager doesn't need manual disposing.
             Texture2D bgTex = content.Load<Texture2D>("Textures/roadSign");
             using (MemoryStream bgStream = new MemoryStream())
             {
@@ -113,66 +148,231 @@ namespace ActionGame.World
 
         void GenerateWalkers(IList<PathGraphVertex> pathVertecies, ContentManager content, ref Matrix worldTransform)
         {
-            Random rand = new Random();
-            for (int i = 0; i < WalkerCount; i++)
+            if (pathVertecies.Count > 2)
             {
-                IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
-                ///TODO: Take human model from central repository.
-                Human walker = new Human(content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, worldTransform);
-                InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
-                walker.AddTask(task);
-                walkers.AddFirst(walker);
+                Random rand = new Random();
+                for (int i = 0; i < WalkerCount; i++)
+                {
+                    IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
+                    ///TODO: Take human model from central repository.
+                    Human walker = new Human(content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, worldTransform);
+                    InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
+                    walker.AddTask(task);
+                    walkers.AddFirst(walker);
+                }
             }
         }
 
-        IList<PathGraphVertex> GeneratePathGraph(List<Rectangle> emptyRectanglesInsideRoads)
+
+        IList<PathGraphVertex> GeneratePathGraph(List<Rectangle> emptyRectanglesInsideRoads, MapFillType[] mapBitmap)
         {
-            List<Point> points = new List<Point>();
+            List<Point> pointsOfInterests = new List<Point>();
             foreach (Rectangle rect in emptyRectanglesInsideRoads)
             {
-                points.AddRange( new Point[] {
+                pointsOfInterests.AddRange( new Point[] {
                     new Point(rect.X, rect.Y),
-                    new Point(rect.X + rect.Width - 1, rect.Y),
-                    new Point(rect.X, rect.Y + rect.Height - 1),
+                    //new Point(rect.X + rect.Width - 1, rect.Y),
+                    //new Point(rect.X, rect.Y + rect.Height - 1),
                     new Point(rect.X + rect.Width - 1, rect.Y + rect.Height - 1)
                     });
             }
 
-            List<PathGraphVertex> vertecies = new List<PathGraphVertex>();
-            Dictionary<int, SortedDictionary<int, PathGraphVertex>> verticalVertecies = new Dictionary<int, SortedDictionary<int, PathGraphVertex>>();
-            Dictionary<int, SortedDictionary<int, PathGraphVertex>> horizontalVertecies = new Dictionary<int, SortedDictionary<int, PathGraphVertex>>();
-            foreach (Point point in points)
+            Dictionary<Point, Tuple<TownQuarterInterface, bool>> interfaceByPoint = new Dictionary<Point, Tuple<TownQuarterInterface, bool>>();//tuple: interface, isLeftPoint
+            foreach (var iface in interfaces)
             {
-                PathGraphVertex vertex = new PathGraphVertex(new PositionInTown(this, new Vector2(point.X + 0.5f, point.Y + 0.5f) * SquareWidth));
-                vertecies.Add(vertex);
-                if (!verticalVertecies.ContainsKey(point.Y))
-                    verticalVertecies.Add(point.Y, new SortedDictionary<int, PathGraphVertex>());
-                if (!horizontalVertecies.ContainsKey(point.X))
-                    horizontalVertecies.Add(point.X, new SortedDictionary<int, PathGraphVertex>());
-                verticalVertecies[point.Y].Add(point.X, vertex);
-                horizontalVertecies[point.X].Add(point.Y, vertex);
+                Point left, right;
+                switch (iface.SidePosition)
+                {
+                    case TownQuarterInterfacePosition.Top:
+                        left.X = iface.BitmapPosition - 1;
+                        left.Y = 0;
+                        right.X = iface.BitmapPosition + 1;
+                        right.Y = 0;
+                        break;
+                    case TownQuarterInterfacePosition.Right:
+                        left.X = bitmapSize.Width - 1;
+                        left.Y = iface.BitmapPosition - 1;
+                        right.X = bitmapSize.Width - 1;
+                        right.Y = iface.BitmapPosition + 1;
+                        break;
+                    case TownQuarterInterfacePosition.Bottom:
+                        left.X = iface.BitmapPosition + 1;
+                        left.Y = bitmapSize.Height - 1;
+                        right.X = iface.BitmapPosition - 1;
+                        right.Y = bitmapSize.Height - 1;
+                        break;
+                    case TownQuarterInterfacePosition.Left:
+                        left.X = 0;
+                        left.Y = iface.BitmapPosition + 1;
+                        right.X = 0;
+                        right.Y = iface.BitmapPosition - 1;
+                        break;
+                    default:
+                        throw new InvalidOperationException("Unknown SidePosition value.");
+                }
+                pointsOfInterests.Add(left);
+                pointsOfInterests.Add(right);
+                interfaceByPoint.Add(left, new Tuple<TownQuarterInterface, bool>(iface, true));
+                interfaceByPoint.Add(right, new Tuple<TownQuarterInterface, bool>(iface, false));
             }
 
-            SweepPathVertecies(verticalVertecies);
-            SweepPathVertecies(horizontalVertecies);
+            pointsOfInterests.AddRange(new Point[] {
+                new Point(BlockWidth - 1, BlockWidth - 1),
+                new Point(bitmapSize.Width - BlockWidth, bitmapSize.Height - BlockWidth)
+            });
+            
+            SortedSet<int> xCoordinates = new SortedSet<int>();
+            SortedSet<int> yCoordinates = new SortedSet<int>();
+            foreach (Point point in pointsOfInterests)
+            {
+                if (!xCoordinates.Contains(point.X))
+                    xCoordinates.Add(point.X);
+                if (!yCoordinates.Contains(point.Y))
+                    yCoordinates.Add(point.Y);
+            }
 
-            return vertecies;
+            List<PathGraphVertex> innerVertices = new List<PathGraphVertex>();
+            Dictionary<int, SortedDictionary<int, PathGraphVertex>> verticalIndexedPaths = new Dictionary<int, SortedDictionary<int, PathGraphVertex>>(yCoordinates.Count);
+            Dictionary<int, SortedDictionary<int, PathGraphVertex>> horizontalIndexedPaths = new Dictionary<int, SortedDictionary<int, PathGraphVertex>>(xCoordinates.Count);
+            foreach (int y in yCoordinates)
+            {
+                verticalIndexedPaths.Add(y, new SortedDictionary<int, PathGraphVertex>());
+            }
+            foreach (int x in xCoordinates)
+            {
+                horizontalIndexedPaths.Add(x, new SortedDictionary<int, PathGraphVertex>());
+                foreach (int y in yCoordinates)
+                {
+                    if (mapBitmap.Index2D(bitmapSize.Height, x, y) == MapFillType.Sidewalk)
+                    {
+                        PathGraphVertex vertex = new PathGraphVertex(new PositionInTown(this, new Vector2(x + 0.5f, y + 0.5f) * SquareWidth));
+                        innerVertices.Add(vertex);
+                        verticalIndexedPaths[y].Add(x, vertex);
+                        horizontalIndexedPaths[x].Add(y, vertex);
+
+                        Point p = new Point(x, y);
+                        if (interfaceByPoint.ContainsKey(p))
+                        {
+                            if (interfaceByPoint[p].Item2)
+                            {
+                                interfaceByPoint[p].Item1.LeftPathGraphVertex = vertex;
+                            }
+                            else
+                            {
+                                interfaceByPoint[p].Item1.RightPathGraphVertex = vertex;
+                            }
+                        }
+                    }
+                }
+            }
+
+            SweepPathVertices(verticalIndexedPaths, mapBitmap, AxisDirection.Horizontal);
+            SweepPathVertices(horizontalIndexedPaths, mapBitmap, AxisDirection.Vertical);
+
+            return innerVertices;
         }
 
-        static void SweepPathVertecies(Dictionary<int, SortedDictionary<int, PathGraphVertex>> vertexLines)
+        private void SweepPathVertices(Dictionary<int, SortedDictionary<int, PathGraphVertex>> vertexLines, MapFillType[] mapBitmap, AxisDirection sweepDirection)
         { 
-            foreach(SortedDictionary<int, PathGraphVertex> vertexLine in vertexLines.Values)
+            foreach(KeyValuePair<int, SortedDictionary<int, PathGraphVertex>> vertexLine in vertexLines)
             {
-                using (SortedDictionary<int, PathGraphVertex>.ValueCollection.Enumerator enumerator = vertexLine.Values.GetEnumerator())
+                using (SortedDictionary<int, PathGraphVertex>.Enumerator enumerator = vertexLine.Value.GetEnumerator())
                 {
                     if (enumerator.MoveNext())
                     {
-                        PathGraphVertex vertex1 = enumerator.Current;
+                        int x1, y1, x2, y2;
+                        x1 = x2 = y1 = y2 = 0;
+                        switch (sweepDirection)
+                        {
+                            case AxisDirection.Horizontal:
+                                y1 = y2 = vertexLine.Key;
+                                x1 = enumerator.Current.Key;
+                                break;
+                            case AxisDirection.Vertical:
+                                x1 = x2 = vertexLine.Key;
+                                y1 = enumerator.Current.Key;
+                                break;
+                            default:
+                                throw new InvalidOperationException("Unknown AxisDirection.");
+                        }
+                        PathGraphVertex vertex1 = enumerator.Current.Value;
                         while (enumerator.MoveNext())
                         {
-                            PathGraphVertex vertex2 = enumerator.Current;
-                            vertex1.AddNeighborBothDirection(vertex2);
+                            PathGraphVertex vertex2 = enumerator.Current.Value;
+                            switch (sweepDirection)
+                            {
+                                case AxisDirection.Horizontal:
+                                    x2 = enumerator.Current.Key;
+                                    break;
+                                case AxisDirection.Vertical:
+                                    y2 = enumerator.Current.Key;
+                                    break;
+                                default:
+                                    throw new InvalidOperationException("Unknown AxisDirection.");
+                            }
+                            //Special foreach begin
+                            bool clearForWalking = true;
+                            int roadCount = 0;
+                            switch (sweepDirection)
+                            {
+                                case AxisDirection.Horizontal:
+                                    for (int i = x1 + 1; i < x2; i++)
+                                    {
+                                        if (mapBitmap.Index2D(bitmapSize.Height, i, y1) == MapFillType.Empty)
+                                        {
+                                            clearForWalking = false;
+                                            break;
+                                        }
+                                        else if (mapBitmap.Index2D(bitmapSize.Height, i, y1) != MapFillType.Sidewalk)
+                                        {
+                                            roadCount++;
+                                            if (roadCount > 1)
+                                            {
+                                                clearForWalking = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case AxisDirection.Vertical:
+                                    for (int i = y1 + 1; i < y2; i++)
+                                    {
+                                        if (mapBitmap.Index2D(bitmapSize.Height, x1, i) == MapFillType.Empty)
+                                        {
+                                            clearForWalking = false;
+                                            break;
+                                        }
+                                        else if (mapBitmap.Index2D(bitmapSize.Height, x1, i) != MapFillType.Sidewalk)
+                                        {
+                                            roadCount++;
+                                            if (roadCount > 1)
+                                            {
+                                                clearForWalking = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    throw new InvalidOperationException("Unknown AxisDirection.");
+                            }
+                            if (clearForWalking)
+                            {
+                                vertex1.AddNeighborBothDirection(vertex2, vertex1.Position.DistanceTo(vertex2.Position));
+                            }
+                            //Special foreach end
                             vertex1 = vertex2;
+                            switch (sweepDirection)
+                            {
+                                case AxisDirection.Horizontal:
+                                    x1 = x2;
+                                    break;
+                                case AxisDirection.Vertical:
+                                    y1 = y2;
+                                    break;
+                                default:
+                                    throw new InvalidOperationException("Unknown AxisDirection.");
+                            }
                         }
                     }
                 }
@@ -345,24 +545,24 @@ namespace ActionGame.World
                             case AxisDirection.Horizontal:
                                 beginL.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
                                 beginL.Y = (position - 1) * SquareWidth;
-                                endL.X = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
-                                endL.Y = (position - 1) * SquareWidth;
+                                endL = beginL;
+                                endL.X += wallWidth;
 
                                 beginR.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
                                 beginR.Y = (position + 2) * SquareWidth;
-                                endR.X = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
-                                endR.Y = (position + 2) * SquareWidth;
+                                endR = beginR;
+                                endR.X += wallWidth;
                                 break;
                             case AxisDirection.Vertical:
                                 beginL.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
                                 beginL.X = (position - 1) * SquareWidth;
-                                endL.Y = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
-                                endL.X = (position - 1) * SquareWidth;
+                                endL = beginL;
+                                endL.Y += wallWidth;
 
                                 beginR.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
                                 beginR.X = (position + 2) * SquareWidth;
-                                endR.Y = (p + 1) * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
-                                endR.X = (position + 2) * SquareWidth;
+                                endR = beginR;
+                                endR.Y += wallWidth;
                                 break;
                             default:
                                 throw new InvalidOperationException("Unknown AxisDirection value.");
@@ -795,7 +995,7 @@ namespace ActionGame.World
 
         public void BuildInterfaceRoadSigns(ContentManager content)
         {
-            float vPosition = 8;
+            const float vPosition = 8;
             float height = 2f;
             float width = 6f;
             foreach (TownQuarterInterface iface in interfaces)
@@ -835,7 +1035,7 @@ namespace ActionGame.World
                 lowerLeft.Y -= height;
                 lowerRight.Y -= height;
                 Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, content.Load<Texture2D>("Textures/metal"));
-                solidPlates.AddLast(signPlate);
+                magicPlates.AddLast(signPlate);
             }
 
         }

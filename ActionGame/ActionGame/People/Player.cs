@@ -12,7 +12,7 @@ namespace ActionGame.People
     public class Player : Human
     {
         static readonly TimeSpan movingKeyTimeOut = new TimeSpan(0, 0, 0, 0, 50);
-        const float YRotateQ = 0.8f;
+        const float YRotateQ = 0.6f;
 
         Keys left = Keys.A;
         Keys right = Keys.D;
@@ -64,20 +64,25 @@ namespace ActionGame.People
                     if (keyboardState.IsKeyDown(turnRIght))
                         Rotate(false);
 
+                    ///TODO: Better look. Cross in the middle of screen...
+                    
+                    //horizontal
                     if (Math.Abs(mouseState.X - (windowWidth / 2)) > windowWidth / 10)
                     {
                         azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth / 2)) * Human.RotateAngle;
                     }
-
-                    ///TODO: Make this work.
-                    /*if (Math.Abs(mouseState.Y - (windowHeight / 2)) > windowHeight / 10)
-                        lookingAtHeight -= (((float)(mouseState.Y - (windowHeight / 2)) / (float)(windowHeight / 2))) * Player.YRotateQ;*/
+                    //vertical
+                    if (Math.Abs(mouseState.Y - (windowHeight / 2)) > windowHeight / 10)
+                    {
+                        lookingAtHeight -= (((float)(mouseState.Y - (windowHeight / 2)) / (float)(windowHeight / 2))) * Player.YRotateQ;
+                    }
                 }
             }
 
             Debug.Write("Player", PositionInQuarter.ToString());
             Debug.Write("Player azimuth", Azimuth.ToString());
 
+            //Supress human instincts
             //base.Update(gameTime);
         }
     }

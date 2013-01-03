@@ -104,6 +104,8 @@ namespace ActionGame.World
                         TownQuarterInterface ifaceJ = (from iface in quarters[j].Interfaces where iface.OppositeInterface == null orderby rand.Next() select iface).First();
                         ifaceI.OppositeInterface = ifaceJ;
                         ifaceJ.OppositeInterface = ifaceI;
+                        ifaceI.LeftPathGraphVertex.AddNeighborBothDirection(ifaceJ.RightPathGraphVertex, TownQuarter.SquareWidth);
+                        ifaceI.RightPathGraphVertex.AddNeighborBothDirection(ifaceJ.LeftPathGraphVertex, TownQuarter.SquareWidth);
                     }
                 }
             }

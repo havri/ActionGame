@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ActionGame.World
 {
     public class PathGraphVertex
     {
-        PositionInTown position;
-        List<PathGraphVertex> neightbors;
+        readonly PositionInTown position;
+        readonly HashSet<PathGraphVertex> neightbors;
+        readonly Dictionary<PathGraphVertex, float> distances;
 
         public PathGraphVertex(PositionInTown position)
         {
-            neightbors = new List<PathGraphVertex>();
+            neightbors = new HashSet<PathGraphVertex>();
+            distances = new Dictionary<PathGraphVertex, float>();
             this.position = position;
         }
 
-        public void AddNeighbor(PathGraphVertex neighbor)
+        public void AddNeighbor(PathGraphVertex neighbor, float distance)
         {
             neightbors.Add(neighbor);
+            distances.Add(neighbor, distance);
         }
 
-        public void AddNeighborBothDirection(PathGraphVertex neighbor)
+        public void AddNeighborBothDirection(PathGraphVertex neighbor, float distance)
         {
-            neightbors.Add(neighbor);
-            neighbor.AddNeighbor(this);
+            AddNeighbor(neighbor, distance);
+            neighbor.AddNeighbor(this, distance);
+        }
+
+        public float DistanceToNeighbor(PathGraphVertex neighbor)
+        {
+            return distances[neighbor];
         }
 
         public IEnumerable<PathGraphVertex> Neighbors

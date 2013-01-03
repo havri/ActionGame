@@ -112,6 +112,10 @@
     <Compile Include="Components\Camera\CameraMode.cs" />
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
+    <Compile Include="Exceptions\PathGraphNotConnectedException.cs" />
+    <Compile Include="Exceptions\PathNotFoundException.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\MapFillTypeExtensions.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
     <Compile Include="Space\Plate.cs" />
@@ -178,6 +182,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="People\girl0.fbx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

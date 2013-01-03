@@ -6,6 +6,7 @@ using System.Linq;
 using ActionGame.Components;
 using ActionGame.People;
 using ActionGame.Space;
+using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,6 +39,7 @@ namespace ActionGame.World
         /// Object what makes ground textures.
         /// </summary>
         LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
+        LinkedList<Plate> magicPlates = new LinkedList<Plate>();
         LinkedList<Human> walkers = new LinkedList<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
@@ -101,7 +103,7 @@ namespace ActionGame.World
                 Name = emptyName;
             }
 
-            //Generate(ref size, degree, content, ref worldTransform, graphicsDevice);
+            //Generate(size, degree, content, ref worldTransform, graphicsDevice);
 
             try
             {
@@ -134,39 +136,18 @@ namespace ActionGame.World
         /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
         public void FillDrawer(Drawer drawer, float angle, Vector2 delta)
         {
-            foreach (FlatObject o in groundObjects)
+            foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
                 drawer.StartDrawingObject(o, angle, delta);
-            }
-            foreach (SpatialObject o in solidObjects)
-            {
-                drawer.StartDrawingObject(o, angle, delta);
-            }
-            foreach (Plate o in solidPlates)
-            {
-                drawer.StartDrawingObject(o, angle, delta);
-            }
-
-            foreach (var walker in walkers)
-            {
-                drawer.StartDrawingObject(walker, angle, delta);
             }
         }
 
         public void RemoveFromDrawer(Drawer drawer)
         {
-            foreach (FlatObject o in groundObjects)
+            foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
                 drawer.StopDrawingObject(o);
-            }
-            foreach (SpatialObject o in solidObjects)
-            {
-                drawer.StopDrawingObject(o);
-            }
-            foreach (var walker in walkers)
-            {
-                drawer.StopDrawingObject(walker);
-            }
+            }        
         }
 
         public Texture2D Map
@@ -203,6 +184,16 @@ namespace ActionGame.World
         public Texture2D RoadSignTexture
         {
             get { return roadSignTexture; }
+        }
+
+        private LinkedList<IDrawableObject> GetAllDrawalbleObjects()
+        {
+            LinkedList<IDrawableObject> result = new LinkedList<IDrawableObject>(groundObjects);
+            result.AddRange(magicPlates);
+            result.AddRange(solidPlates);
+            result.AddRange(solidObjects);
+            result.AddRange(walkers);
+            return result;
         }
     }
 }

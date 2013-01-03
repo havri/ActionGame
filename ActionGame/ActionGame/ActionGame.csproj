@@ -116,9 +116,14 @@
     <Compile Include="Exceptions\PathNotFoundException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\MapFillTypeExtensions.cs" />
+    <Compile Include="QSP\Grid.cs" />
+    <Compile Include="QSP\GridField.cs" />
+    <Compile Include="QSP\LeafNode.cs" />
+    <Compile Include="QSP\QuadNode.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
     <Compile Include="Space\Plate.cs" />
+    <Compile Include="QSP\Node.cs" />
     <Compile Include="Tasks\InfinityWalkingTask.cs" />
     <Compile Include="World\PathGraphVertex.cs" />
     <Compile Include="World\PathGraph.cs" />

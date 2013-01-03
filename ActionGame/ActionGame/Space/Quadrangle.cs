@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace ActionGame
+namespace ActionGame.Space
 {
     public class Quadrangle
     {

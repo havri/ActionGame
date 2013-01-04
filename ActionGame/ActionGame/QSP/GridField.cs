@@ -10,10 +10,10 @@ namespace ActionGame.QSP
         readonly ISet<Quadrangle> objects;
         LeafNode node;
 
-        public GridField(LeafNode node)
+        public GridField()
         {
             objects = new HashSet<Quadrangle>();
-            this.node = node;
+            node = null;
         }
 
         public void AddObject(Quadrangle obj)
@@ -21,9 +21,19 @@ namespace ActionGame.QSP
             objects.Add(obj);
         }
 
+        public void SetNode(LeafNode node)
+        {
+            this.node = node;
+        }
+
         public ISet<Quadrangle> Objects
         {
-            get { return objects; }
+            get { return new HashSet<Quadrangle>(objects); }
+        }
+
+        public int Count
+        {
+            get { return objects.Count; }
         }
     }
 }

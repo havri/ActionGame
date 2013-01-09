@@ -13,5 +13,18 @@ namespace ActionGame.Extensions
                 linkedList.AddLast(item);
             }
         }
+
+        public static T Second<T>(this IEnumerable<T> ien)
+        {
+            int i = 0;
+            foreach (T item in ien)
+            {
+                if (i == 1)
+                    return item;
+                i++;
+            }
+
+            throw new InvalidOperationException("There's no second item.");
+        }
     }
 }

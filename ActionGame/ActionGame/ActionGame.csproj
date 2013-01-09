@@ -122,6 +122,7 @@
     <Compile Include="QSP\QuadNode.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
+    <Compile Include="Space\Line.cs" />
     <Compile Include="Space\Plate.cs" />
     <Compile Include="QSP\Node.cs" />
     <Compile Include="Tasks\InfinityWalkingTask.cs" />

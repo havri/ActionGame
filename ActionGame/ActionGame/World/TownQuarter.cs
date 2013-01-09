@@ -38,17 +38,19 @@ namespace ActionGame.World
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
-        LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
-        LinkedList<Plate> magicPlates = new LinkedList<Plate>();
-        LinkedList<Human> walkers = new LinkedList<Human>();
+        readonly LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
+        readonly LinkedList<Plate> magicPlates = new LinkedList<Plate>();
+        readonly LinkedList<Human> walkers = new LinkedList<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
         /// </summary>
-        LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
-        LinkedList<Plate> solidPlates = new LinkedList<Plate>();
+        readonly LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
+        readonly LinkedList<Plate> solidPlates = new LinkedList<Plate>();
 
-        List<TownQuarterInterface> interfaces;
+        readonly List<TownQuarterInterface> interfaces;
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
+
+
         /// <summary>
         /// Picture map of this quarter.
         /// </summary>

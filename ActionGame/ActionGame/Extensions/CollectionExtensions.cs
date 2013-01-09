@@ -26,5 +26,13 @@ namespace ActionGame.Extensions
 
             throw new InvalidOperationException("There's no second item.");
         }
+
+        public static void SetValue<K,V>(this Dictionary<K,V> dict, K k, V newValue)
+        {
+            if (dict.ContainsKey(k))
+                dict[k] = newValue;
+            else
+                dict.Add(k, newValue);
+        }
     }
 }

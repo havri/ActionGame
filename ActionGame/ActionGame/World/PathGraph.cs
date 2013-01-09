@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using ActionGame.Extensions;
 using ActionGame.Exceptions;
 
 namespace ActionGame.World
@@ -85,9 +85,9 @@ namespace ActionGame.World
                         float tempGSore = gScore[current] + current.DistanceToNeighbor(n);
                         if (!open.Contains(n) || tempGSore <= gScore[n])
                         {
-                            cameFrom.Add(n, current);
-                            gScore.Add(n, tempGSore);
-                            fScore.Add(n, gScore[n] + EuklidDistance(current, n));
+                            cameFrom.SetValue(n, current);
+                            gScore.SetValue(n, tempGSore);
+                            fScore.SetValue(n, gScore[n] + EuklidDistance(current, n));
                             if (!open.Contains(n))
                             {
                                 open.Add(n);

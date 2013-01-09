@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ActionGame.Space;
-using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
+using ActionGame.World;
+using ActionGame.Exceptions;
 
 namespace ActionGame.QSP
 {
@@ -17,6 +17,10 @@ namespace ActionGame.QSP
         public Grid(int width, int height, float fieldWidth, float fieldHeight)
         {
             fields = new GridField[width * height];
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fields[i] = new GridField();
+            }
             this.width = width;
             this.height = height;
             this.fieldWidth = fieldWidth;
@@ -41,7 +45,14 @@ namespace ActionGame.QSP
             return result;
         }
 
-        public void AddObject(Quadrangle obj)
+        public void AddPathGraphVertex(PathGraphVertex vertex)
+        {
+            int x = (int)(vertex.Position.PositionInQuarter.X / fieldWidth);
+            int y = (int)(vertex.Position.PositionInQuarter.Y / fieldHeight);
+            GetField(x, y).AddPathGraphVertex(vertex);
+        }
+
+        IEnumerable<GridField> GetFieldsByObject(Quadrangle obj)
         {
             Vector2[] corners = new Vector2[] {
                 obj.UpperLeftCorner,
@@ -75,10 +86,92 @@ namespace ActionGame.QSP
 
                     if (fieldOne.IsInCollisionWith(obj))
                     {
-                        GetField(x, y).AddObject(obj);
+                        yield return GetField(x, y);
                     }
                 }
             }
+        }
+
+        public bool IsInCollision(Quadrangle obj)
+        {
+            foreach (GridField field in GetFieldsByObject(obj))
+            {
+                if (field.IsInCollision(obj))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddObject(Quadrangle obj)
+        {
+            foreach (GridField field in GetFieldsByObject(obj))
+            {
+                field.AddObject(obj);
+            }
+        }
+
+        public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
+        {
+            foreach (GridField field in GetFieldsByRounds(from))
+            {
+                foreach (PathGraphVertex v in field.PathGraphVertices)
+                {
+                    Quadrangle pathObj = new Quadrangle(v.Position.PositionInQuarter, v.Position.PositionInQuarter, from, from);
+                    if (!IsInCollision(pathObj))
+                    {
+                        return v;
+                    }
+                }
+            }
+            throw new PathNotFoundException("Couldn't find path graph vertex with has clear way to specified position.");
+        }
+
+        IEnumerable<GridField> GetFieldsByRounds(Vector2 from)
+        {
+            int x = (int)(from.X / fieldWidth);
+            int y = (int)(from.Y / fieldHeight);
+
+            yield return GetField(x, y);
+
+            int r = 1;
+            bool found;
+            do
+            {
+                found = false;
+                foreach (int v in new int[] { y - r, y + r })
+                {
+                    if (v >= 0 && v < height)
+                    {
+                        for (int h = x - r; h <= x + r; h++)
+                        {
+                            if (h >= 0 && h < width)
+                            {
+                                found = true;
+                                yield return GetField(h, v);
+                            }
+                        }
+                    }
+                }
+
+                foreach (int h in new int[] { y - r + 1, y + r - 1 })
+                {
+                    if (h >= 0 && h < width)
+                    {
+                        for (int v = y - r; v <= y + r; v++)
+                        {
+                            if (v >= 0 && v < height)
+                            {
+                                found = true;
+                                yield return GetField(h, v);
+                            }
+                        }
+                    }
+                }
+                r++;
+            }
+            while (found);
         }
     }
 }

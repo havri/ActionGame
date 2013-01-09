@@ -38,7 +38,12 @@ namespace ActionGame.Tasks
         void computeWayPointsFrom(PositionInTown from)
         {
             wayPoints.Clear();
-            ///TODO: Find closest path vertices and find shortest path.
+            PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
+            PathGraphVertex end = destination.Quarter.FindNearestPathGraphVertex(destination.PositionInQuarter);
+            foreach(var v in PathGraph.FindShortestPath(start, end))
+            {
+                wayPoints.Enqueue(new WayPoint(v.Position));
+            }
             wayPoints.Enqueue(new WayPoint(destination));
         }
 

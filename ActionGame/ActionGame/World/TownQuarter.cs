@@ -10,6 +10,7 @@ using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ActionGame.QSP;
 
 
 namespace ActionGame.World
@@ -50,7 +51,7 @@ namespace ActionGame.World
         readonly List<TownQuarterInterface> interfaces;
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
 
-
+        readonly Grid spaceGrid;
         /// <summary>
         /// Picture map of this quarter.
         /// </summary>
@@ -91,8 +92,6 @@ namespace ActionGame.World
         public TownQuarter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             interfaces = new List<TownQuarterInterface>(degree);
-            
-
             if (nameRepository.Count > 0)
             {
                 Random rand = new Random();
@@ -105,11 +104,14 @@ namespace ActionGame.World
                 Name = emptyName;
             }
 
-            //Generate(size, degree, content, ref worldTransform, graphicsDevice);
+            int xSize = (int)Math.Floor(size.X / SquareWidth);
+            int ySize = (int)Math.Floor(size.Y / SquareWidth);
+            bitmapSize = new System.Drawing.Size(xSize, ySize);
+            spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, SquareWidth, SquareWidth);
 
             try
             {
-                Generate(size, degree, content, ref worldTransform, graphicsDevice);
+                Generate(degree, content, ref worldTransform, graphicsDevice);
             }
             catch (Exception ex)
             {
@@ -196,6 +198,19 @@ namespace ActionGame.World
             result.AddRange(solidObjects);
             result.AddRange(walkers);
             return result;
+        }
+
+        LinkedList<Quadrangle> GetAllSolidObjects()
+        {
+            LinkedList<Quadrangle> result = new LinkedList<Quadrangle>(solidPlates);
+            result.AddRange(solidObjects);
+            result.AddRange(walkers);
+            return result;
+        }
+
+        public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
+        {
+            return spaceGrid.FindNearestPathGraphVertex(from);
         }
     }
 }

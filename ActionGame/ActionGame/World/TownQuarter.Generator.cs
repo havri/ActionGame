@@ -10,13 +10,14 @@ using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Tasks;
 using ActionGame.People;
 using ActionGame.Exceptions;
+using ActionGame.QSP;
 
 namespace ActionGame.World
 {
     public partial class TownQuarter : IDisposable
     {
 
-        private void Generate(Vector2 size, int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
+        private void Generate(int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             ///TODO: Use bitmap to deny X crossroads.
 
@@ -25,17 +26,13 @@ namespace ActionGame.World
             Texture2D sidewalkTexture = content.Load<Texture2D>("Textures/Ground/sidewalk0");
             Texture2D grassTexture = content.Load<Texture2D>("Textures/Ground/grass0");
 
-            int xSize = (int)Math.Floor(size.X / SquareWidth);
-            int ySize = (int)Math.Floor(size.Y / SquareWidth);
 
-            if (xSize < 4 * BlockWidth || ySize < 4 * BlockWidth)
+            if (bitmapSize.Width < 4 * BlockWidth || bitmapSize.Height < 4 * BlockWidth)
             {
                 throw new ArgumentOutOfRangeException("Specified size is to small.");
             }
 
-            bitmapSize = new System.Drawing.Size(xSize, ySize);
-
-            MapFillType[] mapBitmap = new MapFillType[xSize * ySize];
+            MapFillType[] mapBitmap = new MapFillType[bitmapSize.Width * bitmapSize.Height];
             for (int i = 0; i < mapBitmap.Length; i++)
                 mapBitmap[i] = MapFillType.Empty;
 
@@ -52,13 +49,17 @@ namespace ActionGame.World
                 );
             }
             IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectanglesInsideRoads, mapBitmap);
+
+            ///TODO: This test cas slow generation process.
             if (!PathGraph.IsConnected(pathVertecies))
             {
                 throw new PathGraphNotConnectedException("Path graph generated inside this town quarter has two or more components.");
             }
-            //showing path graph
-            foreach (var v in pathVertecies)
+            
+            foreach (PathGraphVertex v in pathVertecies)
             {
+                spaceGrid.AddPathGraphVertex(v);
+                //showing path graph
                 const float pointHeight = 0.01f;
                 Plate vplate = new Plate(
                         this,
@@ -92,6 +93,11 @@ namespace ActionGame.World
             GenerateMapPicture(graphicsDevice, mapBitmap);
             GenerateRoadSignPicture(graphicsDevice, content);
             GenerateWalkers(pathVertecies, content, ref worldTransform);
+
+            foreach (Quadrangle quadrangle in GetAllSolidObjects())
+            {
+                spaceGrid.AddObject(quadrangle);
+            }
         }
 
         private void GenerateRoadSignPicture(GraphicsDevice graphicsDevice, ContentManager content)

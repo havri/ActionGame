@@ -18,7 +18,7 @@ namespace ActionGame.QSP
 
             foreach (var field in grid.GetFields(space))
             {
-                field.SetNode(this);
+                //field.SetNode(this);
             }
         }
 

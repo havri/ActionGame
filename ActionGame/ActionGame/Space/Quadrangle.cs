@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionGame.Extensions;
+using ActionGame.QSP;
 using Microsoft.Xna.Framework;
 
 namespace ActionGame.Space
@@ -12,6 +13,7 @@ namespace ActionGame.Space
         readonly Vector2 upperRightCorner;
         readonly Vector2 lowerLeftCorner;
         readonly Vector2 lowerRightCorner;
+        readonly ISet<GridField> spacePartitioningFields;
 
         public Quadrangle(Vector2 UpperLeftCorner, Vector2 UpperRightCorner, Vector2 LowerLeftCorner, Vector2 LowerRightCorner)
         {
@@ -19,6 +21,7 @@ namespace ActionGame.Space
             upperRightCorner = UpperRightCorner;
             lowerLeftCorner = LowerLeftCorner;
             lowerRightCorner = LowerRightCorner;
+            spacePartitioningFields = new HashSet<GridField>();
         }
 
         protected Quadrangle()
@@ -27,6 +30,7 @@ namespace ActionGame.Space
             upperRightCorner = Vector2.Zero;
             lowerLeftCorner = Vector2.Zero;
             lowerRightCorner = Vector2.Zero;
+            spacePartitioningFields = new HashSet<GridField>();
         }
 
         public bool IsInCollisionWith(Quadrangle obj)
@@ -74,6 +78,14 @@ namespace ActionGame.Space
             get
             {
                 return lowerRightCorner;
+            }
+        }
+
+        public ISet<GridField> SpacePartitioningFields
+        {
+            get
+            {
+                return spacePartitioningFields;
             }
         }
     }

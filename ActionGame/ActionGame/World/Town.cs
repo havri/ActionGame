@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ActionGame.Extensions;
+using ActionGame.MenuForms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,12 +33,14 @@ namespace ActionGame.World
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
         
-        public Town(ActionGame game, int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+        public Town(ActionGame game, int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice, Loading loadingFrom)
             : base(game)
         {
             quarters = new TownQuarter[quarterCount];
 
             //Town graph creation
+            loadingFrom.SetLabel("Generating town graph...");
+            loadingFrom.SetValue(0);
             int[] degrees = new int[quarterCount];
             bool[,] edges = new bool[quarterCount,quarterCount]; // Graph is unoriented (symetric). edges[i, j] can be true only if i<j!
             for (int i = 0; i < quarterCount-1; i++) // First is made path through all. Graph has to have only one component.
@@ -50,6 +53,7 @@ namespace ActionGame.World
             Random rand = new Random();
             for (int i = 0; i < quarterCount; i++)
             {
+                loadingFrom.SetValue(100 * i / quarterCount);
                 for (int j = i+1; j < quarterCount; j++) //graph isn't oriented and reflexion is denied
                 {
                     if (!edges[i, j] && degrees[i] < MaxQuarterDegree && degrees[j] < MaxQuarterDegree)
@@ -65,8 +69,11 @@ namespace ActionGame.World
             }
 
             //Quarter creating by degrees
+            loadingFrom.SetLabel("Generating quarters and streets...");
+            loadingFrom.SetValue(0);
             for (int i = 0; i < quarterCount; i++)
             {
+                loadingFrom.SetValue(100 * i / quarterCount);
                 float perimeterLength = MinSideLengthPerInterface * Math.Max(degrees[i], 4); // Even interface isn't needed the side must be there
                 perimeterLength *= (float)rand.NextDouble() + 1f; //Minimal length can be doubled
                 float width = (perimeterLength / 2f) * (float)(rand.NextDouble() * 0.3 + 0.35); //aspect ratio
@@ -94,8 +101,11 @@ namespace ActionGame.World
 
 
             //Joining interfaces
+            loadingFrom.SetLabel("Building town...");
+            loadingFrom.SetValue(0);
             for (int i = 0; i < quarterCount; i++)
             {
+                loadingFrom.SetValue(100 * i / quarterCount);
                 for (int j = i + 1; j < quarterCount; j++)
                 {
                     if (edges[i, j])
@@ -115,6 +125,8 @@ namespace ActionGame.World
             }
 
             //Town graph raster map creation
+            loadingFrom.SetLabel("Creating maps for player...");
+            loadingFrom.SetValue(0);
             Bitmap mapRaster = new Bitmap(MapImageWidth, MapImageHeight);
             using (Graphics graphics = Graphics.FromImage(mapRaster))
             {
@@ -125,6 +137,7 @@ namespace ActionGame.World
 
                 for (int i = 0; i < quarterCount; i++)
                 {
+                    loadingFrom.SetValue(100 * i / quarterCount);
                     for (int j = i + 1; j < quarterCount; j++)
                     {
                         if (edges[i, j])
@@ -141,6 +154,7 @@ namespace ActionGame.World
 
                 for (int i = 0; i < quarterCount; i++)
                 {
+                    loadingFrom.SetValue(100 * i / quarterCount);
                     graphics.FillEllipse(Brushes.Blue,
                         center.X + (float)Math.Cos(i * angleJump) * radius - 3.5f,
                         center.Y + (float)Math.Sin(i * angleJump) * radius - 3.5f,

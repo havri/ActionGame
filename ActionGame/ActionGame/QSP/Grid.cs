@@ -8,7 +8,7 @@ using ActionGame.Exceptions;
 
 namespace ActionGame.QSP
 {
-    class Grid
+    public class Grid
     {
         readonly GridField[] fields;
         readonly int width, height;
@@ -94,7 +94,7 @@ namespace ActionGame.QSP
 
         public bool IsInCollision(Quadrangle obj)
         {
-            foreach (GridField field in GetFieldsByObject(obj))
+            foreach (GridField field in obj.SpacePartitioningFields)
             {
                 if (field.IsInCollision(obj))
                 {
@@ -110,6 +110,15 @@ namespace ActionGame.QSP
             {
                 field.AddObject(obj);
             }
+        }
+
+        public void RemoveObject(Quadrangle obj)
+        {
+            foreach (GridField field in obj.SpacePartitioningFields)
+            {
+                field.RemoveObject(obj);
+            }
+            obj.SpacePartitioningFields.Clear();
         }
 
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)

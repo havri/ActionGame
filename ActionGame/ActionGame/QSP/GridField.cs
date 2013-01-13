@@ -6,7 +6,7 @@ using ActionGame.World;
 
 namespace ActionGame.QSP
 {
-    class GridField
+    public class GridField
     {
         readonly ISet<Quadrangle> objects;
         readonly ISet<PathGraphVertex> pathGraphVertices;
@@ -20,6 +20,12 @@ namespace ActionGame.QSP
         public void AddObject(Quadrangle obj)
         {
             objects.Add(obj);
+            obj.SpacePartitioningFields.Add(this);
+        }
+
+        public void RemoveObject(Quadrangle obj)
+        {
+            objects.Remove(obj);
         }
 
         public void AddPathGraphVertex(PathGraphVertex vertex)

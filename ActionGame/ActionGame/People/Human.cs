@@ -99,7 +99,7 @@ namespace ActionGame.People
             }
         }
 
-        public virtual void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             if (tasks.Count > 0)
             {
@@ -108,6 +108,8 @@ namespace ActionGame.People
                 if (currentTask.IsComplete())
                     tasks.Dequeue();
             }
+
+            base.Update(gameTime);
         }
 
         public int Health

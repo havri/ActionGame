@@ -168,9 +168,10 @@ namespace ActionGame.Components
 
             if (townGraphPicture != null)
                 townGraphPicture.Dispose();
-
-            playerIcon.Dispose();
-            townPanorama.Dispose();
+            if(playerIcon != null)
+                playerIcon.Dispose();
+            if(townGraphPicture != null)
+                townPanorama.Dispose();
         }
     }
 }

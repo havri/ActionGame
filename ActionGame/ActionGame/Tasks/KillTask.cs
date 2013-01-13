@@ -9,11 +9,11 @@ namespace ActionGame.Tasks
 {
     public class KillTask : Task
     {
-        Human target;
-        public KillTask(Human holder)
+        readonly Human target;
+        public KillTask(Human holder, Human target)
             : base(holder)
         {
-            
+            this.target = target; 
         }
 
         public override void Update(GameTime gameTime)

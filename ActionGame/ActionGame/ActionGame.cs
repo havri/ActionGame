@@ -12,6 +12,7 @@ using ActionGame.World;
 using ActionGame.People;
 using ActionGame.Components;
 using ActionGame.Tasks;
+using ActionGame.MenuForms;
 
 namespace ActionGame
 {
@@ -23,9 +24,9 @@ namespace ActionGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        const int resolutionWidth = 1660;
-        const int resolutionHeight = 1010;
-        const bool fullscreen = false;
+        int resolutionWidth = 1660;
+        int resolutionHeight = 1010;
+        bool fullscreen = false;
 
 
         Player player;
@@ -66,8 +67,26 @@ namespace ActionGame
             }
         }
 
+        bool doInitialize = true;
+
         public ActionGame()
         {
+            using (MainMenu mainMenuForm = new MainMenu())
+            {
+                if (mainMenuForm.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                {
+                    doInitialize = false;
+                    Exit();
+                }
+                else
+                {
+                    fullscreen = mainMenuForm.FullScreen;
+                    System.Drawing.Size resolution = mainMenuForm.Resolution;
+                    resolutionWidth = resolution.Width;
+                    resolutionHeight = resolution.Height;
+                }
+            }
+
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = resolutionWidth;
             graphics.PreferredBackBufferHeight = resolutionHeight;
@@ -91,7 +110,10 @@ namespace ActionGame
         /// </summary>
         protected override void Initialize()
         {
-            base.Initialize();
+            if (doInitialize)
+            {
+                base.Initialize();
+            }
         }
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -99,14 +121,22 @@ namespace ActionGame
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            using (Loading loadingForm = new Loading())
+            {
+                loadingForm.Show();
+                loadingForm.SetLabel("Loading graphics device...");
+                spriteBatch = new SpriteBatch(GraphicsDevice);
+                town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice, loadingForm);
+                loadingForm.SetLabel("Loading player...");
+                loadingForm.SetValue(0);
+                player.Load(Content.Load<Model>("Objects/Humans/human0"), new PositionInTown(null, new Vector2(00, 00)), MathHelper.PiOver2, drawer.WorldTransformMatrix);
+                drawer.TownGraphPicture = town.Map;
+                Components.Add(town);
 
-
-            town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice);
-            player.Load(Content.Load<Model>("Objects/Humans/human0"), new PositionInTown(null, new Vector2(00, 00)), MathHelper.PiOver2, drawer.WorldTransformMatrix);
-            drawer.TownGraphPicture = town.Map;
-            player.AddTask(new MoveTask(player, new PositionInTown(null, new Vector2(40,40))));
-            Components.Add(town);
+                loadingForm.SetLabel("Content loaded. Get ready to play!");
+                loadingForm.SetValue(100);
+                loadingForm.Close();
+            }
         }
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload

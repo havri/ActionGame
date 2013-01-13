@@ -52,6 +52,7 @@ namespace ActionGame.World
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
 
         readonly Grid spaceGrid;
+        public Grid SpaceGrid { get { return spaceGrid; } }
         /// <summary>
         /// Picture map of this quarter.
         /// </summary>

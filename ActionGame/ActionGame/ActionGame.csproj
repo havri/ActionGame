@@ -93,7 +93,9 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
@@ -116,6 +118,18 @@
     <Compile Include="Exceptions\PathNotFoundException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\MapFillTypeExtensions.cs" />
+    <Compile Include="MenuForms\Loading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuForms\Loading.Designer.cs">
+      <DependentUpon>Loading.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuForms\MainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuForms\MainMenu.Designer.cs">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="QSP\Grid.cs" />
     <Compile Include="QSP\GridField.cs" />
     <Compile Include="QSP\LeafNode.cs" />
@@ -190,6 +204,14 @@
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
     <None Include="People\girl0.fbx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MenuForms\Loading.resx">
+      <DependentUpon>Loading.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuForms\MainMenu.resx">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

@@ -31,7 +31,7 @@ namespace ActionGame.MenuForms
                 MessageBox.Show(
                     String.Format("Resolution in video settings contains incorrect value. You've entered \"{0}\" Correct form is for example 800x600.", resolutionCmb.Text),
                     "Bad resolution", MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1);
-                resolutionCmb.Text = "640x480";
+                resolutionCmb.Text = "800x600";
             }
         }
 
@@ -45,5 +45,6 @@ namespace ActionGame.MenuForms
                 return new Size(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
             }
         }
+        public int TownQuarterCount { get { return (int)quartersCountNB.Value; } }
     }
 }

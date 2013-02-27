@@ -9,6 +9,9 @@ namespace ActionGame.Extensions
 {
     static class ModelExtensions
     {
+        private static readonly Dictionary<Model, Vector3> sizeCache = new Dictionary<Model, Vector3>();
+        private static Matrix cachedWorldTransform = Matrix.Identity;
+
         /// <summary>
         /// Creates BoundingBox of this model.
         /// From: http://gamedev.stackexchange.com/questions/2438/how-do-rx-create-bounding-boxes-with-xna-4-0
@@ -43,8 +46,21 @@ namespace ActionGame.Extensions
             return new BoundingBox(min, max);
         }
 
+
         public static Vector3 GetSize(this Model model, Matrix worldTransform)
         {
+            if (cachedWorldTransform == worldTransform)
+            {
+                if (sizeCache.ContainsKey(model))
+                {
+                    return sizeCache[model];
+                }
+            }
+            else
+            {
+                cachedWorldTransform = worldTransform;
+                sizeCache.Clear();
+            }
             BoundingBox box = model.GetBoundingBox(worldTransform);
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
@@ -64,7 +80,9 @@ namespace ActionGame.Extensions
                 if (corner.Z < min.Z)
                     min.Z = corner.Z;
             }
-            return (max - min);
+            Vector3 size = (max - min);
+            sizeCache.Add(model, size);
+            return size;
         }
     }
 }

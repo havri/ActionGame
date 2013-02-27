@@ -43,7 +43,7 @@ namespace ActionGame
             int i = 0;
             foreach (var writing in writings)
             {
-                game.SpriteBatch.DrawString(font, String.Format("{0}: {1}", writing.Key, writing.Value), new Vector2(10, i * 16), Color.White);
+                game.SpriteBatch.DrawString(font, String.Format("{0}: {1}", writing.Key, writing.Value), new Vector2(10,100 + i * 16), Color.White);
                 i++;
             }
             game.SpriteBatch.End();

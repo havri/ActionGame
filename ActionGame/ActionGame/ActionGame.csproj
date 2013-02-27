@@ -140,6 +140,9 @@
     <Compile Include="Space\Plate.cs" />
     <Compile Include="QSP\Node.cs" />
     <Compile Include="Tasks\InfinityWalkingTask.cs" />
+    <Compile Include="Tools\Gun.cs" />
+    <Compile Include="Tools\GunType.cs" />
+    <Compile Include="Tools\Tool.cs" />
     <Compile Include="World\PathGraphVertex.cs" />
     <Compile Include="World\PathGraph.cs" />
     <Compile Include="World\DrawedSpatialObject.cs" />
@@ -203,7 +206,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
-    <None Include="People\girl0.fbx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MenuForms\Loading.resx">

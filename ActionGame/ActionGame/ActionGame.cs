@@ -13,6 +13,7 @@ using ActionGame.People;
 using ActionGame.Components;
 using ActionGame.Tasks;
 using ActionGame.MenuForms;
+using ActionGame.Tools;
 
 namespace ActionGame
 {
@@ -27,6 +28,7 @@ namespace ActionGame
         int resolutionWidth = 1660;
         int resolutionHeight = 1010;
         bool fullscreen = false;
+        int townQuarterCount = 6;
 
 
         Player player;
@@ -68,7 +70,6 @@ namespace ActionGame
         }
 
         bool doInitialize = true;
-
         public ActionGame()
         {
             using (MainMenu mainMenuForm = new MainMenu())
@@ -84,18 +85,22 @@ namespace ActionGame
                     System.Drawing.Size resolution = mainMenuForm.Resolution;
                     resolutionWidth = resolution.Width;
                     resolutionHeight = resolution.Height;
+                    townQuarterCount = mainMenuForm.TownQuarterCount;
                 }
             }
 
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = resolutionWidth;
-            graphics.PreferredBackBufferHeight = resolutionHeight;
+            graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = resolutionWidth,
+                PreferredBackBufferHeight = resolutionHeight 
+            };
             if(fullscreen)
                 graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
 
-            player = new Player();
-            camera = new Camera(player, this);
+            
+            
+            camera = new Camera(this);
             debug = new Debug(this);
             drawer = new Drawer(this, resolutionWidth, resolutionHeight);
             Components.Add(camera);
@@ -112,6 +117,8 @@ namespace ActionGame
         {
             if (doInitialize)
             {
+                Human.Fists = new GunType(10, 0.5f, true, Content.Load<Texture2D>("Textures/ToolIcons/fists"));
+                player = new Player();
                 base.Initialize();
             }
         }
@@ -126,7 +133,7 @@ namespace ActionGame
                 loadingForm.Show();
                 loadingForm.SetLabel("Loading graphics device...");
                 spriteBatch = new SpriteBatch(GraphicsDevice);
-                town = new Town(this, 6, Content, drawer.WorldTransformMatrix, GraphicsDevice, loadingForm);
+                town = new Town(this, townQuarterCount, Content, drawer.WorldTransformMatrix, GraphicsDevice, loadingForm);
                 loadingForm.SetLabel("Loading player...");
                 loadingForm.SetValue(0);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), new PositionInTown(null, new Vector2(00, 00)), MathHelper.PiOver2, drawer.WorldTransformMatrix);
@@ -187,7 +194,7 @@ namespace ActionGame
             base.Dispose(disposing);
 
             player.Dispose();
-            town.Dispose();
+            if(town != null) town.Dispose();
             drawer.Dispose();
             camera.Dispose();
             debug.Dispose();

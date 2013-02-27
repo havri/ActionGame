@@ -8,6 +8,7 @@ using ActionGame.World;
 using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ActionGame.Tools;
 
 namespace ActionGame.People
 {
@@ -21,17 +22,23 @@ namespace ActionGame.People
         const float LookingAtHeightStep = 0.3f;
         public const float EpsilonDistance = 0.5f;
         public static readonly TimeSpan StepTimeOut = new TimeSpan(0, 0, 0, 0, 30);
+        ///TODO: Load from xml or something.
+        public static GunType Fists;
 
         protected int health;
         protected float lookingAtHeight;
-
-        Queue<Task> tasks;
+        private readonly Queue<Task> tasks;
+        private readonly List<Tool> tools;
+        private int selectedToolIndex;
 
         public Human(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
         {
             health = 100;
             tasks = new Queue<Task>();
+            tools = new List<Tool>();
+            tools.Add(new Gun(Fists, this));
+            selectedToolIndex = 0;
         }
 
         protected void Go(bool forward)
@@ -123,6 +130,25 @@ namespace ActionGame.People
         public void AddTask(Task task)
         {
             tasks.Enqueue(task);
+        }
+
+        public Tool SelectedTool
+        { 
+            get
+            {
+                if (tools.Count == 0)
+                    return null;
+                else
+                    return tools[selectedToolIndex];
+            }
+        }
+
+        public void DoToolAction()
+        {
+            if (SelectedTool != null)
+            {
+                SelectedTool.DoAction();
+            }
         }
     }
 }

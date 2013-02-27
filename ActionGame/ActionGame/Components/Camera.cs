@@ -15,18 +15,24 @@ namespace ActionGame
 
         public Matrix ViewMatrix {get;set;}
 
-        Human holdingHuman;
+        
         CameraMode mode = CameraMode.ThirdPersonLook;
-        Keys changeKey = Keys.C;
+        static readonly Keys changeKey = Keys.C;
         TimeSpan lastChange = new TimeSpan(0);
         Vector3 cameraPosition;
         Vector3 cameraSubjectPosition;
 
-        public Camera(Player cameraHoldingPlayer, Game game)
-            :base(game)
+        Human holdingHuman
         {
-            this.holdingHuman = cameraHoldingPlayer;
+            get
+            {
+                return ((ActionGame)Game).Player;
+            }
         }
+
+        public Camera(Game game)
+            :base(game)
+        { }
 
         /// <summary>
         /// Gets current camera side.

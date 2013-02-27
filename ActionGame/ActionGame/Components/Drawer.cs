@@ -14,14 +14,16 @@ namespace ActionGame.Components
     /// </summary>
     public class Drawer : DrawableGameComponent
     {
-        ActionGame game;
-        List<DrawedObject> objects;
-        Matrix projectionMatrix;
-        Matrix worldMatrix = Matrix.Identity;
+        readonly ActionGame game;
+        readonly List<DrawedObject> objects;
+        readonly Matrix projectionMatrix;
+        readonly Matrix worldMatrix = Matrix.Identity;
+        Texture2D toolPanelBackground;
         Texture2D townGraphPicture;
         Texture2D playerIcon;
         Texture2D townPanorama;
         TownQuarter currentQuarter;
+        SpriteFont font;
 
 
         /// <summary>
@@ -85,6 +87,14 @@ namespace ActionGame.Components
             }
             game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
+            game.SpriteBatch.Begin();
+            game.SpriteBatch.Draw(toolPanelBackground, new Vector2(0, 0), Color.AliceBlue);
+            game.SpriteBatch.DrawString(font, game.Player.Health.ToString(), new Vector2(20, 80), Color.Maroon);
+            if (game.Player.SelectedTool != null)
+            {
+                game.SpriteBatch.Draw(game.Player.SelectedTool.Icon, new Vector2(100, 0), Color.AliceBlue);
+            }
+            game.SpriteBatch.End();
 
             DrawMaps();
         }
@@ -160,6 +170,8 @@ namespace ActionGame.Components
 
             playerIcon = Game.Content.Load<Texture2D>("Textures/player");
             townPanorama = Game.Content.Load<Texture2D>("Textures/panorama");
+            toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
+            font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
         }
 
         protected override void Dispose(bool disposing)

@@ -26,6 +26,7 @@ namespace ActionGame.QSP
         public void RemoveObject(Quadrangle obj)
         {
             objects.Remove(obj);
+            obj.SpacePartitioningFields.Remove(this);
         }
 
         public void AddPathGraphVertex(PathGraphVertex vertex)

@@ -191,6 +191,7 @@ namespace ActionGame.World
         {
             foreach (var walker in walkers)
                 walker.Update(gameTime);
+            spaceGrid.Update();
         }
 
         public Texture2D RoadSignTexture

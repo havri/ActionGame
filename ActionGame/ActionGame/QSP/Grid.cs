@@ -10,6 +10,7 @@ namespace ActionGame.QSP
 {
     public class Grid
     {
+        readonly ISet<Quadrangle> objects;
         readonly GridField[] fields;
         readonly int width, height;
         readonly float fieldWidth, fieldHeight;
@@ -25,6 +26,34 @@ namespace ActionGame.QSP
             this.height = height;
             this.fieldWidth = fieldWidth;
             this.fieldHeight = fieldHeight;
+            objects = new HashSet<Quadrangle>();
+        }
+
+        public void Fill(IEnumerable<Quadrangle> objects)
+        {
+            foreach (Quadrangle obj in objects)
+            {
+                AddObject(obj);
+            }
+        }
+
+        public void Update()
+        {
+            foreach (Quadrangle obj in objects)
+            {
+                IEnumerable<GridField> fields = GetFieldsByObject(obj);
+                HashSet<GridField> newFields = new HashSet<GridField>(fields);
+                newFields.ExceptWith(obj.SpacePartitioningFields);
+                obj.SpacePartitioningFields.ExceptWith(fields);
+                foreach (GridField oldField in obj.SpacePartitioningFields)
+                {
+                    oldField.RemoveObject(obj);
+                }
+                foreach (GridField newField in newFields)
+                {
+                    newField.AddObject(obj);
+                }
+            }
         }
 
         public GridField GetField(int x, int y)
@@ -110,6 +139,7 @@ namespace ActionGame.QSP
             {
                 field.AddObject(obj);
             }
+            objects.Add(obj);
         }
 
         public void RemoveObject(Quadrangle obj)
@@ -118,7 +148,7 @@ namespace ActionGame.QSP
             {
                 field.RemoveObject(obj);
             }
-            obj.SpacePartitioningFields.Clear();
+            objects.Remove(obj);
         }
 
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)

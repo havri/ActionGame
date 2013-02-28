@@ -203,6 +203,9 @@ namespace ActionGame.World
                 usedInterface.OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
                 currentQuarter.RemoveFromDrawer(Game.Drawer);
 
+                //Remove player from old quarter space grid
+                currentQuarter.SpaceGrid.RemoveObject(Game.Player);
+
                 //Moves player into new current quarter
                 float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
                 Vector2 delta = ResolveQuarterPositionDelta(TownQuarter.SquareWidth, usedInterface);
@@ -213,6 +216,9 @@ namespace ActionGame.World
 
                 //Changes current quarter
                 currentQuarter = usedInterface.OppositeInterface.Quarter;
+
+                //Assings player to new space grid
+                currentQuarter.SpaceGrid.AddObject(Game.Player);
 
                 //Restart for drawing
                 lastNearestInterfaceIndex = -1;

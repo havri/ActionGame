@@ -33,6 +33,13 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.healingBoxesNB = new System.Windows.Forms.NumericUpDown();
+            this.ammoBoxesNB = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.quartersCountNB = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.videoSettingsPage = new System.Windows.Forms.TabPage();
             this.resolutionCmb = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -40,18 +47,15 @@
             this.fullScreenChb = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.quartersCountNB = new System.Windows.Forms.NumericUpDown();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ammoBoxesNB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).BeginInit();
             this.videoSettingsPage.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -92,8 +96,6 @@
             // gameSettingsPage
             // 
             this.gameSettingsPage.Controls.Add(this.groupBox1);
-            this.gameSettingsPage.Controls.Add(this.label5);
-            this.gameSettingsPage.Controls.Add(this.label4);
             this.gameSettingsPage.Location = new System.Drawing.Point(4, 22);
             this.gameSettingsPage.Name = "gameSettingsPage";
             this.gameSettingsPage.Padding = new System.Windows.Forms.Padding(3);
@@ -101,6 +103,105 @@
             this.gameSettingsPage.TabIndex = 0;
             this.gameSettingsPage.Text = "Game";
             this.gameSettingsPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.healingBoxesNB);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.ammoBoxesNB);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.quartersCountNB);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(570, 208);
+            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Town";
+            // 
+            // healingBoxesNB
+            // 
+            this.healingBoxesNB.Location = new System.Drawing.Point(140, 40);
+            this.healingBoxesNB.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.healingBoxesNB.Name = "healingBoxesNB";
+            this.healingBoxesNB.Size = new System.Drawing.Size(40, 20);
+            this.healingBoxesNB.TabIndex = 5;
+            this.healingBoxesNB.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // ammoBoxesNB
+            // 
+            this.ammoBoxesNB.Location = new System.Drawing.Point(140, 65);
+            this.ammoBoxesNB.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ammoBoxesNB.Name = "ammoBoxesNB";
+            this.ammoBoxesNB.Size = new System.Drawing.Size(40, 20);
+            this.ammoBoxesNB.TabIndex = 4;
+            this.ammoBoxesNB.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Number of quarters";
+            // 
+            // quartersCountNB
+            // 
+            this.quartersCountNB.Location = new System.Drawing.Point(140, 14);
+            this.quartersCountNB.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.quartersCountNB.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.quartersCountNB.Name = "quartersCountNB";
+            this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
+            this.quartersCountNB.TabIndex = 3;
+            this.quartersCountNB.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 42);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(128, 13);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Healing boxes per quarter";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 67);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(121, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Ammo boxes per quarter";
             // 
             // videoSettingsPage
             // 
@@ -197,67 +298,6 @@
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 16);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Number of quarters";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(58, 134);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "label4";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(58, 195);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "label5";
-            // 
-            // quartersCountNB
-            // 
-            this.quartersCountNB.Location = new System.Drawing.Point(109, 14);
-            this.quartersCountNB.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.quartersCountNB.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.quartersCountNB.Name = "quartersCountNB";
-            this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
-            this.quartersCountNB.TabIndex = 3;
-            this.quartersCountNB.Value = new decimal(new int[] {
-            6,
-            0,
-            0,
-            0});
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.quartersCountNB);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(570, 97);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Town";
-            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -273,13 +313,14 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.gameSettingsPage.ResumeLayout(false);
-            this.gameSettingsPage.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ammoBoxesNB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).EndInit();
             this.videoSettingsPage.ResumeLayout(false);
             this.videoSettingsPage.PerformLayout();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -304,5 +345,7 @@
         private System.Windows.Forms.NumericUpDown quartersCountNB;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown healingBoxesNB;
+        private System.Windows.Forms.NumericUpDown ammoBoxesNB;
     }
 }

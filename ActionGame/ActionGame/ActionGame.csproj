@@ -140,9 +140,11 @@
     <Compile Include="Space\Plate.cs" />
     <Compile Include="QSP\Node.cs" />
     <Compile Include="Tasks\InfinityWalkingTask.cs" />
+    <Compile Include="Tools\Box.cs" />
     <Compile Include="Tools\Gun.cs" />
     <Compile Include="Tools\GunType.cs" />
     <Compile Include="Tools\Tool.cs" />
+    <Compile Include="Tools\ToolBox.cs" />
     <Compile Include="World\PathGraphVertex.cs" />
     <Compile Include="World\PathGraph.cs" />
     <Compile Include="World\DrawedSpatialObject.cs" />

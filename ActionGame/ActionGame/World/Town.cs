@@ -33,7 +33,7 @@ namespace ActionGame.World
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
         
-        public Town(ActionGame game, int quarterCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice, Loading loadingFrom)
+        public Town(ActionGame game, int quarterCount, int ammoBoxCount, int healBoxCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice, Loading loadingFrom)
             : base(game)
         {
             quarters = new TownQuarter[quarterCount];
@@ -87,7 +87,7 @@ namespace ActionGame.World
                 {
                     try
                     {
-                        TownQuarter quarter = new TownQuarter(new Vector2(width, height), degrees[i], content, worldTransform, graphicsDevice);
+                        TownQuarter quarter = new TownQuarter(new Vector2(width, height), degrees[i], ammoBoxCount, healBoxCount, content, worldTransform, graphicsDevice);
                         quarters[i] = quarter;
                     }
                     catch (NoSpaceForInterfaceException ex)

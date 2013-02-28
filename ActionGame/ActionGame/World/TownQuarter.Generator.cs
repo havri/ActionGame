@@ -11,13 +11,14 @@ using ActionGame.Tasks;
 using ActionGame.People;
 using ActionGame.Exceptions;
 using ActionGame.QSP;
+using ActionGame.Tools;
 
 namespace ActionGame.World
 {
     public partial class TownQuarter : IDisposable
     {
 
-        private void Generate(int degree, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
+        private void Generate(int degree, int ammoBoxCount, int healBoxCount, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             ///TODO: Use bitmap to deny X crossroads.
 
@@ -92,11 +93,37 @@ namespace ActionGame.World
             GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform);
             GenerateMapPicture(graphicsDevice, mapBitmap);
             GenerateRoadSignPicture(graphicsDevice, content);
+            for (int i = 0; i < ammoBoxCount; i++)
+            {
+                Point p = GetRandomSquare(mapBitmap, x => x == MapFillType.Sidewalk);
+                ToolBox tb = new ToolBox(null,
+                    content.Load<Model>("Objects/Decorations/Box"),
+                    new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
+                    worldTransform
+                    );
+                solidObjects.AddLast(tb);
+            }
             GenerateWalkers(pathVertecies, content, ref worldTransform);
+
 
             foreach (Quadrangle quadrangle in GetAllSolidObjects())
             {
                 spaceGrid.AddObject(quadrangle);
+            }
+        }
+
+        private Point GetRandomSquare(MapFillType[] mapBitmap, Predicate<MapFillType> where)
+        {
+            Random rand = new Random();
+            for (int x = rand.Next(bitmapSize.Width); x < bitmapSize.Width; x = (x + 1) % bitmapSize.Width)
+            {
+                for (int y = rand.Next(bitmapSize.Height); y < bitmapSize.Height; y = (y + 1) % bitmapSize.Height)
+                {
+                    if (where(mapBitmap.Index2D(bitmapSize.Height, x, y)))
+                    {
+                        return new Point(x, y);
+                    }
+                }
             }
         }
 
@@ -392,8 +419,7 @@ namespace ActionGame.World
             {
                 content.Load<Model>("Objects/Buildings/panelak"),
                 content.Load<Model>("Objects/Buildings/panelak2"),
-                content.Load<Model>("Objects/Buildings/house1")/*,
-                content.Load<Model>("Objects/Decorations/bin")*/
+                content.Load<Model>("Objects/Buildings/house1")
             };
 
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)

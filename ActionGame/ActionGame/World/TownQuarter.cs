@@ -90,7 +90,7 @@ namespace ActionGame.World
         /// <param name="content">ContentManager for loading objects</param>
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="graphicsDevice">Graphics device for creating textures</param>
-        public TownQuarter(Vector2 size, int degree, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+        public TownQuarter(Vector2 size, int degree, int ammoBoxCount, int healBoxCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
         {
             interfaces = new List<TownQuarterInterface>(degree);
             if (nameRepository.Count > 0)
@@ -112,7 +112,7 @@ namespace ActionGame.World
 
             try
             {
-                Generate(degree, content, ref worldTransform, graphicsDevice);
+                Generate(degree, ammoBoxCount, healBoxCount content, ref worldTransform, graphicsDevice);
             }
             catch (Exception ex)
             {

@@ -49,6 +49,20 @@ namespace ActionGame.Space
                 ;
         }
 
+        public void CheckHits()
+        {
+            foreach (GridField field in SpacePartitioningFields)
+            {
+                foreach(Quadrangle q in field.GetCollisions(this))
+                {
+                    Hit(q);
+                }
+            }
+        }
+
+        public virtual void Hit(Quadrangle something)
+        { }
+
         public virtual Vector2 UpperLeftCorner
         {
             get

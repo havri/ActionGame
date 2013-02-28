@@ -12,13 +12,10 @@ namespace ActionGame.Tasks
         protected Human holder;
         protected Queue<WayPoint> wayPoints;
 
-        TimeSpan lastStepMade;
-
         public Task(Human holder)
         {
             this.holder = holder;
             this.wayPoints = new Queue<WayPoint>();
-            lastStepMade = new TimeSpan(0,0,0);
         }
 
         public abstract bool IsComplete();
@@ -34,11 +31,11 @@ namespace ActionGame.Tasks
                 }
             }
 
-            if (wayPoints.Count > 0 && gameTime.TotalGameTime - lastStepMade > Human.StepTimeOut)
+            if (wayPoints.Count > 0)
             {
-                lastStepMade = gameTime.TotalGameTime;
                 WayPoint nextWayPoint = wayPoints.Peek();
-                holder.GoThisWay(nextWayPoint.Point);
+                float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                holder.GoThisWay(nextWayPoint.Point, seconds);
             }
         }
     }

@@ -129,6 +129,8 @@ namespace ActionGame.World
                 }
                 throw ex;
             }
+
+            spaceGrid.Fill(GetAllSolidObjects());
         }
 
         /// <summary>

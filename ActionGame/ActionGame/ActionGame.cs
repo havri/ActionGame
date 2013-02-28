@@ -15,6 +15,7 @@ using ActionGame.Tasks;
 using ActionGame.MenuForms;
 using ActionGame.Tools;
 using ActionGame.Extensions;
+using System.Threading;
 
 namespace ActionGame
 {
@@ -91,23 +92,26 @@ namespace ActionGame
                 }
             }
 
-            graphics = new GraphicsDeviceManager(this)
+            if (doInitialize)
             {
-                PreferredBackBufferWidth = settings.ScreenSize.Width,
-                PreferredBackBufferHeight = settings.ScreenSize.Height 
-            };
-            if(settings.Fullscreen)
-                graphics.ToggleFullScreen();
-            Content.RootDirectory = "Content";
+                graphics = new GraphicsDeviceManager(this)
+                {
+                    PreferredBackBufferWidth = settings.ScreenSize.Width,
+                    PreferredBackBufferHeight = settings.ScreenSize.Height
+                };
+                if (settings.Fullscreen)
+                    graphics.ToggleFullScreen();
+                Content.RootDirectory = "Content";
 
-            
-            
-            camera = new Camera(this);
-            debug = new Debug(this);
-            drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
-            Components.Add(camera);
-            Components.Add(drawer);
-            Components.Add(debug);
+
+
+                camera = new Camera(this);
+                debug = new Debug(this);
+                drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
+                Components.Add(camera);
+                Components.Add(drawer);
+                Components.Add(debug);
+            }
         }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -141,6 +145,7 @@ namespace ActionGame
                 Point playerPoint =  town.CurrentQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                 PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
+                town.CurrentQuarter.SpaceGrid.AddObject(player);
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
@@ -170,7 +175,6 @@ namespace ActionGame
                 this.Exit();
 
             player.Update(gameTime, settings.ScreenSize.Width, settings.ScreenSize.Height);
-
             base.Update(gameTime);
         }
         /// <summary>

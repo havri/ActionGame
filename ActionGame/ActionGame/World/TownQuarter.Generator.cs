@@ -91,12 +91,6 @@ namespace ActionGame.World
             GenerateRoadSignPicture();
             GenerateBoxes();
             GenerateWalkers(pathVertecies);
-
-
-            foreach (Quadrangle quadrangle in GetAllSolidObjects())
-            {
-                spaceGrid.AddObject(quadrangle);
-            }
         }
 
         private void GenerateBoxes()
@@ -139,6 +133,7 @@ namespace ActionGame.World
             bool firstX = true;
             for (int x = startX; x != startX || firstX; x = (x + 1) % bitmapSize.Width)
             {
+                firstX = false;
                 int startY = rand.Next(bitmapSize.Height);
                 bool firstY = true;
                 for (int y = startY; y != startY || firstY; y = (y + 1) % bitmapSize.Height)

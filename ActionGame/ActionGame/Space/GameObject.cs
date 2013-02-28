@@ -93,17 +93,5 @@ namespace ActionGame.Space
                 position = value;
             }
         }
-
-        static readonly TimeSpan GridUpdateTimeout = new TimeSpan(0, 0, 0, 0, 250);
-        TimeSpan lastGridUpdate;
-        public virtual void Update(GameTime gameTime)
-        {
-            if (gameTime.TotalGameTime - lastGridUpdate > GridUpdateTimeout)
-            {
-                position.Quarter.SpaceGrid.RemoveObject(this);
-                position.Quarter.SpaceGrid.AddObject(this);
-                lastGridUpdate = gameTime.TotalGameTime;
-            }
-        }
     }
 }

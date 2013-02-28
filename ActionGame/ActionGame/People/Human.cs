@@ -14,14 +14,19 @@ namespace ActionGame.People
 {
     public class Human : SpatialObject
     {
-        const float StepLength = 0.05f;
-        public const double RotateAngle = MathHelper.Pi / 50f;
+        /// <summary>
+        /// Speed of human walk. In meters per second.
+        /// </summary>
+        const float WalkSpeed = 1.25f;
+        /// <summary>
+        /// Speed of human rotation. In radians per second.
+        /// </summary>
+        public const double RotateAngle = MathHelper.Pi;
         const float ThirdHeadHorizontalDistance = 1.5f;
         const float ThirdHeadVerticalDistance = 0.1f;
         const float LookingAtDistance = 10;
         const float LookingAtHeightStep = 0.3f;
         public const float EpsilonDistance = 0.5f;
-        public static readonly TimeSpan StepTimeOut = new TimeSpan(0, 0, 0, 0, 30);
         ///TODO: Load from xml or something.
         public static GunType Fists;
 
@@ -30,6 +35,7 @@ namespace ActionGame.People
         private readonly Queue<Task> tasks;
         private readonly List<Tool> tools;
         private int selectedToolIndex;
+        private Vector2 lastPosition;
 
         public Human(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -39,21 +45,24 @@ namespace ActionGame.People
             tools = new List<Tool>();
             tools.Add(new Gun(Fists, this));
             selectedToolIndex = 0;
+            lastPosition = position.PositionInQuarter;
         }
 
-        protected void Go(bool forward)
+        protected void Go(bool forward, float seconds)
         {
-            position.PositionInQuarter = position.PositionInQuarter.Go(StepLength * (forward ? 1 : -1), azimuth);
+            lastPosition = position.PositionInQuarter;
+            position.PositionInQuarter = position.PositionInQuarter.Go(WalkSpeed * seconds * (forward ? 1 : -1), azimuth);
         }
 
-        protected void Step(bool toLeft)
+        protected void Step(bool toLeft, float seconds)
         {
-            position.PositionInQuarter = position.PositionInQuarter.Go(StepLength, azimuth + (toLeft ? -MathHelper.PiOver2 : MathHelper.PiOver2));
+            lastPosition = position.PositionInQuarter;
+            position.PositionInQuarter = position.PositionInQuarter.Go(WalkSpeed * seconds, azimuth + (toLeft ? -MathHelper.PiOver2 : MathHelper.PiOver2));
         }
 
-        protected void Rotate(bool toLeft)
+        protected void Rotate(bool toLeft, float seconds)
         {
-            azimuth += (toLeft ? -1 : 1) * RotateAngle;
+            azimuth += (toLeft ? -1 : 1) * RotateAngle * seconds;
         }
 
         public Vector3 FirstHeadPosition
@@ -83,7 +92,7 @@ namespace ActionGame.People
             }
         }
 
-        public void GoThisWay(PositionInTown destination)
+        public void GoThisWay(PositionInTown destination, float seconds)
         {
             if (destination.Quarter == this.position.Quarter)
             {
@@ -91,12 +100,14 @@ namespace ActionGame.People
                 while (direction >= MathHelper.TwoPi) direction -= MathHelper.TwoPi;
                 if (Math.Abs(azimuth - direction) > RotateAngle || (azimuth + MathHelper.TwoPi - direction) > RotateAngle && direction > azimuth)
                 {
-                    this.Rotate((azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi));
+                    this.Rotate(
+                        (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi),
+                        seconds);
                 }
                 else
                 {
                     azimuth = direction;
-                    this.Go(true);
+                    this.Go(true, seconds);
                 }
             }
             else
@@ -106,7 +117,7 @@ namespace ActionGame.People
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             if (tasks.Count > 0)
             {
@@ -115,8 +126,6 @@ namespace ActionGame.People
                 if (currentTask.IsComplete())
                     tasks.Dequeue();
             }
-
-            base.Update(gameTime);
         }
 
         public int Health
@@ -149,6 +158,21 @@ namespace ActionGame.People
             {
                 SelectedTool.DoAction();
             }
+        }
+        public override void Hit(Quadrangle something)
+        {
+            if (something is ToolBox)
+            {
+                Hit(something as ToolBox);
+            }
+            else
+            {
+                position.PositionInQuarter = lastPosition;
+            }
+        }
+
+        private void Hit(ToolBox box)
+        { 
         }
     }
 }

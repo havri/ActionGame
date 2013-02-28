@@ -49,16 +49,15 @@ namespace ActionGame.QSP
             get { return objects.Count; }
         }
 
-        public bool IsInCollision(Quadrangle obj)
+        public IEnumerable<Quadrangle> GetCollisions(Quadrangle obj)
         {
             foreach (Quadrangle quad in objects)
             {
                 if (obj.IsInCollisionWith(quad) && obj != quad)
                 {
-                    return true;
+                    yield return quad;
                 }
             }
-            return false;
         }
     }
 }

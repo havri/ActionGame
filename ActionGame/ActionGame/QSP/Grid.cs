@@ -12,6 +12,7 @@ namespace ActionGame.QSP
     {
         readonly ISet<Quadrangle> objects;
         readonly GridField[] fields;
+        readonly GridField outside;
         readonly int width, height;
         readonly float fieldWidth, fieldHeight;
 
@@ -27,6 +28,7 @@ namespace ActionGame.QSP
             this.fieldWidth = fieldWidth;
             this.fieldHeight = fieldHeight;
             objects = new HashSet<Quadrangle>();
+            outside = new GridField();
         }
 
         public void Fill(IEnumerable<Quadrangle> objects)
@@ -41,11 +43,12 @@ namespace ActionGame.QSP
         {
             foreach (Quadrangle obj in objects)
             {
-                IEnumerable<GridField> fields = GetFieldsByObject(obj);
-                HashSet<GridField> newFields = new HashSet<GridField>(fields);
+                IEnumerable<GridField> rightFields = GetFieldsByObject(obj);
+                HashSet<GridField> newFields = new HashSet<GridField>(rightFields);
+                HashSet<GridField> oldFields = new HashSet<GridField>(obj.SpacePartitioningFields);
                 newFields.ExceptWith(obj.SpacePartitioningFields);
-                obj.SpacePartitioningFields.ExceptWith(fields);
-                foreach (GridField oldField in obj.SpacePartitioningFields)
+                oldFields.ExceptWith(rightFields);
+                foreach (GridField oldField in oldFields)
                 {
                     oldField.RemoveObject(obj);
                 }
@@ -98,34 +101,42 @@ namespace ActionGame.QSP
             int wX = (int)(minX / fieldWidth), //auto floor
                 wY = (int)(minY / fieldHeight);
             Rectangle window = new Rectangle(wX, wY,
-                (int)(maxX / fieldWidth) - wX,
-                (int)((maxY - maxY) / fieldHeight) - wY
+                (int)(maxX / fieldWidth) - wX + 1,
+                (int)(maxY / fieldHeight) - wY + 1
                 );
 
+            List<GridField> result = new List<GridField>();
             for (int y = 0; y < window.Height; y++)
             {
+                int actY = y + window.Y;
                 for (int x = 0; x < window.Width; x++)
                 {
+                    int actX = x + window.X;
                     Quadrangle fieldOne = new Quadrangle(
-                        new Vector2(x * fieldWidth, y * fieldHeight),
-                        new Vector2(x * fieldWidth + fieldWidth, y * fieldHeight),
-                        new Vector2(x * fieldWidth, y * fieldHeight + fieldHeight),
-                        new Vector2(x * fieldWidth + fieldWidth, y * fieldHeight + fieldHeight)
+                        new Vector2(actX * fieldWidth, actY * fieldHeight),
+                        new Vector2(actX * fieldWidth + fieldWidth, actY * fieldHeight),
+                        new Vector2(actX * fieldWidth, actY * fieldHeight + fieldHeight),
+                        new Vector2(actX * fieldWidth + fieldWidth, actY * fieldHeight + fieldHeight)
                         );
 
-                    if (fieldOne.IsInCollisionWith(obj))
+                    if (fieldOne.IsInCollisionWith(obj) && actX < width && actY < height)
                     {
-                        yield return GetField(x, y);
+                        result.Add(GetField(actX, actY));
                     }
                 }
             }
+            if (result.Count == 0)
+            {
+                result.Add(outside);
+            }
+            return result;
         }
 
-        public bool IsInCollision(Quadrangle obj)
+        public static bool IsInCollision(Quadrangle obj)
         {
             foreach (GridField field in obj.SpacePartitioningFields)
             {
-                if (field.IsInCollision(obj))
+                if (field.GetCollisions(obj).Any())
                 {
                     return true;
                 }
@@ -135,19 +146,11 @@ namespace ActionGame.QSP
 
         public void AddObject(Quadrangle obj)
         {
-            foreach (GridField field in GetFieldsByObject(obj))
-            {
-                field.AddObject(obj);
-            }
             objects.Add(obj);
         }
 
         public void RemoveObject(Quadrangle obj)
         {
-            foreach (GridField field in obj.SpacePartitioningFields)
-            {
-                field.RemoveObject(obj);
-            }
             objects.Remove(obj);
         }
 
@@ -164,7 +167,7 @@ namespace ActionGame.QSP
                     }
                 }
             }
-            throw new PathNotFoundException("Couldn't find path graph vertex with has clear way to specified position.");
+            throw new PathNotFoundException("Couldn't find path graph vertex witch has clear way to specified position.");
         }
 
         IEnumerable<GridField> GetFieldsByRounds(Vector2 from)

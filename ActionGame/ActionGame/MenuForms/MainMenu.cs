@@ -35,18 +35,21 @@ namespace ActionGame.MenuForms
             }
         }
 
-
-        public bool FullScreen { get { return fullScreenChb.Checked; } }
-        public Size Resolution
+        public GameSettings Settings
         {
             get
-            { 
+            {
                 Match match = Regex.Match(resolutionCmb.Text, @"^(\d{3,4})x(\d{3,4})$");
-                return new Size(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+                Size resolution = new  Size(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+                return new GameSettings
+                    {
+                        Fullscreen = fullScreenChb.Checked,
+                        ScreenSize = resolution,
+                        TownQuarterCount = (int)quartersCountNB.Value,
+                        HealBoxCount = (int)healingBoxesNB.Value,
+                        AmmoBoxCount = (int)ammoBoxesNB.Value
+                    };
             }
         }
-        public int TownQuarterCount { get { return (int)quartersCountNB.Value; } }
-        public int HealingBoxesCount { get { return (int)healingBoxesNB.Value; } }
-        public int AmmoBoxesCount { get { return (int)ammoBoxesNB.Value; } }
     }
 }

@@ -106,7 +106,7 @@ namespace ActionGame.Components
             game.SpriteBatch.Begin();
             if (ShowQuatterMap)
             {
-                Vector2 mapPosition = new Vector2((game.WindowWidth - currentQuarter.Map.Width) / 2, (game.WindowHeight - currentQuarter.Map.Height) / 2);
+                Vector2 mapPosition = new Vector2((game.Settings.ScreenSize.Width - currentQuarter.Map.Width) / 2, (game.Settings.ScreenSize.Height - currentQuarter.Map.Height) / 2);
                 game.SpriteBatch.Draw(currentQuarter.Map, mapPosition, Color.White);
 
                 Vector2 playerPosition = new Vector2(
@@ -117,7 +117,7 @@ namespace ActionGame.Components
             }
             if (ShowTownGraph && townGraphPicture != null)
             {
-                game.SpriteBatch.Draw(townGraphPicture, new Vector2((game.WindowWidth - townGraphPicture.Width) / 2, (game.WindowHeight - townGraphPicture.Height) / 2), Color.White);
+                game.SpriteBatch.Draw(townGraphPicture, new Vector2((game.Settings.ScreenSize.Width - townGraphPicture.Width) / 2, (game.Settings.ScreenSize.Height - townGraphPicture.Height) / 2), Color.White);
             }
             game.SpriteBatch.End();
         }
@@ -128,14 +128,14 @@ namespace ActionGame.Components
         {
             ///TODO: Respect player vertical moves.
             game.SpriteBatch.Begin();
-            float ratio = townPanorama.Height / (game.WindowHeight * 0.5f);
+            float ratio = townPanorama.Height / (game.Settings.ScreenSize.Height * 0.5f);
             double percentAngle = game.Player.Azimuth / MathHelper.TwoPi;
             game.SpriteBatch.Draw(townPanorama,
-                new Rectangle(-(int)(percentAngle * game.WindowWidth), 0, game.WindowWidth, game.WindowHeight / 2),
+                new Rectangle(-(int)(percentAngle * game.Settings.ScreenSize.Width), 0, game.Settings.ScreenSize.Width, game.Settings.ScreenSize.Height / 2),
                 new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
                 Color.White);
             game.SpriteBatch.Draw(townPanorama,
-                new Rectangle(-(int)((percentAngle - 1) * game.WindowWidth), 0, game.WindowWidth, game.WindowHeight / 2),
+                new Rectangle(-(int)((percentAngle - 1) * game.Settings.ScreenSize.Width), 0, game.Settings.ScreenSize.Width, game.Settings.ScreenSize.Height / 2),
                 new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
                 Color.White);
             game.SpriteBatch.End();

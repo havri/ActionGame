@@ -14,6 +14,7 @@ using ActionGame.Components;
 using ActionGame.Tasks;
 using ActionGame.MenuForms;
 using ActionGame.Tools;
+using ActionGame.Extensions;
 
 namespace ActionGame
 {
@@ -25,10 +26,15 @@ namespace ActionGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int resolutionWidth = 1660;
-        int resolutionHeight = 1010;
-        bool fullscreen = false;
-        int townQuarterCount = 6;
+
+        public GameSettings Settings
+        {
+            get
+            {
+                return settings;
+            }
+        }
+        GameSettings settings;
 
 
         Player player;
@@ -81,20 +87,16 @@ namespace ActionGame
                 }
                 else
                 {
-                    fullscreen = mainMenuForm.FullScreen;
-                    System.Drawing.Size resolution = mainMenuForm.Resolution;
-                    resolutionWidth = resolution.Width;
-                    resolutionHeight = resolution.Height;
-                    townQuarterCount = mainMenuForm.TownQuarterCount;
+                    settings = mainMenuForm.Settings;
                 }
             }
 
             graphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = resolutionWidth,
-                PreferredBackBufferHeight = resolutionHeight 
+                PreferredBackBufferWidth = settings.ScreenSize.Width,
+                PreferredBackBufferHeight = settings.ScreenSize.Height 
             };
-            if(fullscreen)
+            if(settings.Fullscreen)
                 graphics.ToggleFullScreen();
             Content.RootDirectory = "Content";
 
@@ -102,7 +104,7 @@ namespace ActionGame
             
             camera = new Camera(this);
             debug = new Debug(this);
-            drawer = new Drawer(this, resolutionWidth, resolutionHeight);
+            drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
             Components.Add(camera);
             Components.Add(drawer);
             Components.Add(debug);
@@ -133,10 +135,12 @@ namespace ActionGame
                 loadingForm.Show();
                 loadingForm.SetLabel("Loading graphics device...");
                 spriteBatch = new SpriteBatch(GraphicsDevice);
-                town = new Town(this, townQuarterCount, Content, drawer.WorldTransformMatrix, GraphicsDevice, loadingForm);
+                town = new Town(this, loadingForm);
                 loadingForm.SetLabel("Loading player...");
                 loadingForm.SetValue(0);
-                player.Load(Content.Load<Model>("Objects/Humans/human0"), new PositionInTown(null, new Vector2(00, 00)), MathHelper.PiOver2, drawer.WorldTransformMatrix);
+                Point playerPoint =  town.CurrentQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
+                PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth);
+                player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
@@ -165,7 +169,7 @@ namespace ActionGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            player.Update(gameTime, resolutionWidth, resolutionHeight);
+            player.Update(gameTime, settings.ScreenSize.Width, settings.ScreenSize.Height);
 
             base.Update(gameTime);
         }
@@ -177,16 +181,6 @@ namespace ActionGame
         {
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer ,Color.CornflowerBlue, 1, 1);
             base.Draw(gameTime);
-        }
-
-        public int WindowWidth
-        {
-            get { return resolutionWidth; }
-        }
-
-        public int WindowHeight
-        {
-            get { return resolutionHeight; }
         }
 
         protected override void Dispose(bool disposing)

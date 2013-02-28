@@ -18,14 +18,14 @@ namespace ActionGame.World
     public partial class TownQuarter : IDisposable
     {
 
-        private void Generate(int degree, int ammoBoxCount, int healBoxCount, ContentManager content, ref Matrix worldTransform, GraphicsDevice graphicsDevice)
+        private void Generate(int degree)
         {
             ///TODO: Use bitmap to deny X crossroads.
 
             ///TODO: Load textures from central repository
-            Texture2D roadTexture = content.Load<Texture2D>("Textures/Ground/road0");
-            Texture2D sidewalkTexture = content.Load<Texture2D>("Textures/Ground/sidewalk0");
-            Texture2D grassTexture = content.Load<Texture2D>("Textures/Ground/grass0");
+            Texture2D roadTexture = game.Content.Load<Texture2D>("Textures/Ground/road0");
+            Texture2D sidewalkTexture = game.Content.Load<Texture2D>("Textures/Ground/sidewalk0");
+            Texture2D grassTexture = game.Content.Load<Texture2D>("Textures/Ground/grass0");
 
 
             if (bitmapSize.Width < 4 * BlockWidth || bitmapSize.Height < 4 * BlockWidth)
@@ -33,23 +33,19 @@ namespace ActionGame.World
                 throw new ArgumentOutOfRangeException("Specified size is to small.");
             }
 
-            MapFillType[] mapBitmap = new MapFillType[bitmapSize.Width * bitmapSize.Height];
-            for (int i = 0; i < mapBitmap.Length; i++)
-                mapBitmap[i] = MapFillType.Empty;
+            GenerateInterfaces(degree, roadTexture, sidewalkTexture);
 
-            GenerateInterfaces(degree, mapBitmap, roadTexture, sidewalkTexture, worldTransform, content);
+            Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(roadTexture);
 
-            Rectangle emptyRectangleInBorderRoadCyrcle = GenerateBorderRoads(roadTexture, mapBitmap);
-
-            List<Rectangle> emptyRectanglesInsideRoads = GenerateInnerRoadNetwork(roadTexture, emptyRectangleInBorderRoadCyrcle, mapBitmap);
+            List<Rectangle> emptyRectanglesInsideRoads = GenerateInnerRoadNetwork(roadTexture, emptyRectangleInBorderRoadCyrcle);
             List<Rectangle> emptyRectaglesInsideSidewalks = new List<Rectangle>(emptyRectanglesInsideRoads.Count);
             foreach (Rectangle emptyRect in emptyRectanglesInsideRoads)
             {
                 emptyRectaglesInsideSidewalks.Add(
-                    GenerateSidewalks(emptyRect, sidewalkTexture, mapBitmap)
+                    GenerateSidewalks(emptyRect, sidewalkTexture)
                 );
             }
-            IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectanglesInsideRoads, mapBitmap);
+            IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectanglesInsideRoads);
 
             ///TODO: This test cas slow generation process.
             if (!PathGraph.IsConnected(pathVertecies))
@@ -68,8 +64,8 @@ namespace ActionGame.World
                         v.Position.PositionInQuarter.Go(0.2f, MathHelper.PiOver2).ToVector3(pointHeight),
                         v.Position.PositionInQuarter.Go(0.2f, -MathHelper.PiOver2).ToVector3(pointHeight),
                         v.Position.PositionInQuarter.Go(0.2f, MathHelper.Pi).ToVector3(pointHeight),
-                        content.Load<Texture2D>("Textures/blue"),
-                        content.Load<Texture2D>("Textures/blue"));
+                        game.Content.Load<Texture2D>("Textures/blue"),
+                        game.Content.Load<Texture2D>("Textures/blue"));
                 magicPlates.AddLast(vplate);
                 foreach (var n in v.Neighbors)
                 { 
@@ -80,8 +76,8 @@ namespace ActionGame.World
                         n.Position.PositionInQuarter.ToVector3(height),
                         v.Position.PositionInQuarter.ToVector3(0),
                         n.Position.PositionInQuarter.ToVector3(0),
-                        content.Load<Texture2D>("Textures/blue"),
-                        content.Load<Texture2D>("Textures/blue"));
+                        game.Content.Load<Texture2D>("Textures/blue"),
+                        game.Content.Load<Texture2D>("Textures/blue"));
                     magicPlates.AddLast(plate);
                 }
             }
@@ -90,20 +86,11 @@ namespace ActionGame.World
 
             GenerateGrass(grassTexture, emptyRectaglesInsideSidewalks);
 
-            GenerateBuildings(emptyRectaglesInsideSidewalks, content, worldTransform);
-            GenerateMapPicture(graphicsDevice, mapBitmap);
-            GenerateRoadSignPicture(graphicsDevice, content);
-            for (int i = 0; i < ammoBoxCount; i++)
-            {
-                Point p = GetRandomSquare(mapBitmap, x => x == MapFillType.Sidewalk);
-                ToolBox tb = new ToolBox(null,
-                    content.Load<Model>("Objects/Decorations/Box"),
-                    new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
-                    worldTransform
-                    );
-                solidObjects.AddLast(tb);
-            }
-            GenerateWalkers(pathVertecies, content, ref worldTransform);
+            GenerateBuildings(emptyRectaglesInsideSidewalks);
+            GenerateMapPicture();
+            GenerateRoadSignPicture();
+            GenerateBoxes();
+            GenerateWalkers(pathVertecies);
 
 
             foreach (Quadrangle quadrangle in GetAllSolidObjects())
@@ -112,25 +99,65 @@ namespace ActionGame.World
             }
         }
 
-        private Point GetRandomSquare(MapFillType[] mapBitmap, Predicate<MapFillType> where)
+        private void GenerateBoxes()
         {
-            Random rand = new Random();
-            for (int x = rand.Next(bitmapSize.Width); x < bitmapSize.Width; x = (x + 1) % bitmapSize.Width)
+            HashSet<Point> occupiedPositions = new HashSet<Point>();
+            for (int i = 0; i < game.Settings.AmmoBoxCount; i++)
             {
-                for (int y = rand.Next(bitmapSize.Height); y < bitmapSize.Height; y = (y + 1) % bitmapSize.Height)
-                {
-                    if (where(mapBitmap.Index2D(bitmapSize.Height, x, y)))
-                    {
-                        return new Point(x, y);
-                    }
-                }
+                Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height,pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
+                ToolBox tb = new ToolBox(null,
+                    game.Content.Load<Model>("Objects/Decorations/Box"),
+                    new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
+                    game.Drawer.WorldTransformMatrix
+                    );
+                solidObjects.AddLast(tb);
+                occupiedPositions.Add(p);
+            }
+
+            for (int i = 0; i < game.Settings.HealBoxCount; i++)
+            {
+                Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
+                ToolBox tb = new ToolBox(null,
+                    game.Content.Load<Model>("Objects/Decorations/Box"),
+                    new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
+                    game.Drawer.WorldTransformMatrix
+                    );
+                solidObjects.AddLast(tb);
+                occupiedPositions.Add(p);
             }
         }
 
-        private void GenerateRoadSignPicture(GraphicsDevice graphicsDevice, ContentManager content)
+        public Point GetRandomSquare(Predicate<MapFillType> where)
+        {
+            return GetRandomSquare(pos => where(mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y)));
+        }
+
+        public Point GetRandomSquare(Predicate<Point> where)
+        {
+            Random rand = new Random();
+            int startX = rand.Next(bitmapSize.Width);
+            bool firstX = true;
+            for (int x = startX; x != startX || firstX; x = (x + 1) % bitmapSize.Width)
+            {
+                int startY = rand.Next(bitmapSize.Height);
+                bool firstY = true;
+                for (int y = startY; y != startY || firstY; y = (y + 1) % bitmapSize.Height)
+                {
+                    firstY = false;
+                    Point point = new Point(x, y);
+                    if (where(point))
+                    {
+                        return point;
+                    }
+                }
+            }
+            return Point.Zero;
+        }
+
+        private void GenerateRoadSignPicture()
         {
             //Stuff from Content Manager doesn't need manual disposing.
-            Texture2D bgTex = content.Load<Texture2D>("Textures/roadSign");
+            Texture2D bgTex = game.Content.Load<Texture2D>("Textures/roadSign");
             using (MemoryStream bgStream = new MemoryStream())
             {
                 bgTex.SaveAsPng(bgStream, 768, 256);
@@ -153,7 +180,7 @@ namespace ActionGame.World
                     {
                         signImg.Save(imgStream, System.Drawing.Imaging.ImageFormat.Png);
                         imgStream.Position = 0;
-                        roadSignTexture = Texture2D.FromStream(graphicsDevice, imgStream);
+                        roadSignTexture = Texture2D.FromStream(game.GraphicsDevice, imgStream);
                     }
                 }
             }
@@ -179,7 +206,7 @@ namespace ActionGame.World
             }
         }
 
-        void GenerateWalkers(IList<PathGraphVertex> pathVertecies, ContentManager content, ref Matrix worldTransform)
+        void GenerateWalkers(IList<PathGraphVertex> pathVertecies)
         {
             if (pathVertecies.Count > 2)
             {
@@ -188,7 +215,7 @@ namespace ActionGame.World
                 {
                     IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
                     ///TODO: Take human model from central repository.
-                    Human walker = new Human(content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, worldTransform);
+                    Human walker = new Human(game.Content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
                     walker.AddTask(task);
                     walkers.AddFirst(walker);
@@ -197,7 +224,7 @@ namespace ActionGame.World
         }
 
 
-        IList<PathGraphVertex> GeneratePathGraph(List<Rectangle> emptyRectanglesInsideRoads, MapFillType[] mapBitmap)
+        IList<PathGraphVertex> GeneratePathGraph(List<Rectangle> emptyRectanglesInsideRoads)
         {
             List<Point> pointsOfInterests = new List<Point>();
             foreach (Rectangle rect in emptyRectanglesInsideRoads)
@@ -299,13 +326,13 @@ namespace ActionGame.World
                 }
             }
 
-            SweepPathVertices(verticalIndexedPaths, mapBitmap, AxisDirection.Horizontal);
-            SweepPathVertices(horizontalIndexedPaths, mapBitmap, AxisDirection.Vertical);
+            SweepPathVertices(verticalIndexedPaths, AxisDirection.Horizontal);
+            SweepPathVertices(horizontalIndexedPaths,  AxisDirection.Vertical);
 
             return innerVertices;
         }
 
-        private void SweepPathVertices(Dictionary<int, SortedDictionary<int, PathGraphVertex>> vertexLines, MapFillType[] mapBitmap, AxisDirection sweepDirection)
+        private void SweepPathVertices(Dictionary<int, SortedDictionary<int, PathGraphVertex>> vertexLines, AxisDirection sweepDirection)
         { 
             foreach(KeyValuePair<int, SortedDictionary<int, PathGraphVertex>> vertexLine in vertexLines)
             {
@@ -412,14 +439,14 @@ namespace ActionGame.World
             }
         }
 
-        private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks, ContentManager content, Matrix worldTransofrm)
+        private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks)
         {
             ///TODO: Build central model repository
             Model[] buildingModels = new Model[]
             {
-                content.Load<Model>("Objects/Buildings/panelak"),
-                content.Load<Model>("Objects/Buildings/panelak2"),
-                content.Load<Model>("Objects/Buildings/house1")
+                game.Content.Load<Model>("Objects/Buildings/panelak"),
+                game.Content.Load<Model>("Objects/Buildings/panelak2"),
+                game.Content.Load<Model>("Objects/Buildings/house1")
             };
 
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
@@ -428,19 +455,20 @@ namespace ActionGame.World
                     realHeight = emptyRect.Height * SquareWidth;
 
                 RectangleF realEmptyRectangle = new RectangleF(emptyRect.X * SquareWidth, emptyRect.Y * SquareWidth, realWidth, realHeight);
-                FillByBuildings(worldTransofrm, buildingModels, realEmptyRectangle);
+                FillByBuildings(buildingModels, realEmptyRectangle);
             }
         }
 
-        private void FillByBuildings(Matrix worldTransofrm, Model[] buildingModels, RectangleF target)
+        private void FillByBuildings(Model[] buildingModels, RectangleF target)
         {
+            Matrix worldTransform = game.Drawer.WorldTransformMatrix;
             Random rand = new Random();
             float horizontalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
             float verticalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
 
 
             IEnumerable<Model> modelCandidates = from model in buildingModels
-                                                 where model.GetSize(worldTransofrm).X + horizontalSpace <= target.Width && model.GetSize(worldTransofrm).Z + verticalSpace <= target.Height
+                                                 where model.GetSize(worldTransform).X + horizontalSpace <= target.Width && model.GetSize(worldTransform).Z + verticalSpace <= target.Height
                                                  orderby rand.Next()
                                                  select model;
             if (modelCandidates.Any())
@@ -452,22 +480,22 @@ namespace ActionGame.World
                     this,
                     new Vector3(target.X + horizontalSpace / 2f, 0, target.Y + verticalSpace / 2f),
                     0,
-                    worldTransofrm);
+                    worldTransform);
                 solidObjects.AddLast(building);
                 RectangleF nextRect = new RectangleF(
-                    target.X + usedModel.GetSize(worldTransofrm).X + horizontalSpace,
+                    target.X + usedModel.GetSize(worldTransform).X + horizontalSpace,
                     target.Y,
-                    target.Width - usedModel.GetSize(worldTransofrm).X - horizontalSpace,
-                    usedModel.GetSize(worldTransofrm).Z + verticalSpace);
+                    target.Width - usedModel.GetSize(worldTransform).X - horizontalSpace,
+                    usedModel.GetSize(worldTransform).Z + verticalSpace);
 
                 RectangleF downRect = new RectangleF(
                     target.X,
-                    target.Y + usedModel.GetSize(worldTransofrm).Z + verticalSpace,
+                    target.Y + usedModel.GetSize(worldTransform).Z + verticalSpace,
                     target.Width,
-                    target.Height - usedModel.GetSize(worldTransofrm).Z - verticalSpace);
+                    target.Height - usedModel.GetSize(worldTransform).Z - verticalSpace);
 
-                FillByBuildings(worldTransofrm, buildingModels, nextRect);
-                FillByBuildings(worldTransofrm, buildingModels, downRect);
+                FillByBuildings(buildingModels, nextRect);
+                FillByBuildings(buildingModels, downRect);
             }
         }
 
@@ -480,7 +508,7 @@ namespace ActionGame.World
         /// <param name="sidewalkTexture">Used sidewalk model</param>
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="content">Content manager for loading models</param>
-        private void GenerateInterfaces(int degree, MapFillType[] mapBitmap, Texture2D roadTexture, Texture2D sidewalkTexture, Matrix worldTransform, ContentManager content)
+        private void GenerateInterfaces(int degree, Texture2D roadTexture, Texture2D sidewalkTexture)
         {
             Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges = new Dictionary<TownQuarterInterfacePosition, List<Range>>(4);
             emptyRanges.Add(TownQuarterInterfacePosition.Top, new List<Range>(new Range[] { new Range(BlockWidth + 1, bitmapSize.Width - BlockWidth - 1) }));
@@ -564,7 +592,7 @@ namespace ActionGame.World
                 //wall generator
                 {
                     ///TODO: load textures from central repository
-                    Texture2D wallTexture = content.Load<Texture2D>("Textures/Spatial/wall0");
+                    Texture2D wallTexture = game.Content.Load<Texture2D>("Textures/Spatial/wall0");
                     float wallWidth = 6f; //m
                     float wallHeight = 4.5f;
                     int count = (int)((BlockWidth - 1) * SquareWidth / wallWidth); //minus sidewalk
@@ -609,12 +637,12 @@ namespace ActionGame.World
                 interfaces.Add(iface);
             }
 
-            GenerateRestOfBorderSidewalks(emptyRanges, mapBitmap, sidewalkTexture);
+            GenerateRestOfBorderSidewalks(emptyRanges, sidewalkTexture);
 
-            GenerateBorderBuildings(content, emptyRanges, worldTransform);
+            GenerateBorderBuildings(emptyRanges);
         }
 
-        private void GenerateBorderBuildings(ContentManager content, Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, Matrix worldTransform)
+        private void GenerateBorderBuildings(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges)
         {
             //expand corner ranges
             foreach (var ranges in emptyRanges)
@@ -651,19 +679,19 @@ namespace ActionGame.World
             ///TODO: Build central model repository
             Model[] buildingModels = new Model[]
             {
-                content.Load<Model>("Objects/Buildings/borderBuilding"),
-                content.Load<Model>("Objects/Buildings/borderBuilding10"),
-                content.Load<Model>("Objects/Buildings/borderBuilding8"),
-                content.Load<Model>("Objects/Buildings/borderBuilding4"),
-                content.Load<Model>("Objects/Buildings/borderBuilding1"),
-                content.Load<Model>("Objects/Buildings/fence1")
+                game.Content.Load<Model>("Objects/Buildings/borderBuilding"),
+                game.Content.Load<Model>("Objects/Buildings/borderBuilding10"),
+                game.Content.Load<Model>("Objects/Buildings/borderBuilding8"),
+                game.Content.Load<Model>("Objects/Buildings/borderBuilding4"),
+                game.Content.Load<Model>("Objects/Buildings/borderBuilding1"),
+                game.Content.Load<Model>("Objects/Buildings/fence1")
             };
             Random rand = new Random();
             foreach (var ranges in emptyRanges)
             {
                 foreach (var range in ranges.Value)
                 {
-                    FillEmptyBorderRange(worldTransform, buildingModels, rand, ranges.Key, range, 0f);
+                    FillEmptyBorderRange(buildingModels, rand, ranges.Key, range, 0f);
                 }
             }
         }
@@ -680,17 +708,17 @@ namespace ActionGame.World
         /// <param name="offset">Already filled part of range</param>
         /// <param name="bitmapSizeX">Town quarter width in road squares</param>
         /// <param name="bitmapSizeY">Town quarter height in road squares</param>
-        private void FillEmptyBorderRange(Matrix worldTransform, Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset)
+        private void FillEmptyBorderRange(Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset)
         {
             float emptySpace = (range.Length - 1) * SquareWidth - offset;
             IEnumerable<Model> modelCandidates = from model in buildingModels
-                                                 where model.GetSize(worldTransform).X <= emptySpace
+                                                 where model.GetSize(game.Drawer.WorldTransformMatrix).X <= emptySpace
                                                  orderby rand.Next()
                                                  select model;
             if (modelCandidates.Any())
             {
                 Model usedModel = modelCandidates.First();
-                Vector3 usedModelSize = usedModel.GetSize(worldTransform);
+                Vector3 usedModelSize = usedModel.GetSize(game.Drawer.WorldTransformMatrix);
 
 
                 float angle = 0;
@@ -716,10 +744,10 @@ namespace ActionGame.World
                         break;
                 }
 
-                SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, worldTransform);
+                SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, game.Drawer.WorldTransformMatrix);
                 solidObjects.AddLast(borderBuilding);
 
-                FillEmptyBorderRange(worldTransform, buildingModels, rand, borderPosition, range, newOffset);
+                FillEmptyBorderRange(buildingModels, rand, borderPosition, range, newOffset);
             }
         }
 
@@ -733,7 +761,7 @@ namespace ActionGame.World
         /// <param name="sidewalkModel">Used sidewalk model</param>
         /// <param name="sidewalkModelWidth">Sidewalk model width</param>
         /// <param name="worldTransform">World transform matrix</param>
-        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, MapFillType[] mapBitmap, Texture2D sidewalkTexture)
+        private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, Texture2D sidewalkTexture)
         {
             // Corners
             foreach (Tuple<int, int> p in new Tuple<int, int>[]
@@ -806,7 +834,7 @@ namespace ActionGame.World
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <param name="mapBitmap">Quarter bitmap</param>
-        private void GenerateMapPicture(GraphicsDevice graphicsDevice, MapFillType[] mapBitmap)
+        private void GenerateMapPicture()
         {
             const int namePixelHeight = 14;
             System.Drawing.Bitmap mapPicture = new System.Drawing.Bitmap(bitmapSize.Width * PictureMapRoadWidth,bitmapSize.Height * PictureMapRoadWidth + namePixelHeight);
@@ -846,7 +874,7 @@ namespace ActionGame.World
             using (MemoryStream ms = new MemoryStream())
             {
                 mapPicture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                map = Texture2D.FromStream(graphicsDevice, ms);
+                map = Texture2D.FromStream(game.GraphicsDevice, ms);
             }
         }
 
@@ -860,7 +888,7 @@ namespace ActionGame.World
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Another list of empty rectangles for next filling</returns>
-        private List<Rectangle> GenerateInnerRoadNetwork(Texture2D roadTexture, Rectangle emptyRectangle, MapFillType[] mapBitmap)
+        private List<Rectangle> GenerateInnerRoadNetwork(Texture2D roadTexture, Rectangle emptyRectangle)
         {
             List<Rectangle> result = new List<Rectangle>();
             int erSize = Math.Max(emptyRectangle.Width, emptyRectangle.Height);
@@ -868,12 +896,12 @@ namespace ActionGame.World
             double nextSplittingProbability = rand.NextDouble();
             if (nextSplittingProbability * erSize > 2 * BlockWidth + 1) // Splitting isn't sure when it's possible.
             {
-                Rectangle[] newEmptyRectangles = AddSplittingRoad(ref emptyRectangle, roadTexture, mapBitmap);
+                Rectangle[] newEmptyRectangles = AddSplittingRoad(ref emptyRectangle, roadTexture);
                 foreach (Rectangle emptyRect in newEmptyRectangles)
                 {
                     ///TODO: This can be faster. Using linked list simply join results...
                     result.AddRange(
-                        GenerateInnerRoadNetwork(roadTexture, emptyRect, mapBitmap)
+                        GenerateInnerRoadNetwork(roadTexture, emptyRect)
                         );
                 }
             }
@@ -896,7 +924,7 @@ namespace ActionGame.World
         /// <param name="xSize">Quarter bitmap width</param>
         /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Array of new empty rectangles inside the splited rectangle</returns>
-        private Rectangle[] AddSplittingRoad(ref Rectangle target, Texture2D roadTexture, MapFillType[] mapBitmap)
+        private Rectangle[] AddSplittingRoad(ref Rectangle target, Texture2D roadTexture)
         {
             AxisDirection direction;
             if (target.Width < target.Height)
@@ -957,7 +985,7 @@ namespace ActionGame.World
         /// <param name="roadTexture">Road texture</param>
         /// <param name="mapBitmap">Quarter bitmap</param>
         /// <returns>Empty rectangle inside the bitmap</returns>
-        private Rectangle GenerateBorderRoads(Texture2D roadTexture, MapFillType[] mapBitmap)
+        private Rectangle GenerateBorderRoads(Texture2D roadTexture)
         {
             int xOffset = BlockWidth;
             int yOffset = BlockWidth;
@@ -997,7 +1025,7 @@ namespace ActionGame.World
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="mapBitmap">Quarter bitmap</param>
         /// <returns>Rest of the target rectangle what's empty</returns>
-        private Rectangle GenerateSidewalks(Rectangle target, Texture2D sidewalkTexture,MapFillType[] mapBitmap)
+        private Rectangle GenerateSidewalks(Rectangle target, Texture2D sidewalkTexture)
         {
             for (int x = 0; x < target.Width; x++)
             {
@@ -1025,7 +1053,7 @@ namespace ActionGame.World
             return new Rectangle(target.X + 1, target.Y + 1, target.Width - 2, target.Height - 2);
         }
 
-        public void BuildInterfaceRoadSigns(ContentManager content)
+        public void BuildInterfaceRoadSigns()
         {
             const float vPosition = 8;
             float height = 2f;
@@ -1066,7 +1094,7 @@ namespace ActionGame.World
                 Vector3 lowerLeft = upperLeft, lowerRight = upperRight;
                 lowerLeft.Y -= height;
                 lowerRight.Y -= height;
-                Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, content.Load<Texture2D>("Textures/metal"));
+                Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, game.Content.Load<Texture2D>("Textures/metal"));
                 magicPlates.AddLast(signPlate);
             }
 

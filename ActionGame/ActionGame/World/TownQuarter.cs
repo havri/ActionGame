@@ -65,6 +65,7 @@ namespace ActionGame.World
                 return bitmapSize;
             }
         }
+        MapFillType[] mapBitmap;
         /// <summary>
         /// Width of road and sidewalk. In meters.
         /// </summary>
@@ -76,6 +77,8 @@ namespace ActionGame.World
         /// </summary>
         public string Name;
         Texture2D roadSignTexture;
+
+        readonly ActionGame game;
 
         readonly static List<string> nameRepository = new List<string>(new string[] {
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
@@ -90,8 +93,9 @@ namespace ActionGame.World
         /// <param name="content">ContentManager for loading objects</param>
         /// <param name="worldTransform">World transform matrix</param>
         /// <param name="graphicsDevice">Graphics device for creating textures</param>
-        public TownQuarter(Vector2 size, int degree, int ammoBoxCount, int healBoxCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice)
+        public TownQuarter(ActionGame game, Vector2 size, int degree)
         {
+            this.game = game;
             interfaces = new List<TownQuarterInterface>(degree);
             if (nameRepository.Count > 0)
             {
@@ -108,11 +112,14 @@ namespace ActionGame.World
             int xSize = (int)Math.Floor(size.X / SquareWidth);
             int ySize = (int)Math.Floor(size.Y / SquareWidth);
             bitmapSize = new System.Drawing.Size(xSize, ySize);
+            mapBitmap = new MapFillType[bitmapSize.Width * bitmapSize.Height];
+            for (int i = 0; i < mapBitmap.Length; i++)
+                mapBitmap[i] = MapFillType.Empty;
             spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, SquareWidth, SquareWidth);
 
             try
             {
-                Generate(degree, ammoBoxCount, healBoxCount content, ref worldTransform, graphicsDevice);
+                Generate(degree);
             }
             catch (Exception ex)
             {

@@ -28,22 +28,33 @@ namespace ActionGame.World
         const float MinQuarterSideLength = 100;
 
         public Texture2D Map;
-        TownQuarter[] quarters;
+        readonly TownQuarter[] quarters;
         TownQuarter currentQuarter;
+        public TownQuarter CurrentQuarter
+        {
+            get
+            {
+        	    return currentQuarter;
+            }
+        }
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
+        public ActionGame Game
+        { 
+            get {return (ActionGame)base.Game;}
+        }
         
-        public Town(ActionGame game, int quarterCount, int ammoBoxCount, int healBoxCount, ContentManager content, Matrix worldTransform, GraphicsDevice graphicsDevice, Loading loadingFrom)
+        public Town(ActionGame game, Loading loadingFrom)
             : base(game)
         {
-            quarters = new TownQuarter[quarterCount];
+            quarters = new TownQuarter[game.Settings.TownQuarterCount];
 
             //Town graph creation
             loadingFrom.SetLabel("Generating town graph...");
             loadingFrom.SetValue(0);
-            int[] degrees = new int[quarterCount];
-            bool[,] edges = new bool[quarterCount,quarterCount]; // Graph is unoriented (symetric). edges[i, j] can be true only if i<j!
-            for (int i = 0; i < quarterCount-1; i++) // First is made path through all. Graph has to have only one component.
+            int[] degrees = new int[game.Settings.TownQuarterCount];
+            bool[,] edges = new bool[game.Settings.TownQuarterCount, game.Settings.TownQuarterCount]; // Graph is unoriented (symetric). edges[i, j] can be true only if i<j!
+            for (int i = 0; i < game.Settings.TownQuarterCount - 1; i++) // First is made path through all. Graph has to have only one component.
             { 
                 int j = i+1;
                 degrees[i]++;
@@ -51,10 +62,10 @@ namespace ActionGame.World
                 edges[i, j] = true;
             }
             Random rand = new Random();
-            for (int i = 0; i < quarterCount; i++)
+            for (int i = 0; i < game.Settings.TownQuarterCount; i++)
             {
-                loadingFrom.SetValue(100 * i / quarterCount);
-                for (int j = i+1; j < quarterCount; j++) //graph isn't oriented and reflexion is denied
+                loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
+                for (int j = i + 1; j < game.Settings.TownQuarterCount; j++) //graph isn't oriented and reflexion is denied
                 {
                     if (!edges[i, j] && degrees[i] < MaxQuarterDegree && degrees[j] < MaxQuarterDegree)
                     {
@@ -71,9 +82,9 @@ namespace ActionGame.World
             //Quarter creating by degrees
             loadingFrom.SetLabel("Generating quarters and streets...");
             loadingFrom.SetValue(0);
-            for (int i = 0; i < quarterCount; i++)
+            for (int i = 0; i < game.Settings.TownQuarterCount; i++)
             {
-                loadingFrom.SetValue(100 * i / quarterCount);
+                loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
                 float perimeterLength = MinSideLengthPerInterface * Math.Max(degrees[i], 4); // Even interface isn't needed the side must be there
                 perimeterLength *= (float)rand.NextDouble() + 1f; //Minimal length can be doubled
                 float width = (perimeterLength / 2f) * (float)(rand.NextDouble() * 0.3 + 0.35); //aspect ratio
@@ -87,7 +98,7 @@ namespace ActionGame.World
                 {
                     try
                     {
-                        TownQuarter quarter = new TownQuarter(new Vector2(width, height), degrees[i], ammoBoxCount, healBoxCount, content, worldTransform, graphicsDevice);
+                        TownQuarter quarter = new TownQuarter(game, new Vector2(width, height), degrees[i]);
                         quarters[i] = quarter;
                     }
                     catch (NoSpaceForInterfaceException ex)
@@ -103,10 +114,10 @@ namespace ActionGame.World
             //Joining interfaces
             loadingFrom.SetLabel("Building town...");
             loadingFrom.SetValue(0);
-            for (int i = 0; i < quarterCount; i++)
+            for (int i = 0; i < game.Settings.TownQuarterCount; i++)
             {
-                loadingFrom.SetValue(100 * i / quarterCount);
-                for (int j = i + 1; j < quarterCount; j++)
+                loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
+                for (int j = i + 1; j < game.Settings.TownQuarterCount; j++)
                 {
                     if (edges[i, j])
                     {
@@ -121,7 +132,7 @@ namespace ActionGame.World
             }
             foreach (var quarter in quarters)
             {
-                quarter.BuildInterfaceRoadSigns(content);
+                quarter.BuildInterfaceRoadSigns();
             }
 
             //Town graph raster map creation
@@ -131,14 +142,14 @@ namespace ActionGame.World
             using (Graphics graphics = Graphics.FromImage(mapRaster))
             {
                 graphics.FillRectangle(Brushes.White, 0, 0, mapRaster.Width, mapRaster.Height);
-                float angleJump = MathHelper.TwoPi / quarterCount;
+                float angleJump = MathHelper.TwoPi / game.Settings.TownQuarterCount;
                 float radius = Math.Min(MapImageWidth, MapImageHeight)/2f - 20f;
                 PointF center = new PointF(MapImageWidth/2f, MapImageHeight/2f);
 
-                for (int i = 0; i < quarterCount; i++)
+                for (int i = 0; i < game.Settings.TownQuarterCount; i++)
                 {
-                    loadingFrom.SetValue(100 * i / quarterCount);
-                    for (int j = i + 1; j < quarterCount; j++)
+                    loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
+                    for (int j = i + 1; j < game.Settings.TownQuarterCount; j++)
                     {
                         if (edges[i, j])
                         {
@@ -152,9 +163,9 @@ namespace ActionGame.World
                     }
                 }
 
-                for (int i = 0; i < quarterCount; i++)
+                for (int i = 0; i < game.Settings.TownQuarterCount; i++)
                 {
-                    loadingFrom.SetValue(100 * i / quarterCount);
+                    loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
                     graphics.FillEllipse(Brushes.Blue,
                         center.X + (float)Math.Cos(i * angleJump) * radius - 3.5f,
                         center.Y + (float)Math.Sin(i * angleJump) * radius - 3.5f,
@@ -165,19 +176,11 @@ namespace ActionGame.World
             using (MemoryStream ms = new MemoryStream())
             {
                 mapRaster.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                Map = Texture2D.FromStream(graphicsDevice, ms);
+                Map = Texture2D.FromStream(game.GraphicsDevice, ms);
             }
 
             //Selecting starting quarter
             currentQuarter = quarters[0];
-        }
-
-        protected new ActionGame Game
-        {
-            get
-            {
-                return (ActionGame)base.Game;
-            }
         }
 
         static readonly TimeSpan quarterChangeTimeOut = new TimeSpan(0, 0, 1);
@@ -400,6 +403,7 @@ namespace ActionGame.World
 
         public void Dispose()
         {
+            Map.Dispose();
             foreach (TownQuarter quarter in quarters)
                 quarter.Dispose();
         }

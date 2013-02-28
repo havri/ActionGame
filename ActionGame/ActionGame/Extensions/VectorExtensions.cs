@@ -58,5 +58,10 @@ namespace ActionGame.Extensions
             if (atan < 0) atan += MathHelper.TwoPi;
             return atan;
         }
+
+        public static Vector2 ToVector2(this Microsoft.Xna.Framework.Point point)
+        {
+            return new Vector2(point.X, point.Y);
+        }
     }
 }

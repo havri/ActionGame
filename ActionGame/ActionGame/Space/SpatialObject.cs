@@ -18,16 +18,16 @@ namespace ActionGame.Space
         public SpatialObject(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(position, azimuth, (model == null ? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()))
         {
-            load(model, position, 0, azimuth, worldTransform);
+            Load(model, position, 0, azimuth, worldTransform);
         }
 
         public SpatialObject(Model model, TownQuarter quarter, Vector3 positionInQuarter, double azimuth, Matrix worldTransform)
             : base(new PositionInTown(quarter, positionInQuarter.XZToVector2()), azimuth, (model == null? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()) )
         {
-            load(model, new PositionInTown(quarter, positionInQuarter.XZToVector2()), positionInQuarter.Y, azimuth, worldTransform);
+            Load(model, new PositionInTown(quarter, positionInQuarter.XZToVector2()), positionInQuarter.Y, azimuth, worldTransform);
         }
 
-        protected void load(Model model, PositionInTown position, float verticalPosition, double azimuth, Matrix worldTransform)
+        protected void Load(Model model, PositionInTown position, float verticalPosition, double azimuth, Matrix worldTransform)
         {
             this.model = model;
             verticalPosition = position.PositionInQuarter.Y;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ActionGame.Space;
 using ActionGame.Tasks;
 using ActionGame.World;
@@ -104,20 +103,20 @@ namespace ActionGame.People
 
         public void GoThisWay(PositionInTown destination, float seconds)
         {
-            if (destination.Quarter == this.position.Quarter)
+            if (destination.Quarter == position.Quarter)
             {
-                float direction = (destination.PositionInQuarter - this.position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
+                float direction = (destination.PositionInQuarter - position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
                 while (direction >= MathHelper.TwoPi) direction -= MathHelper.TwoPi;
                 if (Math.Abs(azimuth - direction) > RotateAngle || (azimuth + MathHelper.TwoPi - direction) > RotateAngle && direction > azimuth)
                 {
-                    this.Rotate(
+                    Rotate(
                         (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi),
                         seconds);
                 }
                 else
                 {
                     azimuth = direction;
-                    this.Go(true, seconds);
+                    Go(true, seconds);
                 }
             }
             else

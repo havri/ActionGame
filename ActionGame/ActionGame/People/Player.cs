@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,7 +28,7 @@ namespace ActionGame.People
 
         private bool running = false;
         private Point lastMousePosition = Point.Zero;
-        ActionGame game;
+        readonly ActionGame game;
         double lookAngle = 0f;
 
         public Player(ActionGame game)
@@ -40,7 +39,7 @@ namespace ActionGame.People
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
-            base.load(model, position, 0, azimuth, worldTransform);
+            base.Load(model, position, 0, azimuth, worldTransform);
         }
 
         public override void Update(GameTime gameTime)

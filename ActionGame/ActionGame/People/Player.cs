@@ -11,9 +11,8 @@ namespace ActionGame.People
 {
     public class Player : Human
     {
-        static readonly TimeSpan movingKeyTimeOut = new TimeSpan(0, 0, 0, 0, 50);
-        const float YRotateQ = 0.6f;
-
+        const float MouseXSensitivityCoef = 0.5f;
+        const float MouseYSensitivityCoef = 0.4f;
         static readonly Keys Left = Keys.A;
         static readonly Keys Right = Keys.D;
         static readonly Keys Forward = Keys.W;
@@ -24,14 +23,19 @@ namespace ActionGame.People
         static readonly Keys EnterCar = Keys.Enter;
         static readonly Keys TurnLeft = Keys.Left;
         static readonly Keys TurnRight = Keys.Right;
+        static readonly Keys TurnUp = Keys.Up;
+        static readonly Keys TurnDown = Keys.Down;
         static readonly Keys RunSwitch = Keys.CapsLock;
 
         private bool running = false;
+        private Point lastMousePosition = Point.Zero;
+        ActionGame game;
+        double lookAngle = 0f;
 
-        public Player()
+        public Player(ActionGame game)
             :base(null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
-        { 
-
+        {
+            this.game = game;
         }
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -40,11 +44,6 @@ namespace ActionGame.People
         }
 
         public override void Update(GameTime gameTime)
-        {
-            throw new InvalidOperationException("This Update overload is denied!");
-        }
-
-        public void Update(GameTime gameTime, int windowWidth, int windowHeight)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
@@ -68,22 +67,26 @@ namespace ActionGame.People
                     Rotate(true, seconds);
                 if (keyboardState.IsKeyDown(TurnRight))
                     Rotate(false, seconds);
+                if (keyboardState.IsKeyDown(TurnUp))
+                    lookAngle += Human.RotateAngle * seconds;
+                if (keyboardState.IsKeyDown(TurnDown))
+                    lookAngle -= Human.RotateAngle * seconds;
                 if (keyboardState.IsKeyDown(RunSwitch))
                     running = !running;
 
-                ///TODO: Better look. Cross in the middle of screen...
-                /*
-                //horizontal
-                if (Math.Abs(mouseState.X - (windowWidth / 2)) > windowWidth / 10)
+                int windowWidth = game.Settings.ScreenSize.Width;
+                int windowHeight = game.Settings.ScreenSize.Height;
+                if (game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
                 {
-                    azimuth += ((float)(mouseState.X - (windowWidth / 2)) / (float)(windowWidth / 2)) * Human.RotateAngle;
+                    azimuth += ( (mouseState.X - lastMousePosition.X) / (float)windowWidth) * game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseXInvert ? -1 : 1);
+                    lookAngle += ((mouseState.Y - lastMousePosition.Y) / (float)windowWidth) * game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseYInvert ? 1 : -1);
+                    if (lookAngle > MathHelper.PiOver2)
+                        lookAngle = MathHelper.PiOver2;
+                    if (lookAngle < -MathHelper.PiOver2)
+                        lookAngle = -MathHelper.PiOver2;
+                    lookingAtHeight = (float)Math.Sin(lookAngle) * LookingAtDistance + size.Y;
+                    lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
-                //vertical
-                if (Math.Abs(mouseState.Y - (windowHeight / 2)) > windowHeight / 10)
-                {
-                    lookingAtHeight -= (((float)(mouseState.Y - (windowHeight / 2)) / (float)(windowHeight / 2))) * Player.YRotateQ;
-                }
-                */
             }
 
             CheckHits();

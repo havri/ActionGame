@@ -35,18 +35,29 @@
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.healingBoxesNB = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.ammoBoxesNB = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.quartersCountNB = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.videoSettingsPage = new System.Windows.Forms.TabPage();
             this.resolutionCmb = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.fullScreenChb = new System.Windows.Forms.CheckBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.mouseYSensTB = new System.Windows.Forms.TrackBar();
+            this.mouseIgnoreWindowCB = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.mouseInvertYCB = new System.Windows.Forms.CheckBox();
+            this.mouseInvertXCB = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
@@ -55,6 +66,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.ammoBoxesNB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).BeginInit();
             this.videoSettingsPage.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,6 +101,7 @@
             // 
             this.tabControl1.Controls.Add(this.gameSettingsPage);
             this.tabControl1.Controls.Add(this.videoSettingsPage);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
@@ -136,6 +152,15 @@
             0,
             0,
             0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 67);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(121, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Ammo boxes per quarter";
             // 
             // ammoBoxesNB
             // 
@@ -193,15 +218,6 @@
             this.label4.Size = new System.Drawing.Size(128, 13);
             this.label4.TabIndex = 1;
             this.label4.Text = "Healing boxes per quarter";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 67);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(121, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Ammo boxes per quarter";
             // 
             // videoSettingsPage
             // 
@@ -278,6 +294,99 @@
             this.fullScreenChb.Text = "Full screen";
             this.fullScreenChb.UseVisualStyleBackColor = true;
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(576, 411);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Controlls";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.mouseInvertXCB);
+            this.groupBox2.Controls.Add(this.mouseInvertYCB);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.mouseYSensTB);
+            this.groupBox2.Controls.Add(this.mouseIgnoreWindowCB);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.mouseXSensTB);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox2.Location = new System.Drawing.Point(3, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(570, 229);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Mouse";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(33, 20);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(75, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Window mode";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(18, 96);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(90, 13);
+            this.label8.TabIndex = 4;
+            this.label8.Text = "Vertical sensitivity";
+            // 
+            // mouseYSensTB
+            // 
+            this.mouseYSensTB.LargeChange = 20;
+            this.mouseYSensTB.Location = new System.Drawing.Point(114, 93);
+            this.mouseYSensTB.Maximum = 110;
+            this.mouseYSensTB.Minimum = 10;
+            this.mouseYSensTB.Name = "mouseYSensTB";
+            this.mouseYSensTB.Size = new System.Drawing.Size(145, 45);
+            this.mouseYSensTB.SmallChange = 5;
+            this.mouseYSensTB.TabIndex = 5;
+            this.mouseYSensTB.Value = 60;
+            // 
+            // mouseIgnoreWindowCB
+            // 
+            this.mouseIgnoreWindowCB.AutoSize = true;
+            this.mouseIgnoreWindowCB.Checked = true;
+            this.mouseIgnoreWindowCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mouseIgnoreWindowCB.Location = new System.Drawing.Point(114, 19);
+            this.mouseIgnoreWindowCB.Name = "mouseIgnoreWindowCB";
+            this.mouseIgnoreWindowCB.Size = new System.Drawing.Size(128, 17);
+            this.mouseIgnoreWindowCB.TabIndex = 3;
+            this.mouseIgnoreWindowCB.Text = "Ignore window border";
+            this.mouseIgnoreWindowCB.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 45);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(102, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Horizontal sensitivity";
+            // 
+            // mouseXSensTB
+            // 
+            this.mouseXSensTB.LargeChange = 20;
+            this.mouseXSensTB.Location = new System.Drawing.Point(114, 42);
+            this.mouseXSensTB.Maximum = 110;
+            this.mouseXSensTB.Minimum = 10;
+            this.mouseXSensTB.Name = "mouseXSensTB";
+            this.mouseXSensTB.Size = new System.Drawing.Size(145, 45);
+            this.mouseXSensTB.SmallChange = 5;
+            this.mouseXSensTB.TabIndex = 1;
+            this.mouseXSensTB.Value = 60;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.playBtn);
@@ -297,6 +406,35 @@
             this.playBtn.Text = "Play!";
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(74, 145);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.TabIndex = 7;
+            this.label9.Text = "Invert";
+            // 
+            // mouseInvertYCB
+            // 
+            this.mouseInvertYCB.AutoSize = true;
+            this.mouseInvertYCB.Location = new System.Drawing.Point(114, 167);
+            this.mouseInvertYCB.Name = "mouseInvertYCB";
+            this.mouseInvertYCB.Size = new System.Drawing.Size(82, 17);
+            this.mouseInvertYCB.TabIndex = 8;
+            this.mouseInvertYCB.Text = "Vertikal axix";
+            this.mouseInvertYCB.UseVisualStyleBackColor = true;
+            // 
+            // mouseInvertXCB
+            // 
+            this.mouseInvertXCB.AutoSize = true;
+            this.mouseInvertXCB.Location = new System.Drawing.Point(114, 144);
+            this.mouseInvertXCB.Name = "mouseInvertXCB";
+            this.mouseInvertXCB.Size = new System.Drawing.Size(94, 17);
+            this.mouseInvertXCB.TabIndex = 9;
+            this.mouseInvertXCB.Text = "Horizontal axis";
+            this.mouseInvertXCB.UseVisualStyleBackColor = true;
             // 
             // MainMenu
             // 
@@ -320,6 +458,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.quartersCountNB)).EndInit();
             this.videoSettingsPage.ResumeLayout(false);
             this.videoSettingsPage.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).EndInit();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -347,5 +490,16 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown healingBoxesNB;
         private System.Windows.Forms.NumericUpDown ammoBoxesNB;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TrackBar mouseXSensTB;
+        private System.Windows.Forms.CheckBox mouseIgnoreWindowCB;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TrackBar mouseYSensTB;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox mouseInvertXCB;
+        private System.Windows.Forms.CheckBox mouseInvertYCB;
+        private System.Windows.Forms.Label label9;
     }
 }

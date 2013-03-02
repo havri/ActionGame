@@ -124,7 +124,7 @@ namespace ActionGame
             if (doInitialize)
             {
                 Human.Fists = new GunType(10, 0.5f, true, Content.Load<Texture2D>("Textures/ToolIcons/fists"));
-                player = new Player();
+                player = new Player(this);
                 base.Initialize();
             }
         }
@@ -173,9 +173,11 @@ namespace ActionGame
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
-            player.Update(gameTime, settings.ScreenSize.Width, settings.ScreenSize.Height);
-            base.Update(gameTime);
+            if(doInitialize)
+            {
+                player.Update(gameTime);
+                base.Update(gameTime);
+            }
         }
         /// <summary>
         /// This is called when the game should draw itself.
@@ -191,7 +193,7 @@ namespace ActionGame
         {
             base.Dispose(disposing);
 
-            player.Dispose();
+            if(player != null) player.Dispose();
             if(town != null) town.Dispose();
             drawer.Dispose();
             camera.Dispose();

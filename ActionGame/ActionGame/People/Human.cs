@@ -28,8 +28,7 @@ namespace ActionGame.People
         public const double RotateAngle = MathHelper.Pi;
         const float ThirdHeadHorizontalDistance = 1.5f;
         const float ThirdHeadVerticalDistance = 0.1f;
-        const float LookingAtDistance = 10;
-        const float LookingAtHeightStep = 0.3f;
+        public const float LookingAtDistance = 10;
         public const float EpsilonDistance = 0.5f;
         ///TODO: Load from xml or something.
         public static GunType Fists;
@@ -50,6 +49,7 @@ namespace ActionGame.People
             tools.Add(new Gun(Fists,0, this));
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
+            lookingAtHeight = size.Y;
         }
 
         protected void Go(bool forward, float seconds)
@@ -98,7 +98,7 @@ namespace ActionGame.People
             get
             {
                 Vector2 ret = Pivot.PositionInQuarter.Go((size.Z + LookingAtDistance), azimuth);
-                return ret.ToVector3(lookingAtHeight * LookingAtHeightStep);
+                return ret.ToVector3(lookingAtHeight);
             }
         }
 

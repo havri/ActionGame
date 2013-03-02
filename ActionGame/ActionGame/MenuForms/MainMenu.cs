@@ -47,7 +47,12 @@ namespace ActionGame.MenuForms
                         ScreenSize = resolution,
                         TownQuarterCount = (int)quartersCountNB.Value,
                         HealBoxCount = (int)healingBoxesNB.Value,
-                        AmmoBoxCount = (int)ammoBoxesNB.Value
+                        AmmoBoxCount = (int)ammoBoxesNB.Value,
+                        MouseXSensitivity = mouseXSensTB.Value,
+                        MouseYSensitivity = mouseYSensTB.Value,
+                        MouseIgnoresWindow = mouseIgnoreWindowCB.Checked,
+                        MouseXInvert = mouseInvertXCB.Checked,
+                        MouseYInvert = mouseInvertYCB.Checked
                     };
             }
         }

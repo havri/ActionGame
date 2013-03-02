@@ -37,7 +37,7 @@ namespace ActionGame.Space
                 size = model.GetSize(worldTransform);
                 verticalSize = size.Y;
             }
-            base.load(position, azimuth, size.XZToVector2());
+            base.Load(position, azimuth, size.XZToVector2());
         }
 
         public void Draw(Matrix view, Matrix projection, Matrix world)
@@ -87,6 +87,11 @@ namespace ActionGame.Space
         public void Dispose()
         {
             model = null;
+        }
+
+        public void Destroy()
+        {
+            position.Quarter.DestroyObject(this);
         }
     }
 }

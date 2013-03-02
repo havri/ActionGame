@@ -20,5 +20,11 @@ namespace ActionGame.Tools
         {
             tool = toolInside;
         }
+
+        public Tool Take()
+        {
+            Destroy();
+            return tool;
+        }
     }
 }

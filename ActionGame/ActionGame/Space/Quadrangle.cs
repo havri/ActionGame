@@ -40,12 +40,11 @@ namespace ActionGame.Space
             Line upperAxis = Line.FromTwoPoints(UpperLeftCorner, UpperRightCorner);
             Line lowerAxis = Line.FromTwoPoints(LowerLeftCorner, LowerRightCorner);
 
-            return leftAxis.IsCrossing(obj)
-                || upperAxis.IsCrossing(obj)
-                || lowerAxis.IsCrossing(obj)
-                || rightAxis.IsCrossing(obj)
-                || (!leftAxis.HasOnLeftSide(obj.UpperLeftCorner) && rightAxis.HasOnLeftSide(obj.UpperLeftCorner) && !upperAxis.HasOnLeftSide(obj.UpperLeftCorner) && lowerAxis.HasOnLeftSide(obj.UpperLeftCorner)) // inside normal
-                || (leftAxis.HasOnLeftSide(obj.UpperLeftCorner) && !rightAxis.HasOnLeftSide(obj.UpperLeftCorner) && upperAxis.HasOnLeftSide(obj.UpperLeftCorner) && !lowerAxis.HasOnLeftSide(obj.UpperLeftCorner)) // inside up-side-down
+            return
+                ( !leftAxis.HasOnLeftSide(obj) && !rightAxis.HasOnRightSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj) ) // classic
+                || (!leftAxis.HasOnLeftSide(obj) && !rightAxis.HasOnRightSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // horizontal switched
+                || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj)) // vertical switched
+                || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // both switched
                 ;
         }
 

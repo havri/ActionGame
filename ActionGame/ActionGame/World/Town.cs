@@ -200,8 +200,8 @@ namespace ActionGame.World
                 TownQuarterInterface usedInterface = currentQuarter.Interfaces[lastNearestInterfaceIndex];
 
                 //Remove drawed quaeters from drawer
-                usedInterface.OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
-                currentQuarter.RemoveFromDrawer(Game.Drawer);
+                usedInterface.OppositeInterface.Quarter.RemoveFromDrawer();
+                currentQuarter.RemoveFromDrawer();
 
                 //Remove player from old quarter space grid
                 currentQuarter.SpaceGrid.RemoveObject(Game.Player);
@@ -250,7 +250,7 @@ namespace ActionGame.World
             {
                 if (lastNearestInterfaceIndex >= 0)
                 {
-                    currentQuarter.Interfaces[lastNearestInterfaceIndex].OppositeInterface.Quarter.RemoveFromDrawer(Game.Drawer);
+                    currentQuarter.Interfaces[lastNearestInterfaceIndex].OppositeInterface.Quarter.RemoveFromDrawer();
                 }
                 lastNearestInterfaceIndex = nearestInterfaceIndex;
 
@@ -258,12 +258,12 @@ namespace ActionGame.World
                 TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
                 Vector2 delta = ResolveQuarterPositionDelta(squareWidth, iface);
                 float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);
-                iface.OppositeInterface.Quarter.FillDrawer(Game.Drawer, angle, delta);
+                iface.OppositeInterface.Quarter.FillDrawer(angle, delta);
 
                 if (!currentQuarterDrawed)
                 {
                     Game.Drawer.CurrentQuarter = currentQuarter;
-                    currentQuarter.FillDrawer(Game.Drawer);
+                    currentQuarter.FillDrawer();
                     currentQuarterDrawed = true;
                 }
             }

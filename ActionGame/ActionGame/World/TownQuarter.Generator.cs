@@ -57,6 +57,7 @@ namespace ActionGame.World
             {
                 spaceGrid.AddPathGraphVertex(v);
                 //showing path graph
+                /*
                 const float pointHeight = 0.01f;
                 Plate vplate = new Plate(
                         this,
@@ -80,6 +81,7 @@ namespace ActionGame.World
                         game.Content.Load<Texture2D>("Textures/blue"));
                     magicPlates.AddLast(plate);
                 }
+                */
             }
 
             

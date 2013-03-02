@@ -103,5 +103,23 @@ namespace ActionGame.Space
                 && !HasOnLeftSide(quadrangle.LowerLeftCorner)
                 && !HasOnLeftSide(quadrangle.LowerRightCorner);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Line)
+            { 
+                return this == (Line)obj;
+            }
+            return base.Equals(obj);
+        }
+
+        public static bool operator== (Line l1, Line l2)
+        {
+            return l1.xIntersect == l2.xIntersect && l1.yIntersect == l2.yIntersect;
+        }
+        public static bool operator !=(Line l1, Line l2)
+        {
+            return l1.xIntersect != l2.xIntersect || l1.yIntersect != l2.yIntersect;
+        }
     }
 }

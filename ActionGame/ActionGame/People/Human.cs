@@ -19,6 +19,10 @@ namespace ActionGame.People
         /// </summary>
         const float WalkSpeed = 1.25f;
         /// <summary>
+        /// Speed of human run. In meters per second.
+        /// </summary>
+        const float RunSpeed = 6f;
+        /// <summary>
         /// Speed of human rotation. In radians per second.
         /// </summary>
         public const double RotateAngle = MathHelper.Pi;
@@ -43,7 +47,7 @@ namespace ActionGame.People
             health = 100;
             tasks = new Queue<Task>();
             tools = new List<Tool>();
-            tools.Add(new Gun(Fists, this));
+            tools.Add(new Gun(Fists,0, this));
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
         }
@@ -52,6 +56,12 @@ namespace ActionGame.People
         {
             lastPosition = position.PositionInQuarter;
             position.PositionInQuarter = position.PositionInQuarter.Go(WalkSpeed * seconds * (forward ? 1 : -1), azimuth);
+        }
+
+        protected void Run(float seconds)
+        {
+            lastPosition = position.PositionInQuarter;
+            position.PositionInQuarter = position.PositionInQuarter.Go(RunSpeed * seconds, azimuth);
         }
 
         protected void Step(bool toLeft, float seconds)
@@ -172,7 +182,23 @@ namespace ActionGame.People
         }
 
         private void Hit(ToolBox box)
-        { 
+        {
+            Tool takenTool = box.Take();
+            if(takenTool is Gun)
+            {
+                Gun takenGun = (Gun)takenTool;
+                int ind = tools.FindIndex(x => (x is Gun && ((Gun)x).Type == takenGun.Type));
+                if(ind >= 0 && ind < tools.Count)
+                {
+                    ((Gun)tools[ind]).Load(takenGun.Bullets);
+                    selectedToolIndex = ind;
+                }
+                else
+                {
+                    tools.Add(takenGun);
+                    selectedToolIndex = tools.Count - 1;
+                }
+            }
         }
     }
 }

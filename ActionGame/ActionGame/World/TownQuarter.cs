@@ -137,9 +137,9 @@ namespace ActionGame.World
         /// Configures drawer for drawing this quarter as main.
         /// </summary>
         /// <param name="drawer">Display drawer</param>
-        public void FillDrawer(Drawer drawer)
+        public void FillDrawer()
         {
-            FillDrawer(drawer, 0, Vector2.Zero);
+            FillDrawer(0, Vector2.Zero);
         }
 
         /// <summary>
@@ -148,19 +148,19 @@ namespace ActionGame.World
         /// <param name="drawer">Display drawer</param>
         /// <param name="delta">Defines difference of quarter placement from drawing center</param>
         /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
-        public void FillDrawer(Drawer drawer, float angle, Vector2 delta)
+        public void FillDrawer(float angle, Vector2 delta)
         {
             foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
-                drawer.StartDrawingObject(o, angle, delta);
+                game.Drawer.StartDrawingObject(o, angle, delta);
             }
         }
 
-        public void RemoveFromDrawer(Drawer drawer)
+        public void RemoveFromDrawer()
         {
             foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
-                drawer.StopDrawingObject(o);
+                game.Drawer.StopDrawingObject(o);
             }        
         }
 
@@ -222,6 +222,19 @@ namespace ActionGame.World
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
         {
             return spaceGrid.FindNearestPathGraphVertex(from);
+        }
+
+        public void DestroyObject(SpatialObject obj)
+        {
+            if (obj is Human)
+            {
+                walkers.Remove(obj as Human);
+            }
+            else
+            {
+                solidObjects.Remove(obj);
+            }
+            game.Drawer.StopDrawingObject(obj);
         }
     }
 }

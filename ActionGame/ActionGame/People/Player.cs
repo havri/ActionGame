@@ -14,16 +14,19 @@ namespace ActionGame.People
         static readonly TimeSpan movingKeyTimeOut = new TimeSpan(0, 0, 0, 0, 50);
         const float YRotateQ = 0.6f;
 
-        static readonly Keys left = Keys.A;
-        static readonly Keys right = Keys.D;
-        static readonly Keys forward = Keys.W;
-        static readonly Keys backward = Keys.S;
-        static readonly Keys gunUp = Keys.LeftControl;
-        static readonly Keys gunDown = Keys.LeftAlt;
-        static readonly Keys shotKey = Keys.Space;
-        static readonly Keys enterCar = Keys.Enter;
-        static readonly Keys turnLeft = Keys.Left;
-        static readonly Keys turnRIght = Keys.Right;
+        static readonly Keys Left = Keys.A;
+        static readonly Keys Right = Keys.D;
+        static readonly Keys Forward = Keys.W;
+        static readonly Keys Backward = Keys.S;
+        static readonly Keys GunUp = Keys.LeftControl;
+        static readonly Keys GunDown = Keys.LeftAlt;
+        static readonly Keys ShotKey = Keys.Space;
+        static readonly Keys EnterCar = Keys.Enter;
+        static readonly Keys TurnLeft = Keys.Left;
+        static readonly Keys TurnRight = Keys.Right;
+        static readonly Keys RunSwitch = Keys.CapsLock;
+
+        private bool running = false;
 
         public Player()
             :base(null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
@@ -48,21 +51,27 @@ namespace ActionGame.People
             float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (health > 0)
             {
-                if (keyboardState.IsKeyDown(left))
+                if (keyboardState.IsKeyDown(Left))
                     Step(true, seconds);
-                if (keyboardState.IsKeyDown(right))
+                if (keyboardState.IsKeyDown(Right))
                     Step(false, seconds);
-                if (keyboardState.IsKeyDown(forward))
-                    Go(true, seconds);
-                if (keyboardState.IsKeyDown(backward))
+                if (keyboardState.IsKeyDown(Forward))
+                {
+                    if (running)
+                        Run(seconds);
+                    else
+                        Go(true, seconds);
+                }
+                if (keyboardState.IsKeyDown(Backward))
                     Go(false, seconds);
-                if (keyboardState.IsKeyDown(turnLeft))
+                if (keyboardState.IsKeyDown(TurnLeft))
                     Rotate(true, seconds);
-                if (keyboardState.IsKeyDown(turnRIght))
+                if (keyboardState.IsKeyDown(TurnRight))
                     Rotate(false, seconds);
+                if (keyboardState.IsKeyDown(RunSwitch))
+                    running = !running;
 
                 ///TODO: Better look. Cross in the middle of screen...
-                    
                 /*
                 //horizontal
                 if (Math.Abs(mouseState.X - (windowWidth / 2)) > windowWidth / 10)
@@ -80,7 +89,7 @@ namespace ActionGame.People
             CheckHits();
 
             Debug.Write("Player", PositionInQuarter.ToString());
-            Debug.Write("Player azimuth", Azimuth.ToString());
+            Debug.Write("Player azimuth", azimuth.ToString());
             Debug.Write("Player's grid fields", SpacePartitioningFields.Count.ToString());
 
 

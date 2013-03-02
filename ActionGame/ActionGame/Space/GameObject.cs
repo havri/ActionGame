@@ -16,10 +16,10 @@ namespace ActionGame.Space
 
         public GameObject(PositionInTown position, double azimuth, Vector2 size)
         {
-            load(position, azimuth, size);
+            Load(position, azimuth, size);
         }
 
-        protected void load(PositionInTown position, double azimuth, Vector2 size)
+        protected void Load(PositionInTown position, double azimuth, Vector2 size)
         {
             this.position = position;
             this.azimuth = azimuth;

@@ -27,7 +27,7 @@ namespace ActionGame.People
         static readonly Keys RunSwitch = Keys.CapsLock;
 
         private bool running = false;
-        private Point lastMousePosition = Point.Zero;
+        readonly Point defaultMousePosition;
         readonly ActionGame game;
         double lookAngle = 0f;
 
@@ -35,6 +35,7 @@ namespace ActionGame.People
             :base(null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
             this.game = game;
+            defaultMousePosition = new Point(game.Settings.ScreenSize.Width / 2, game.Settings.ScreenSize.Height / 2);
         }
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -77,15 +78,16 @@ namespace ActionGame.People
                 int windowHeight = game.Settings.ScreenSize.Height;
                 if (game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
                 {
-                    azimuth += ( (mouseState.X - lastMousePosition.X) / (float)windowWidth) * game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseXInvert ? -1 : 1);
-                    lookAngle += ((mouseState.Y - lastMousePosition.Y) / (float)windowWidth) * game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseYInvert ? 1 : -1);
+                    azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseXInvert ? -1 : 1);
+                    lookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseYInvert ? 1 : -1);
                     if (lookAngle > MathHelper.PiOver2)
                         lookAngle = MathHelper.PiOver2;
                     if (lookAngle < -MathHelper.PiOver2)
                         lookAngle = -MathHelper.PiOver2;
                     lookingAtHeight = (float)Math.Sin(lookAngle) * LookingAtDistance + size.Y;
-                    lastMousePosition = new Point(mouseState.X, mouseState.Y);
+                    //lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
+                Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);
             }
 
             CheckHits();

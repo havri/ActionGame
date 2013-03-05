@@ -160,8 +160,8 @@ namespace ActionGame
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
             base.UnloadContent();
+            spriteBatch.Dispose();
         }
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -195,9 +195,6 @@ namespace ActionGame
 
             if(player != null) player.Dispose();
             if(town != null) town.Dispose();
-            drawer.Dispose();
-            camera.Dispose();
-            debug.Dispose();
         }
     }
 }

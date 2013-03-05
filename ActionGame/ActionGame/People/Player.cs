@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionGame.Tools;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,8 +17,8 @@ namespace ActionGame.People
         static readonly Keys Right = Keys.D;
         static readonly Keys Forward = Keys.W;
         static readonly Keys Backward = Keys.S;
-        static readonly Keys GunUp = Keys.LeftControl;
-        static readonly Keys GunDown = Keys.LeftAlt;
+        static readonly Keys GunUp = Keys.LeftAlt;
+        static readonly Keys GunDown = Keys.LeftControl;
         static readonly Keys ShotKey = Keys.Space;
         static readonly Keys EnterCar = Keys.Enter;
         static readonly Keys TurnLeft = Keys.Left;
@@ -25,17 +26,25 @@ namespace ActionGame.People
         static readonly Keys TurnUp = Keys.Up;
         static readonly Keys TurnDown = Keys.Down;
         static readonly Keys RunSwitch = Keys.CapsLock;
+        static readonly TimeSpan KeyPressedTimeout = new TimeSpan(0, 0, 0, 0, 250);
 
         private bool running = false;
         readonly Point defaultMousePosition;
-        readonly ActionGame game;
         double lookAngle = 0f;
+        private int lastMouseWheelState = 0;
+        readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
 
         public Player(ActionGame game)
-            :base(null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
+            :base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
-            this.game = game;
             defaultMousePosition = new Point(game.Settings.ScreenSize.Width / 2, game.Settings.ScreenSize.Height / 2);
+            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this))
+            {
+                AddTool(gun);
+            }
+            lastKeyPressedGameTime.Add(GunUp, TimeSpan.Zero);
+            lastKeyPressedGameTime.Add(GunDown, TimeSpan.Zero);
+            lastKeyPressedGameTime.Add(RunSwitch, TimeSpan.Zero);
         }
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -71,15 +80,32 @@ namespace ActionGame.People
                     lookAngle += Human.RotateAngle * seconds;
                 if (keyboardState.IsKeyDown(TurnDown))
                     lookAngle -= Human.RotateAngle * seconds;
-                if (keyboardState.IsKeyDown(RunSwitch))
-                    running = !running;
-
-                int windowWidth = game.Settings.ScreenSize.Width;
-                int windowHeight = game.Settings.ScreenSize.Height;
-                if (game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
+                if (keyboardState.IsKeyDown(RunSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[RunSwitch] > KeyPressedTimeout)
                 {
-                    azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseXInvert ? -1 : 1);
-                    lookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (game.Settings.MouseYInvert ? 1 : -1);
+                    running = !running;
+                    lastKeyPressedGameTime[RunSwitch] = gameTime.TotalGameTime;
+                }
+                if (keyboardState.IsKeyDown(GunUp) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunUp] > KeyPressedTimeout)
+                {
+                    SelectNextGun(1);
+                    lastKeyPressedGameTime[GunUp] = gameTime.TotalGameTime;
+                }
+                if (keyboardState.IsKeyDown(GunDown) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunDown] > KeyPressedTimeout)
+                {
+                    SelectNextGun(-1);
+                    lastKeyPressedGameTime[GunDown] = gameTime.TotalGameTime;
+                }
+
+                SelectNextGun((mouseState.ScrollWheelValue - lastMouseWheelState) / 120);
+                lastMouseWheelState = mouseState.ScrollWheelValue;
+
+
+                int windowWidth = Game.Settings.ScreenSize.Width;
+                int windowHeight = Game.Settings.ScreenSize.Height;
+                if (Game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
+                {
+                    azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * Game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseXInvert ? -1 : 1);
+                    lookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
                     if (lookAngle > MathHelper.PiOver2)
                         lookAngle = MathHelper.PiOver2;
                     if (lookAngle < -MathHelper.PiOver2)
@@ -95,6 +121,7 @@ namespace ActionGame.People
             Debug.Write("Player", PositionInQuarter.ToString());
             Debug.Write("Player azimuth", azimuth.ToString());
             Debug.Write("Player's grid fields", SpacePartitioningFields.Count.ToString());
+            Debug.Write("Wheel", mouseState.ScrollWheelValue.ToString());
 
 
             //Supress human instincts

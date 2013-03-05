@@ -37,13 +37,25 @@ namespace ActionGame.Tools
         /// </summary>
         public bool InfinityBullets { get { return infinityBullets; } }
         private readonly bool infinityBullets;
+        /// <summary>
+        /// Timeout between two shots. In milliseconds.
+        /// </summary>
+        public int ShotTimeout { get { return shotTimeout; } }
+        private readonly int shotTimeout;
+        /// <summary>
+        /// Number of bullets you get with this gun from the box or as default equip.
+        /// </summary>
+        public int DefaultBulletCount { get { return defaultBulletCount; } }
+        private readonly int defaultBulletCount;
 
-        public GunType(int damage, float range, bool infinity, Texture2D icon)
+        public GunType(int damage, float range, bool infinity, int shotTimeout,int defaultBulletCount, Texture2D icon)
         {
             this.damage = damage;
             this.range = range;
             this.infinityBullets = infinity;
             this.icon = icon;
+            this.shotTimeout = shotTimeout;
+            this.defaultBulletCount = defaultBulletCount;
         }
     }
 }

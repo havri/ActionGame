@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using ActionGame.Tools;
 
 namespace ActionGame
 {
@@ -18,5 +19,6 @@ namespace ActionGame
         public bool MouseIgnoresWindow { get; set; }
         public bool MouseXInvert { get; set; }
         public bool MouseYInvert { get; set; }
+        public string GunSetFilename { get; set; }
     }
 }

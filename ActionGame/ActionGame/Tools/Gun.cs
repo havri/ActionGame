@@ -44,5 +44,10 @@ namespace ActionGame.Tools
                 return type;
             }
         }
+
+        public override string ToolBarText
+        {
+            get { return (type.InfinityBullets ? String.Empty : bullets.ToString()); }
+        }
     }
 }

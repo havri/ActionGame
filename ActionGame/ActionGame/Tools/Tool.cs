@@ -29,5 +29,7 @@ namespace ActionGame.Tools
         }
 
         public abstract void DoAction();
+
+        public abstract string ToolBarText { get; }
     }
 }

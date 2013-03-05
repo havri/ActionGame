@@ -50,3 +50,6 @@ Content\Textures\ToolIcons\fists.xnb
 Content\Objects\Decorations\box.xnb
 Content\Objects\Decorations\box\Wood_Plywood_Knots.xnb
 Content\Objects\Decorations\box\Wood_Plywood_Knots_0.xnb
+Content\Textures\ToolIcons\pistol.xnb
+Content\Textures\ToolIcons\ak47.xnb
+Content\Config\DefaultGunSet.xml

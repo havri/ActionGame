@@ -29,8 +29,6 @@ namespace ActionGame.People
         const float ThirdHeadVerticalDistance = 0.1f;
         public const float LookingAtDistance = 10;
         public const float EpsilonDistance = 0.5f;
-        ///TODO: Load from xml or something.
-        public static GunType Fists;
 
         protected int health;
         protected float lookingAtHeight;
@@ -38,14 +36,19 @@ namespace ActionGame.People
         private readonly List<Tool> tools;
         private int selectedToolIndex;
         private Vector2 lastPosition;
+        protected ActionGame Game { get { return game; } }
+        private readonly ActionGame game;
 
-        public Human(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
+        public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
         {
+            this.game = game;
             health = 100;
             tasks = new Queue<Task>();
             tools = new List<Tool>();
-            tools.Add(new Gun(Fists,0, this));
+            tools.AddRange(
+                from gunType in game.HumanDefaultGuns select new Gun (gunType, gunType.DefaultBulletCount, this)
+                );
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
             lookingAtHeight = size.Y;
@@ -161,6 +164,12 @@ namespace ActionGame.People
             }
         }
 
+        protected void SelectNextGun(int jumpLength)
+        {
+            jumpLength %= tools.Count;
+            selectedToolIndex = (selectedToolIndex + jumpLength + tools.Count) % tools.Count;
+        }
+
         public void DoToolAction()
         {
             if (SelectedTool != null)
@@ -194,10 +203,15 @@ namespace ActionGame.People
                 }
                 else
                 {
-                    tools.Add(takenGun);
-                    selectedToolIndex = tools.Count - 1;
+                    AddTool(takenGun);
                 }
             }
+        }
+
+        protected void AddTool(Tool tool)
+        {
+            tools.Add(tool);
+            selectedToolIndex = tools.Count - 1;
         }
     }
 }

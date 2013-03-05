@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<guns>
+  <gun name="Fists" available="human">
+    <icon>fists</icon>
+    <damage>5</damage>
+    <range>0.5</range>
+    <shotTimeout>800</shotTimeout>
+    <infinity>true</infinity>
+  </gun>
+  <gun name="Pistol" available="player">
+    <icon>pistol</icon>
+    <damage>40</damage>
+    <range>100</range>
+    <shotTimeout>600</shotTimeout>
+    <infinity>false</infinity>
+    <defaultBulletCount>21</defaultBulletCount>
+  </gun>
+  <gun name="AK47" available="box">
+    <icon>ak47</icon>
+    <damage>30</damage>
+    <range>80</range>
+    <shotTimeout>130</shotTimeout>
+    <infinity>false</infinity>
+    <defaultBulletCount>70</defaultBulletCount>
+  </gun>
+</guns>

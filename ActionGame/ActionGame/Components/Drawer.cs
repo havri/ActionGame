@@ -93,6 +93,7 @@ namespace ActionGame.Components
             if (game.Player.SelectedTool != null)
             {
                 game.SpriteBatch.Draw(game.Player.SelectedTool.Icon, new Vector2(100, 0), Color.AliceBlue);
+                game.SpriteBatch.DrawString(font, game.Player.SelectedTool.ToolBarText.ToString(), new Vector2(120, 80), Color.Black);
             }
             game.SpriteBatch.End();
 

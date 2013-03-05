@@ -33,6 +33,9 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gunSetFileTB = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.healingBoxesNB = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
@@ -47,6 +50,9 @@
             this.fullScreenChb = new System.Windows.Forms.CheckBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.mouseInvertXCB = new System.Windows.Forms.CheckBox();
+            this.mouseInvertYCB = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.mouseYSensTB = new System.Windows.Forms.TrackBar();
@@ -55,12 +61,10 @@
             this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
-            this.label9 = new System.Windows.Forms.Label();
-            this.mouseInvertYCB = new System.Windows.Forms.CheckBox();
-            this.mouseInvertXCB = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ammoBoxesNB)).BeginInit();
@@ -111,6 +115,7 @@
             // 
             // gameSettingsPage
             // 
+            this.gameSettingsPage.Controls.Add(this.groupBox3);
             this.gameSettingsPage.Controls.Add(this.groupBox1);
             this.gameSettingsPage.Location = new System.Drawing.Point(4, 22);
             this.gameSettingsPage.Name = "gameSettingsPage";
@@ -119,6 +124,35 @@
             this.gameSettingsPage.TabIndex = 0;
             this.gameSettingsPage.Text = "Game";
             this.gameSettingsPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.gunSetFileTB);
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox3.Location = new System.Drawing.Point(3, 99);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(570, 57);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Guns & tools";
+            // 
+            // gunSetFileTB
+            // 
+            this.gunSetFileTB.Location = new System.Drawing.Point(97, 17);
+            this.gunSetFileTB.Name = "gunSetFileTB";
+            this.gunSetFileTB.Size = new System.Drawing.Size(158, 20);
+            this.gunSetFileTB.TabIndex = 1;
+            this.gunSetFileTB.Text = "DefaultGunSet";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(85, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Configuration file";
             // 
             // groupBox1
             // 
@@ -131,7 +165,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(570, 208);
+            this.groupBox1.Size = new System.Drawing.Size(570, 96);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Town";
@@ -205,7 +239,7 @@
             this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
             this.quartersCountNB.TabIndex = 3;
             this.quartersCountNB.Value = new decimal(new int[] {
-            6,
+            4,
             0,
             0,
             0});
@@ -324,6 +358,35 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mouse";
             // 
+            // mouseInvertXCB
+            // 
+            this.mouseInvertXCB.AutoSize = true;
+            this.mouseInvertXCB.Location = new System.Drawing.Point(114, 144);
+            this.mouseInvertXCB.Name = "mouseInvertXCB";
+            this.mouseInvertXCB.Size = new System.Drawing.Size(94, 17);
+            this.mouseInvertXCB.TabIndex = 9;
+            this.mouseInvertXCB.Text = "Horizontal axis";
+            this.mouseInvertXCB.UseVisualStyleBackColor = true;
+            // 
+            // mouseInvertYCB
+            // 
+            this.mouseInvertYCB.AutoSize = true;
+            this.mouseInvertYCB.Location = new System.Drawing.Point(114, 167);
+            this.mouseInvertYCB.Name = "mouseInvertYCB";
+            this.mouseInvertYCB.Size = new System.Drawing.Size(82, 17);
+            this.mouseInvertYCB.TabIndex = 8;
+            this.mouseInvertYCB.Text = "Vertikal axix";
+            this.mouseInvertYCB.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(74, 145);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.TabIndex = 7;
+            this.label9.Text = "Invert";
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -407,35 +470,6 @@
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(74, 145);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(34, 13);
-            this.label9.TabIndex = 7;
-            this.label9.Text = "Invert";
-            // 
-            // mouseInvertYCB
-            // 
-            this.mouseInvertYCB.AutoSize = true;
-            this.mouseInvertYCB.Location = new System.Drawing.Point(114, 167);
-            this.mouseInvertYCB.Name = "mouseInvertYCB";
-            this.mouseInvertYCB.Size = new System.Drawing.Size(82, 17);
-            this.mouseInvertYCB.TabIndex = 8;
-            this.mouseInvertYCB.Text = "Vertikal axix";
-            this.mouseInvertYCB.UseVisualStyleBackColor = true;
-            // 
-            // mouseInvertXCB
-            // 
-            this.mouseInvertXCB.AutoSize = true;
-            this.mouseInvertXCB.Location = new System.Drawing.Point(114, 144);
-            this.mouseInvertXCB.Name = "mouseInvertXCB";
-            this.mouseInvertXCB.Size = new System.Drawing.Size(94, 17);
-            this.mouseInvertXCB.TabIndex = 9;
-            this.mouseInvertXCB.Text = "Horizontal axis";
-            this.mouseInvertXCB.UseVisualStyleBackColor = true;
-            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -451,6 +485,8 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.gameSettingsPage.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).EndInit();
@@ -501,5 +537,8 @@
         private System.Windows.Forms.CheckBox mouseInvertXCB;
         private System.Windows.Forms.CheckBox mouseInvertYCB;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TextBox gunSetFileTB;
+        private System.Windows.Forms.Label label10;
     }
 }

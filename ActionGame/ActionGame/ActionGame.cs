@@ -16,6 +16,8 @@ using ActionGame.MenuForms;
 using ActionGame.Tools;
 using ActionGame.Extensions;
 using System.Threading;
+using System.Xml;
+using System.Globalization;
 
 namespace ActionGame
 {
@@ -76,12 +78,30 @@ namespace ActionGame
             }
         }
 
+        Dictionary<string, GunType> gunTypes;
+        readonly List<GunType> humanDefaultGuns = new List<GunType>();
+        public List<GunType> HumanDefaultGuns
+        {
+            get { return humanDefaultGuns; }
+        }
+        readonly List<GunType> boxDefaultGuns = new List<GunType>();
+        public List<GunType> BoxDefaultGuns
+        {
+            get { return boxDefaultGuns; }
+        }
+        readonly List<GunType> playerDefaultGuns = new List<GunType>();
+        public List<GunType> PlayerDefaultGuns
+        {
+            get { return playerDefaultGuns; }
+        } 
+
+
         bool doInitialize = true;
         public ActionGame()
         {
-            using (MainMenu mainMenuForm = new MainMenu())
+            using (MainMenu mainMenuForm = new MainMenu(this))
             {
-                if (mainMenuForm.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                if (mainMenuForm.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 {
                     doInitialize = false;
                     Exit();
@@ -103,14 +123,49 @@ namespace ActionGame
                     graphics.ToggleFullScreen();
                 Content.RootDirectory = "Content";
 
-
-
                 camera = new Camera(this);
                 debug = new Debug(this);
                 drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
                 Components.Add(camera);
                 Components.Add(drawer);
                 Components.Add(debug);
+            }
+        }
+
+        void LoadGunTypes()
+        {
+            string fileName = settings.GunSetFilename;
+            XmlDocument doc = new XmlDocument();
+            string fullPath = String.Format(@"Content\Config\{0}", fileName);
+            if (!fullPath.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
+                fullPath += ".xml";
+            doc.Load(fullPath);
+            var gunNodes = doc.SelectNodes("/guns/*");
+            gunTypes = new Dictionary<string, GunType>(gunNodes.Count);
+            foreach (XmlNode gunNode in gunNodes)
+            {
+                string texture = gunNode.SelectSingleNode("icon").InnerText;
+                Texture2D icon = Content.Load<Texture2D>("Textures/ToolIcons/" + texture);
+                bool infinity = bool.Parse(gunNode.SelectSingleNode("infinity").InnerText);
+                GunType gunType = new GunType(
+                    int.Parse(gunNode.SelectSingleNode("damage").InnerText),
+                    float.Parse(gunNode.SelectSingleNode("range").InnerText, CultureInfo.InvariantCulture.NumberFormat),
+                    infinity,
+                    int.Parse(gunNode.SelectSingleNode("shotTimeout").InnerText),
+                    (infinity ? 0 : int.Parse(gunNode.SelectSingleNode("defaultBulletCount").InnerText)),
+                    icon
+                    );
+                gunTypes.Add(gunNode.Attributes["name"].Value, gunType);
+                if (gunNode.Attributes["available"].Value == "human")
+                    humanDefaultGuns.Add(gunType);
+                if (gunNode.Attributes["available"].Value == "box" || gunNode.Attributes["available"].Value == "player")
+                {
+                    if (gunNode.Attributes["available"].Value == "player")
+                    {
+                        playerDefaultGuns.Add(gunType);
+                    }
+                    boxDefaultGuns.Add(gunType);
+                }
             }
         }
         /// <summary>
@@ -123,8 +178,6 @@ namespace ActionGame
         {
             if (doInitialize)
             {
-                Human.Fists = new GunType(10, 0.5f, true, Content.Load<Texture2D>("Textures/ToolIcons/fists"));
-                player = new Player(this);
                 base.Initialize();
             }
         }
@@ -139,6 +192,9 @@ namespace ActionGame
                 loadingForm.Show();
                 loadingForm.SetLabel("Loading graphics device...");
                 spriteBatch = new SpriteBatch(GraphicsDevice);
+                loadingForm.SetLabel("Loading gun types...");
+                LoadGunTypes();
+                player = new Player(this);
                 town = new Town(this, loadingForm);
                 loadingForm.SetLabel("Loading player...");
                 loadingForm.SetValue(0);

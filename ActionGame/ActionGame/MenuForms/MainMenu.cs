@@ -9,10 +9,12 @@ namespace ActionGame.MenuForms
 {
     public partial class MainMenu : Form
     {
-        public MainMenu()
+        readonly ActionGame game;
+        public MainMenu(ActionGame game)
         {
             InitializeComponent();
             DialogResult = DialogResult.Cancel;
+            this.game = game;
         }
 
         private void playBtn_Click(object sender, EventArgs e)
@@ -49,7 +51,8 @@ namespace ActionGame.MenuForms
                         MouseYSensitivity = mouseYSensTB.Value,
                         MouseIgnoresWindow = mouseIgnoreWindowCB.Checked,
                         MouseXInvert = mouseInvertXCB.Checked,
-                        MouseYInvert = mouseInvertYCB.Checked
+                        MouseYInvert = mouseInvertYCB.Checked,
+                        GunSetFilename = gunSetFileTB.Text
                     };
             }
         }

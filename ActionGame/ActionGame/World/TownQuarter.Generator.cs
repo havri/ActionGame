@@ -97,17 +97,22 @@ namespace ActionGame.World
 
         private void GenerateBoxes()
         {
+            Random random = new Random();
             HashSet<Point> occupiedPositions = new HashSet<Point>();
-            for (int i = 0; i < game.Settings.AmmoBoxCount; i++)
+            if (game.BoxDefaultGuns.Count != 0)
             {
-                Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height,pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
-                ToolBox tb = new ToolBox(null,
-                    game.Content.Load<Model>("Objects/Decorations/Box"),
-                    new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
-                    game.Drawer.WorldTransformMatrix
-                    );
-                solidObjects.AddLast(tb);
-                occupiedPositions.Add(p);
+                for (int i = 0; i < game.Settings.AmmoBoxCount; i++)
+                {
+                    Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
+                    GunType gunType = game.BoxDefaultGuns[random.Next(game.BoxDefaultGuns.Count)];
+                    ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount),
+                        game.Content.Load<Model>("Objects/Decorations/Box"),
+                        new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
+                        game.Drawer.WorldTransformMatrix
+                        );
+                    solidObjects.AddLast(tb);
+                    occupiedPositions.Add(p);
+                }
             }
 
             for (int i = 0; i < game.Settings.HealBoxCount; i++)
@@ -212,7 +217,7 @@ namespace ActionGame.World
                 {
                     IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
                     ///TODO: Take human model from central repository.
-                    Human walker = new Human(game.Content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
+                    Human walker = new Human(game, game.Content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
                     walker.AddTask(task);
                     walkers.AddFirst(walker);

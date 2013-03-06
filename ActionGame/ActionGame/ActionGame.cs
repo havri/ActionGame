@@ -148,6 +148,8 @@ namespace ActionGame
             {
                 string texture = gunNode.SelectSingleNode("icon").InnerText;
                 Texture2D icon = Content.Load<Texture2D>("Textures/ToolIcons/" + texture);
+                string sound = gunNode.SelectSingleNode("sound").InnerText;
+                SoundEffect shotSound = Content.Load<SoundEffect>("Sounds/ToolActions/" + sound);
                 bool infinity = bool.Parse(gunNode.SelectSingleNode("infinity").InnerText);
                 TimeSpan shotTimeout = new TimeSpan(0,0,0,0,int.Parse(gunNode.SelectSingleNode("shotTimeout").InnerText));
                 GunType gunType = new GunType(
@@ -156,7 +158,8 @@ namespace ActionGame
                     infinity,
                     shotTimeout,
                     (infinity ? 0 : int.Parse(gunNode.SelectSingleNode("defaultBulletCount").InnerText)),
-                    icon
+                    icon,
+                    shotSound
                     );
                 gunTypes.Add(gunNode.Attributes["name"].Value, gunType);
                 if (gunNode.Attributes["available"].Value == "human")

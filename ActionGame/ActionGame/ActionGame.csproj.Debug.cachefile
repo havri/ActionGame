@@ -53,4 +53,6 @@ Content\Objects\Decorations\box\Wood_Plywood_Knots_0.xnb
 Content\Textures\ToolIcons\pistol.xnb
 Content\Textures\ToolIcons\ak47.xnb
 Content\Sounds\background.xnb
+Content\Sounds\ToolActions\ak47.xnb
+Content\Sounds\ToolActions\pistol.xnb
 Content\Config\DefaultGunSet.xml

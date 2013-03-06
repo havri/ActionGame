@@ -6,6 +6,7 @@
     <range>0.5</range>
     <shotTimeout>800</shotTimeout>
     <infinity>true</infinity>
+    <sound>pistol</sound>
   </gun>
   <gun name="Pistol" available="player">
     <icon>pistol</icon>
@@ -14,6 +15,7 @@
     <shotTimeout>600</shotTimeout>
     <infinity>false</infinity>
     <defaultBulletCount>21</defaultBulletCount>
+    <sound>pistol</sound>
   </gun>
   <gun name="AK47" available="box">
     <icon>ak47</icon>
@@ -22,5 +24,6 @@
     <shotTimeout>130</shotTimeout>
     <infinity>false</infinity>
     <defaultBulletCount>70</defaultBulletCount>
+    <sound>ak47</sound>
   </gun>
 </guns>

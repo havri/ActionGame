@@ -9,6 +9,7 @@ using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.QSP;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.Tools
 {
@@ -91,8 +92,8 @@ namespace ActionGame.Tools
                     Debug.Write("Shot", nearest.ToString());
                     nearest.BecomeShot(type.Damage);
                 }
-
                 quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, distance, azimuth));
+                type.ShotSount.Play();
                 lastTimeShot = gameTime.TotalGameTime;
             }
         }

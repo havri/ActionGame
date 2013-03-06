@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.Tools
@@ -9,7 +10,7 @@ namespace ActionGame.Tools
     /// <summary>
     /// Describes gun type - gun's tech. specification.
     /// </summary>
-    public class GunType
+    public class GunType : IDisposable
     {
         /// <summary>
         /// Value what is substracted from injured human. Human's health is between 0-100.
@@ -47,8 +48,17 @@ namespace ActionGame.Tools
         /// </summary>
         public int DefaultBulletCount { get { return defaultBulletCount; } }
         private readonly int defaultBulletCount;
+        /// <summary>
+        /// Shot action sound.
+        /// </summary>
+        public SoundEffect ShotSount
+        {
+            get { return shotSount; }
+        } 
+        private readonly SoundEffect shotSount;
 
-        public GunType(int damage, float range, bool infinity, TimeSpan shotTimeout, int defaultBulletCount, Texture2D icon)
+
+        public GunType(int damage, float range, bool infinity, TimeSpan shotTimeout, int defaultBulletCount, Texture2D icon, SoundEffect shot)
         {
             this.damage = damage;
             this.range = range;
@@ -56,6 +66,12 @@ namespace ActionGame.Tools
             this.icon = icon;
             this.shotTimeout = shotTimeout;
             this.defaultBulletCount = defaultBulletCount;
+            shotSount = shot;
+        }
+
+        public void Dispose()
+        {
+            shotSount.Dispose();
         }
     }
 }

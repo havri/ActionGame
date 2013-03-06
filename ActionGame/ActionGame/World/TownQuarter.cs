@@ -235,6 +235,7 @@ namespace ActionGame.World
                 solidObjects.Remove(obj);
             }
             game.Drawer.StopDrawingObject(obj);
+            spaceGrid.RemoveObject(obj);
         }
     }
 }

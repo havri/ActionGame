@@ -93,8 +93,9 @@ namespace ActionGame
         public List<GunType> PlayerDefaultGuns
         {
             get { return playerDefaultGuns; }
-        } 
+        }
 
+        SoundEffectInstance backgroundSound;
 
         bool doInitialize = true;
         public ActionGame()
@@ -205,9 +206,14 @@ namespace ActionGame
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
+                backgroundSound = Content.Load<SoundEffect>("Sounds/background").CreateInstance();
+
                 loadingForm.SetLabel("Content loaded. Get ready to play!");
                 loadingForm.SetValue(100);
                 loadingForm.Close();
+
+                backgroundSound.IsLooped = true;
+                backgroundSound.Play();
             }
         }
         /// <summary>
@@ -250,7 +256,6 @@ namespace ActionGame
             base.Dispose(disposing);
 
             if(player != null) player.Dispose();
-            if(town != null) town.Dispose();
         }
     }
 }

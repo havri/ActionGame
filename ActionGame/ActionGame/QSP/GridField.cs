@@ -10,11 +10,14 @@ namespace ActionGame.QSP
     {
         readonly ISet<Quadrangle> objects;
         readonly ISet<PathGraphVertex> pathGraphVertices;
+        bool isInCollisionProcessing = false;
+        readonly List<Quadrangle> objectsForRemove;
 
         public GridField()
         {
             objects = new HashSet<Quadrangle>();
             pathGraphVertices = new HashSet<PathGraphVertex>();
+            objectsForRemove = new List<Quadrangle>();
         }
 
         public void AddObject(Quadrangle obj)
@@ -25,8 +28,15 @@ namespace ActionGame.QSP
 
         public void RemoveObject(Quadrangle obj)
         {
-            objects.Remove(obj);
-            obj.SpacePartitioningFields.Remove(this);
+            if (!isInCollisionProcessing)
+            {
+                objects.Remove(obj);
+                obj.SpacePartitioningFields.Remove(this);
+            }
+            else
+            {
+                objectsForRemove.Add(obj);
+            }
         }
 
         public void AddPathGraphVertex(PathGraphVertex vertex)
@@ -51,6 +61,7 @@ namespace ActionGame.QSP
 
         public IEnumerable<Quadrangle> GetCollisions(Quadrangle obj)
         {
+            isInCollisionProcessing = true;
             foreach (Quadrangle quad in objects)
             {
                 if (obj.IsInCollisionWith(quad) && obj != quad)
@@ -58,6 +69,12 @@ namespace ActionGame.QSP
                     yield return quad;
                 }
             }
+            isInCollisionProcessing = false;
+            foreach (Quadrangle rem in objectsForRemove)
+            {
+                RemoveObject(rem);
+            }
+            objectsForRemove.Clear();
         }
     }
 }

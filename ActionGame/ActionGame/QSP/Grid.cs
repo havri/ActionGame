@@ -119,7 +119,7 @@ namespace ActionGame.QSP
                         new Vector2(actX * fieldWidth + fieldWidth, actY * fieldHeight + fieldHeight)
                         );
 
-                    if (fieldOne.IsInCollisionWith(obj) && actX < width && actY < height)
+                    if (fieldOne.IsInCollisionWith(obj) && actX < width && actY < height && actX >= 0 && actY >= 0)
                     {
                         result.Add(GetField(actX, actY));
                     }
@@ -152,6 +152,11 @@ namespace ActionGame.QSP
         public void RemoveObject(Quadrangle obj)
         {
             objects.Remove(obj);
+            List<GridField> fields = new List<GridField>( obj.SpacePartitioningFields);
+            foreach (GridField field in fields)
+            {
+                field.RemoveObject(obj);
+            }
         }
 
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)

@@ -24,7 +24,7 @@ namespace ActionGame.People
         static readonly Keys TurnLeft = Keys.Left;
         static readonly Keys TurnRight = Keys.Right;
         static readonly Keys TurnUp = Keys.Up;
-        static readonly Keys TurnDown = Keys.Down;
+        static readonly Keys TurnDown = Keys.Down;  
         static readonly Keys RunSwitch = Keys.CapsLock;
         static readonly TimeSpan KeyPressedTimeout = new TimeSpan(0, 0, 0, 0, 250);
 

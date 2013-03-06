@@ -210,8 +210,18 @@ namespace ActionGame.People
 
         protected void AddTool(Tool tool)
         {
+            tool.Holder = this;
             tools.Add(tool);
             selectedToolIndex = tools.Count - 1;
+        }
+
+        public override void BecomeShot(int damage)
+        {
+            health -= damage;
+            if (health <= 0)
+            {
+                Destroy();
+            }
         }
     }
 }

@@ -14,5 +14,10 @@ namespace ActionGame.Tools
         public Box(Model model, PositionInTown position, Matrix world)
             : base(model, position, 0, world)
         { }
+
+        public override void BecomeShot(int damage)
+        {
+            Destroy();
+        }
     }
 }

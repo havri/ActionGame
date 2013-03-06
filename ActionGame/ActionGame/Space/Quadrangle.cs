@@ -64,6 +64,9 @@ namespace ActionGame.Space
         public virtual void Hit(Quadrangle something)
         { }
 
+        public virtual void BecomeShot(int damage)
+        { }
+
         public virtual Vector2 UpperLeftCorner
         {
             get

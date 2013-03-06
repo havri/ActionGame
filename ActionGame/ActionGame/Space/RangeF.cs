@@ -5,32 +5,33 @@ using System.Text;
 
 namespace ActionGame.Space
 {
-    struct Range
+    struct RangeF
     {
-        int begin;
-        int end;
+        float begin;
+        float end;
 
-        public Range(int begin, int end)
+        public RangeF(float begin, float end)
         {
             this.begin = begin;
             this.end = end;
         }
 
-        public int Begin
-        { 
+        public float Begin
+        {
             get { return begin; }
             set { begin = value; }
         }
 
-        public int End
+        public float End
         {
             get { return end; }
             set { end = value; }
         }
 
-        public int Length
+        public float Length
         {
             get { return Math.Abs(end - begin); }
         }
     }
 }
+

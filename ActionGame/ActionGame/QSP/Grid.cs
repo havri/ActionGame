@@ -84,7 +84,7 @@ namespace ActionGame.QSP
             GetField(x, y).AddPathGraphVertex(vertex);
         }
 
-        IEnumerable<GridField> GetFieldsByObject(Quadrangle obj)
+        public IEnumerable<GridField> GetFieldsByObject(Quadrangle obj)
         {
             Vector2[] corners = new Vector2[] {
                 obj.UpperLeftCorner,

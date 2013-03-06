@@ -11,7 +11,14 @@ namespace ActionGame.Tools
 {
     public abstract class Tool
     {
-        protected Human handler;
+        Human holder;
+
+        public Human Holder
+        {
+            get { return holder; }
+            set { holder = value; }
+        }
+
         private readonly Texture2D icon;
         public Texture2D Icon
         {
@@ -27,11 +34,13 @@ namespace ActionGame.Tools
         public Tool(Texture2D icon, Human handler)
             : this(icon)
         {
-            this.handler = handler;
+            this.holder = handler;
         }
 
         public abstract void DoAction(GameTime gameTime, PositionInTown position, float azimuth);
 
         public abstract string ToolBarText { get; }
+
+        
     }
 }

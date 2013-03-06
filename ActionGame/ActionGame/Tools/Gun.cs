@@ -8,6 +8,7 @@ using ActionGame.World;
 using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ActionGame.QSP;
 
 namespace ActionGame.Tools
 {
@@ -47,7 +48,51 @@ namespace ActionGame.Tools
                 Vector2 right = quarterPosition.Go(bulletWidthHalf, azimuth + MathHelper.PiOver2);
                 Quadrangle bullet = new Quadrangle(left, right, left.Go(type.Range, azimuth), right.Go(type.Range, azimuth));
                 TownQuarter quarter = position.Quarter;
-                quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, type.Range, azimuth));
+
+                IEnumerable<GridField> affectedFields = quarter.SpaceGrid.GetFieldsByObject(bullet);
+                List<Quadrangle> colliders = new List<Quadrangle>();
+                foreach (GridField field in affectedFields)
+                {
+                    colliders.AddRange(field.GetCollisions(bullet));
+                }
+                colliders.RemoveAll(x => x == Holder);
+
+                //Half-interval search
+                Stack<RangeF> testedParts = new Stack<RangeF>();
+                testedParts.Push(new RangeF(0, type.Range));
+
+                Quadrangle nearest = null;
+                float distance = type.Range;
+                while (testedParts.Count != 0)
+                {
+                    RangeF bulletRangePart = testedParts.Pop();
+                    Quadrangle bulletPart = new Quadrangle(
+                        left.Go(bulletRangePart.Begin, azimuth),
+                        right.Go(bulletRangePart.Begin, azimuth),
+                        left.Go(bulletRangePart.End, azimuth),
+                        right.Go(bulletRangePart.End, azimuth));
+                    List<Quadrangle> newColliders = new List<Quadrangle>( colliders.Where(x => x.IsInCollisionWith(bulletPart)) );
+                    if (newColliders.Count != 0)
+                    {
+                        if (newColliders.Count == 1 || bulletRangePart.Length <= bulletWidthHalf)
+                        {
+                            nearest = newColliders[0];
+                            distance = bulletRangePart.End;
+                            break;
+                        }
+                        colliders = newColliders;
+                        testedParts.Push(new RangeF(bulletRangePart.Begin + bulletRangePart.Length * 0.5f, bulletRangePart.End));
+                        testedParts.Push(new RangeF(bulletRangePart.Begin, bulletRangePart.Begin + bulletRangePart.Length * 0.5f));
+                    }
+                }
+
+                if (nearest != null)
+                {
+                    Debug.Write("Shot", nearest.ToString());
+                    nearest.BecomeShot(type.Damage);
+                }
+
+                quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, distance, azimuth));
                 lastTimeShot = gameTime.TotalGameTime;
             }
         }

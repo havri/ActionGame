@@ -206,16 +206,18 @@ namespace ActionGame.World
                 //Remove player from old quarter space grid
                 currentQuarter.SpaceGrid.RemoveObject(Game.Player);
 
+                //Changes current quarter
+                currentQuarter = usedInterface.OppositeInterface.Quarter;
+
                 //Moves player into new current quarter
                 float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
                 Vector2 delta = ResolveQuarterPositionDelta(TownQuarter.SquareWidth, usedInterface);
                 Game.Player.MoveTo(
-                    Vector3.Transform(Game.Player.PositionInQuarter, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2(), // reverse transform of nearest quarter
+                    new PositionInTown(currentQuarter,
+                        Vector3.Transform(Game.Player.PositionInQuarter, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2() // reverse transform of nearest quarter
+                        ),
                     Game.Player.Azimuth - angle
                     );
-
-                //Changes current quarter
-                currentQuarter = usedInterface.OppositeInterface.Quarter;
 
                 //Assings player to new space grid
                 currentQuarter.SpaceGrid.AddObject(Game.Player);

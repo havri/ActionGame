@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using ActionGame.World;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.Tools
@@ -28,7 +30,7 @@ namespace ActionGame.Tools
             this.handler = handler;
         }
 
-        public abstract void DoAction();
+        public abstract void DoAction(GameTime gameTime, PositionInTown position, float azimuth);
 
         public abstract string ToolBarText { get; }
     }

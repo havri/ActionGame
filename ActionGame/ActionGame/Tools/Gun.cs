@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using ActionGame.Space;
+using ActionGame.World;
+using ActionGame.Extensions;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.Tools
@@ -11,6 +15,7 @@ namespace ActionGame.Tools
     {
         private readonly GunType type;
         private int bullets;
+        TimeSpan lastTimeShot;
 
         public Gun(GunType type, int bullets)
             : this(type, bullets, null)
@@ -32,9 +37,19 @@ namespace ActionGame.Tools
             get { return bullets; }
         }
 
-        public override void DoAction()
+        public override void DoAction(GameTime gameTime, PositionInTown position, float azimuth)
         {
-            throw new NotImplementedException();
+            if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout)
+            { 
+                const float bulletWidthHalf = 0.1f;
+                Vector2 quarterPosition = position.PositionInQuarter;
+                Vector2 left = quarterPosition.Go(bulletWidthHalf, azimuth - MathHelper.PiOver2);
+                Vector2 right = quarterPosition.Go(bulletWidthHalf, azimuth + MathHelper.PiOver2);
+                Quadrangle bullet = new Quadrangle(left, right, left.Go(type.Range, azimuth), right.Go(type.Range, azimuth));
+                TownQuarter quarter = position.Quarter;
+                quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, type.Range, azimuth));
+                lastTimeShot = gameTime.TotalGameTime;
+            }
         }
 
         public GunType Type

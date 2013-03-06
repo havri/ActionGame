@@ -95,6 +95,10 @@ namespace ActionGame.People
                     SelectNextGun(-1);
                     lastKeyPressedGameTime[GunDown] = gameTime.TotalGameTime;
                 }
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    DoToolAction(gameTime);
+                }
 
                 SelectNextGun((mouseState.ScrollWheelValue - lastMouseWheelState) / 120);
                 lastMouseWheelState = mouseState.ScrollWheelValue;

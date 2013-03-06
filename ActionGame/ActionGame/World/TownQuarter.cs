@@ -41,6 +41,8 @@ namespace ActionGame.World
         /// </summary>
         readonly LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
         readonly LinkedList<Plate> magicPlates = new LinkedList<Plate>();
+        readonly HashSet<BulletVisualisation> magicBullets = new HashSet<BulletVisualisation>();
+        readonly List<KeyValuePair<BulletVisualisation, TimeSpan>> bulletAddedTimes = new List<KeyValuePair<BulletVisualisation,TimeSpan>>();
         readonly LinkedList<Human> walkers = new LinkedList<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
@@ -77,6 +79,9 @@ namespace ActionGame.World
         /// </summary>
         public string Name;
         Texture2D roadSignTexture;
+
+        float currentDrawingAzimuthDelta;
+        Vector2 currentDrawingPositionDelta;
 
         readonly ActionGame game;
 
@@ -150,6 +155,8 @@ namespace ActionGame.World
         /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
         public void FillDrawer(float angle, Vector2 delta)
         {
+            currentDrawingAzimuthDelta = angle;
+            currentDrawingPositionDelta = delta;
             foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
                 game.Drawer.StartDrawingObject(o, angle, delta);
@@ -194,6 +201,17 @@ namespace ActionGame.World
             foreach (var walker in walkers)
                 walker.Update(gameTime);
             spaceGrid.Update();
+
+            foreach (KeyValuePair<BulletVisualisation, TimeSpan> bulletAddedTime in bulletAddedTimes)
+            {
+                if (bulletAddedTime.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime)
+                {
+                    magicBullets.Remove(bulletAddedTime.Key);
+                    game.Drawer.StopDrawingObject(bulletAddedTime.Key);
+                    bulletAddedTime.Key.Dispose();
+                }
+            }
+            bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
         }
 
         public Texture2D RoadSignTexture
@@ -208,6 +226,7 @@ namespace ActionGame.World
             result.AddRange(solidPlates);
             result.AddRange(solidObjects);
             result.AddRange(walkers);
+            result.AddRange(magicBullets);
             return result;
         }
 
@@ -236,6 +255,13 @@ namespace ActionGame.World
             }
             game.Drawer.StopDrawingObject(obj);
             spaceGrid.RemoveObject(obj);
+        }
+
+        public void AddBullet(GameTime gameTime, BulletVisualisation bullet)
+        {
+            magicBullets.Add(bullet);
+            bulletAddedTimes.Add(new KeyValuePair<BulletVisualisation, TimeSpan>(bullet, gameTime.TotalGameTime));
+            game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
         }
     }
 }

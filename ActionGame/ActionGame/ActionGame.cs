@@ -18,6 +18,7 @@ using ActionGame.Extensions;
 using System.Threading;
 using System.Xml;
 using System.Globalization;
+using ActionGame.Space;
 
 namespace ActionGame
 {
@@ -148,11 +149,12 @@ namespace ActionGame
                 string texture = gunNode.SelectSingleNode("icon").InnerText;
                 Texture2D icon = Content.Load<Texture2D>("Textures/ToolIcons/" + texture);
                 bool infinity = bool.Parse(gunNode.SelectSingleNode("infinity").InnerText);
+                TimeSpan shotTimeout = new TimeSpan(0,0,0,0,int.Parse(gunNode.SelectSingleNode("shotTimeout").InnerText));
                 GunType gunType = new GunType(
                     int.Parse(gunNode.SelectSingleNode("damage").InnerText),
                     float.Parse(gunNode.SelectSingleNode("range").InnerText, CultureInfo.InvariantCulture.NumberFormat),
                     infinity,
-                    int.Parse(gunNode.SelectSingleNode("shotTimeout").InnerText),
+                    shotTimeout,
                     (infinity ? 0 : int.Parse(gunNode.SelectSingleNode("defaultBulletCount").InnerText)),
                     icon
                     );
@@ -206,6 +208,8 @@ namespace ActionGame
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
+
+                BulletVisualisation.Texture = Content.Load<Texture2D>("Textures/blue");
                 backgroundSound = Content.Load<SoundEffect>("Sounds/background").CreateInstance();
 
                 loadingForm.SetLabel("Content loaded. Get ready to play!");

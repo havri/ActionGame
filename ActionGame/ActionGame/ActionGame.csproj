@@ -135,6 +135,7 @@
     <Compile Include="QSP\GridField.cs" />
     <Compile Include="QSP\LeafNode.cs" />
     <Compile Include="QSP\QuadNode.cs" />
+    <Compile Include="Space\BulletVisualisation.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
     <Compile Include="Space\Line.cs" />

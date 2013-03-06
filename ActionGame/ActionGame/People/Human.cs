@@ -170,11 +170,11 @@ namespace ActionGame.People
             selectedToolIndex = (selectedToolIndex + jumpLength + tools.Count) % tools.Count;
         }
 
-        public void DoToolAction()
+        public void DoToolAction(GameTime gameTime)
         {
             if (SelectedTool != null)
             {
-                SelectedTool.DoAction();
+                SelectedTool.DoAction(gameTime, position, (float)azimuth);
             }
         }
         public override void Hit(Quadrangle something)

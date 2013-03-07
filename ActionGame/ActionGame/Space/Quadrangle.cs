@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionGame.Extensions;
+using ActionGame.People;
 using ActionGame.QSP;
 using Microsoft.Xna.Framework;
 
@@ -36,7 +37,7 @@ namespace ActionGame.Space
         public bool IsInCollisionWith(Quadrangle obj)
         {
             return ZapCollisionDetect(obj);
-
+            /*
             Line leftAxis = Line.FromTwoPoints(UpperLeftCorner, LowerLeftCorner);
             Line rightAxis = Line.FromTwoPoints(UpperRightCorner, LowerRightCorner);
             Line upperAxis = Line.FromTwoPoints(UpperLeftCorner, UpperRightCorner);
@@ -48,6 +49,7 @@ namespace ActionGame.Space
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj)) // vertical switched
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // both switched
                 ;
+            */
         }
 
         public void CheckHits()
@@ -64,7 +66,7 @@ namespace ActionGame.Space
         public virtual void Hit(Quadrangle something)
         { }
 
-        public virtual void BecomeShot(int damage)
+        public virtual void BecomeShot(int damage, Human by)
         { }
 
         public virtual Vector2 UpperLeftCorner

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.People;
 using ActionGame.Space;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ namespace ActionGame.Tools
             : base(model, position, 0, world)
         { }
 
-        public override void BecomeShot(int damage)
+        public override void BecomeShot(int damage, Human by)
         {
             Destroy();
         }

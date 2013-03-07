@@ -221,7 +221,6 @@ namespace ActionGame.World
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
                     walker.AddTask(task);
                     walkers.AddFirst(walker);
-                    walker.AddEnemy(game.Player);
                 }
             }
         }
@@ -959,7 +958,6 @@ namespace ActionGame.World
                         break;
                     default:
                         throw new InvalidOperationException("Unknown AxisDirection for splitting.");
-                        break;
                 }
 
                 mapBitmap[bitmapIndex] = MapFillType.StraightRoad;

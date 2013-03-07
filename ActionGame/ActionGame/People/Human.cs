@@ -29,7 +29,7 @@ namespace ActionGame.People
         const float ThirdHeadVerticalDistance = 0.1f;
         public const float LookingAtDistance = 10;
         public const float EpsilonDistance = 0.5f;
-        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 0);
+        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
 
         /// <summary>
         /// Gets current health of human. In percents.
@@ -147,7 +147,11 @@ namespace ActionGame.People
         public virtual void Update(GameTime gameTime)
         {
             bool moved = false;
-            moved = KillEnemyReflex(gameTime);
+            //Order of reflexes is important.
+            if (!moved)
+                moved = KillEnemyReflex(gameTime);
+            if (!moved)
+                moved = BalkReflex(gameTime);
 
             //Solve tasks reflex
             if (!moved)
@@ -160,6 +164,19 @@ namespace ActionGame.People
                         tasks.Dequeue();
                 }
             }
+        }
+
+        bool BalkReflex(GameTime gameTime)
+        {
+            const float balkDistance = 0.8f;
+            Quadrangle viewCone = GetViewCone(balkDistance);
+            IEnumerable<Quadrangle> balks = position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
+            if(balks.Any(x => x != this))
+            {
+                Step(false, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                return true;
+            }
+            return false;
         }
 
         bool KillEnemyReflex(GameTime gameTime)
@@ -290,12 +307,16 @@ namespace ActionGame.People
             selectedToolIndex = tools.Count - 1;
         }
 
-        public override void BecomeShot(int damage)
+        public override void BecomeShot(int damage, Human by)
         {
             health -= damage;
             if (health <= 0)
             {
                 Destroy();
+            }
+            else if(by != null)
+            {
+                AddEnemy(by);
             }
         }
 
@@ -312,6 +333,33 @@ namespace ActionGame.People
             if(!enemies.Contains(enemy))
             {
                 enemies.Add(enemy);
+                RemoveFriend(enemy);
+            }
+        }
+
+        public void AddFriend(Human friend)
+        {
+            if (!friends.Contains(friend))
+            {
+                friends.Add(friend);
+                RemoveEnemy(friend);
+            }
+        }
+
+
+        public void RemoveEnemy(Human enemy)
+        {
+            if (enemies.Contains(enemy))
+            {
+                enemies.Remove(enemy);
+            }
+        }
+
+        public void RemoveFriend(Human friend)
+        {
+            if (friends.Contains(friend))
+            {
+                friends.Remove(friend);
             }
         }
     }

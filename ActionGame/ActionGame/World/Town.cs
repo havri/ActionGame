@@ -101,7 +101,7 @@ namespace ActionGame.World
                         TownQuarter quarter = new TownQuarter(game, new Vector2(width, height), degrees[i]);
                         quarters[i] = quarter;
                     }
-                    catch (NoSpaceForInterfaceException ex)
+                    catch (NoSpaceForInterfaceException)
                     {
                         width += MinSideLengthPerInterface / 2;
                         height += MinSideLengthPerInterface / 2;

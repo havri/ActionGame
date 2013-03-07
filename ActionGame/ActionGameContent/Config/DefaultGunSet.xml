@@ -8,7 +8,7 @@
     <infinity>true</infinity>
     <sound>pistol</sound>
   </gun>
-  <gun name="Pistol" available="human">
+  <gun name="Pistol" available="player">
     <icon>pistol</icon>
     <damage>40</damage>
     <range>100</range>

@@ -85,7 +85,7 @@ namespace ActionGame.Tools
                 if (nearest != null)
                 {
                     Debug.Write("Shot", nearest.ToString());
-                    nearest.BecomeShot(type.Damage);
+                    nearest.BecomeShot(type.Damage, Holder);
                 }
                 quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, distance, azimuth));
                 type.ShotSount.Play();

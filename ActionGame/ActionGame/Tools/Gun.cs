@@ -41,7 +41,7 @@ namespace ActionGame.Tools
 
         public override void DoAction(GameTime gameTime, PositionInTown position, float azimuth)
         {
-            if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout && (bullets > 0  || type.InfinityBullets))
+            if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout && Usable)
             { 
                 const float bulletWidthHalf = 0.1f;
                 Vector2 quarterPosition = position.PositionInQuarter;
@@ -50,12 +50,7 @@ namespace ActionGame.Tools
                 Quadrangle bullet = new Quadrangle(left, right, left.Go(type.Range, azimuth), right.Go(type.Range, azimuth));
                 TownQuarter quarter = position.Quarter;
 
-                IEnumerable<GridField> affectedFields = quarter.SpaceGrid.GetFieldsByObject(bullet);
-                List<Quadrangle> colliders = new List<Quadrangle>();
-                foreach (GridField field in affectedFields)
-                {
-                    colliders.AddRange(field.GetCollisions(bullet));
-                }
+                List<Quadrangle> colliders = new List<Quadrangle>(quarter.SpaceGrid.GetAllCollisions(bullet));
                 colliders.RemoveAll(x => x == Holder);
 
                 //Half-interval search
@@ -110,6 +105,14 @@ namespace ActionGame.Tools
         public override string ToolBarText
         {
             get { return (type.InfinityBullets ? String.Empty : bullets.ToString()); }
+        }
+
+        public override bool Usable
+        {
+            get
+            {
+                return Type.InfinityBullets || bullets > 0;
+            }
         }
     }
 }

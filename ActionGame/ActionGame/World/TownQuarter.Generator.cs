@@ -221,6 +221,7 @@ namespace ActionGame.World
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
                     walker.AddTask(task);
                     walkers.AddFirst(walker);
+                    walker.AddEnemy(game.Player);
                 }
             }
         }

@@ -35,6 +35,10 @@ namespace ActionGame.World
         const int PictureMapRoadWidth = 15;
 
         const float BetweenBuildingSpace = 4f;
+        readonly static List<string> nameRepository = new List<string>(new string[] {
+            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
+        });
+        readonly static string emptyName = "Unnamed";
 
         /// <summary>
         /// Object what makes ground textures.
@@ -82,13 +86,9 @@ namespace ActionGame.World
 
         float currentDrawingAzimuthDelta;
         Vector2 currentDrawingPositionDelta;
-
+        bool updateProcessing = false;
+        readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
         readonly ActionGame game;
-
-        readonly static List<string> nameRepository = new List<string>(new string[] {
-            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
-        });
-        readonly static string emptyName = "Unnamed";
 
         /// <summary>
         /// Creates new town quarter as map fragment. Generates roads, buildings, etc.
@@ -198,6 +198,7 @@ namespace ActionGame.World
 
         public void Update(GameTime gameTime)
         {
+            updateProcessing = true;
             foreach (var walker in walkers)
                 walker.Update(gameTime);
             spaceGrid.Update();
@@ -212,6 +213,12 @@ namespace ActionGame.World
                 }
             }
             bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
+            updateProcessing = false;
+            foreach (SpatialObject obj in awaitingDestroy)
+            {
+                DestroyObject(obj);
+            }
+            awaitingDestroy.Clear();
         }
 
         public Texture2D RoadSignTexture
@@ -245,16 +252,23 @@ namespace ActionGame.World
 
         public void DestroyObject(SpatialObject obj)
         {
-            if (obj is Human)
+            if (!updateProcessing)
             {
-                walkers.Remove(obj as Human);
+                if (obj is Human)
+                {
+                    walkers.Remove(obj as Human);
+                }
+                else
+                {
+                    solidObjects.Remove(obj);
+                }
+                game.Drawer.StopDrawingObject(obj);
+                spaceGrid.RemoveObject(obj);
             }
             else
             {
-                solidObjects.Remove(obj);
+                awaitingDestroy.Add(obj);
             }
-            game.Drawer.StopDrawingObject(obj);
-            spaceGrid.RemoveObject(obj);
         }
 
         public void AddBullet(GameTime gameTime, BulletVisualisation bullet)

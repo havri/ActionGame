@@ -41,6 +41,6 @@ namespace ActionGame.Tools
 
         public abstract string ToolBarText { get; }
 
-        
+        public abstract bool Usable { get; }
     }
 }

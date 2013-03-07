@@ -220,5 +220,16 @@ namespace ActionGame.QSP
             }
             while (found);
         }
+
+        public IEnumerable<Quadrangle> GetAllCollisions(Quadrangle subject)
+        {
+            IEnumerable<GridField> affectedFields = GetFieldsByObject(subject);
+            List<Quadrangle> colliders = new List<Quadrangle>();
+            foreach (GridField field in affectedFields)
+            {
+                colliders.AddRange(field.GetCollisions(subject));
+            }
+            return colliders;
+        }
     }
 }

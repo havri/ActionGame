@@ -19,6 +19,7 @@ namespace ActionGame.People
         static readonly Keys Backward = Keys.S;
         static readonly Keys GunUp = Keys.LeftAlt;
         static readonly Keys GunDown = Keys.LeftControl;
+        static readonly Keys GunDrop = Keys.Back;
         static readonly Keys ShotKey = Keys.Space;
         static readonly Keys EnterCar = Keys.Enter;
         static readonly Keys TurnLeft = Keys.Left;
@@ -45,6 +46,7 @@ namespace ActionGame.People
             lastKeyPressedGameTime.Add(GunUp, TimeSpan.Zero);
             lastKeyPressedGameTime.Add(GunDown, TimeSpan.Zero);
             lastKeyPressedGameTime.Add(RunSwitch, TimeSpan.Zero);
+            lastKeyPressedGameTime.Add(GunDrop, TimeSpan.Zero);
         }
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -94,6 +96,11 @@ namespace ActionGame.People
                 {
                     SelectNextGun(-1);
                     lastKeyPressedGameTime[GunDown] = gameTime.TotalGameTime;
+                }
+                if (keyboardState.IsKeyDown(GunDrop) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunDrop] > KeyPressedTimeout)
+                {
+                    DropSelectedTool();
+                    lastKeyPressedGameTime[GunDrop] = gameTime.TotalGameTime;
                 }
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {

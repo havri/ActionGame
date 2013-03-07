@@ -223,5 +223,13 @@ namespace ActionGame.People
                 Destroy();
             }
         }
+
+        protected void DropSelectedTool()
+        {
+            if(tools.Count != 0 && !(SelectedTool is Gun && game.HumanDefaultGuns.Contains(((Gun)SelectedTool).Type)))
+            {
+                tools.RemoveAt(selectedToolIndex);
+            }
+        }
     }
 }

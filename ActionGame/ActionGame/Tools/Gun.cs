@@ -41,7 +41,7 @@ namespace ActionGame.Tools
 
         public override void DoAction(GameTime gameTime, PositionInTown position, float azimuth)
         {
-            if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout)
+            if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout && (bullets > 0  || type.InfinityBullets))
             { 
                 const float bulletWidthHalf = 0.1f;
                 Vector2 quarterPosition = position.PositionInQuarter;
@@ -95,6 +95,7 @@ namespace ActionGame.Tools
                 quarter.AddBullet(gameTime, new BulletVisualisation(quarter, quarterPosition, distance, azimuth));
                 type.ShotSount.Play();
                 lastTimeShot = gameTime.TotalGameTime;
+                bullets--;
             }
         }
 

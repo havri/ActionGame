@@ -56,4 +56,7 @@ Content\Sounds\background.xnb
 Content\Sounds\ToolActions\ak47.xnb
 Content\Sounds\ToolActions\pistol.xnb
 Content\Textures\halfWhite.xnb
+Content\Objects\panorama.xnb
+Content\Objects\panorama\panorama.xnb
+Content\Objects\panorama\panorama_0.xnb
 Content\Config\DefaultGunSet.xml

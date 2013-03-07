@@ -36,18 +36,18 @@ namespace ActionGame.People
         /// </summary>
         public int Health { get { return health; } }
         int health;
-        protected float lookingAtHeight;
         private readonly Queue<Task> tasks;
         private readonly List<Tool> tools;
         private int selectedToolIndex;
         private Vector2 lastPosition;
         protected ActionGame Game { get { return game; } }
         private readonly ActionGame game;
-
-        readonly HashSet<Human> friends;
-        readonly HashSet<Human> enemies;
-        readonly HashSet<Human> hasMeAsFriend;
-        readonly HashSet<Human> hasMeAsEnemy;
+        public double LookAngle { get { return lookAngle; } set { lookAngle = value; } }
+        double lookAngle = 0f;
+        readonly HashSet<Human> friends = new HashSet<Human>();
+        readonly HashSet<Human> enemies = new HashSet<Human>();
+        readonly HashSet<Human> hasMeAsFriend = new HashSet<Human>();
+        readonly HashSet<Human> hasMeAsEnemy = new HashSet<Human>();
         Human lastSeenEnemy;
         TimeSpan lastTimeSawEnemy;
 
@@ -63,10 +63,6 @@ namespace ActionGame.People
                 );
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
-            lookingAtHeight = size.Y;
-
-            friends = new HashSet<Human>();
-            enemies = new HashSet<Human>();
             lastSeenEnemy = null;
             lastTimeSawEnemy = TimeSpan.Zero;
         }
@@ -116,8 +112,9 @@ namespace ActionGame.People
         {
             get
             {
-                Vector2 ret = Pivot.PositionInQuarter.Go((size.Z + LookingAtDistance), azimuth);
-                return ret.ToVector3(lookingAtHeight);
+                float distance2D = (float)Math.Cos(lookAngle) * LookingAtDistance;
+                Vector2 ret = Pivot.PositionInQuarter.Go((size.Z + distance2D), azimuth);
+                return ret.ToVector3((float)Math.Sin(lookAngle) * LookingAtDistance + size.Y);
             }
         }
 

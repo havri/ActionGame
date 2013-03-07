@@ -225,6 +225,8 @@ namespace ActionGame
                 Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                 PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
                 opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
+                oppQuarter.SpaceGrid.AddObject(opponent);
+                opponent.AddEnemy(player);
 
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
@@ -283,6 +285,7 @@ namespace ActionGame
             base.Dispose(disposing);
 
             if(player != null) player.Dispose();
+            if (opponent != null) opponent.Dispose();
             if(backgroundSound != null) backgroundSound.Dispose();
         }
     }

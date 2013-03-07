@@ -218,13 +218,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\panorama.jpg">
-      <Name>panorama</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Ground\sidewalk0.jpg">
       <Name>sidewalk0</Name>
       <Importer>TextureImporter</Importer>
@@ -308,6 +301,11 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Objects\panorama.fbx">
+      <Name>panorama</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\ToolIcons\pistol.png">
@@ -345,6 +343,13 @@
   <ItemGroup>
     <Compile Include="Textures\halfWhite.png">
       <Name>halfWhite</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\panorama\panorama.jpg">
+      <Name>panorama</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -21,10 +21,9 @@ namespace ActionGame.Components
         Texture2D toolPanelBackground;
         Texture2D townGraphPicture;
         Texture2D playerIcon;
-        Texture2D townPanorama;
         TownQuarter currentQuarter;
         SpriteFont font;
-
+        SpatialObject panorama;
 
         /// <summary>
         /// Constructs new drawing component.
@@ -37,7 +36,7 @@ namespace ActionGame.Components
         {
             this.game = game;
             objects = new List<DrawedObject>();
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 500);
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
         }
 
         public override void Initialize()
@@ -76,7 +75,9 @@ namespace ActionGame.Components
         {
             base.Draw(gameTime);
 
-            DrawPanoramaBackground();
+            panorama.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+
+            //DrawPanoramaBackground();
 
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -123,25 +124,6 @@ namespace ActionGame.Components
             game.SpriteBatch.End();
         }
         /// <summary>
-        /// Draws panoramatic town background.
-        /// </summary>
-        private void DrawPanoramaBackground()
-        {
-            ///TODO: Respect player vertical moves.
-            game.SpriteBatch.Begin();
-            float ratio = townPanorama.Height / (game.Settings.ScreenSize.Height * 0.5f);
-            double percentAngle = game.Player.Azimuth / MathHelper.TwoPi;
-            game.SpriteBatch.Draw(townPanorama,
-                new Rectangle(-(int)(percentAngle * game.Settings.ScreenSize.Width), 0, game.Settings.ScreenSize.Width, game.Settings.ScreenSize.Height / 2),
-                new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
-                Color.White);
-            game.SpriteBatch.Draw(townPanorama,
-                new Rectangle(-(int)((percentAngle - 1) * game.Settings.ScreenSize.Width), 0, game.Settings.ScreenSize.Width, game.Settings.ScreenSize.Height / 2),
-                new Rectangle(0, 0, townPanorama.Width, townPanorama.Height),
-                Color.White);
-            game.SpriteBatch.End();
-        }
-        /// <summary>
         /// Sets current quarter.
         /// </summary>
         public TownQuarter CurrentQuarter
@@ -170,9 +152,9 @@ namespace ActionGame.Components
             base.LoadContent();
 
             playerIcon = Game.Content.Load<Texture2D>("Textures/player");
-            townPanorama = Game.Content.Load<Texture2D>("Textures/panorama");
             toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
             font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
+            panorama = new SpatialObject(game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
         }
 
         protected override void Dispose(bool disposing)
@@ -183,8 +165,6 @@ namespace ActionGame.Components
                 townGraphPicture.Dispose();
             if(playerIcon != null)
                 playerIcon.Dispose();
-            if(townGraphPicture != null)
-                townPanorama.Dispose();
         }
     }
 }

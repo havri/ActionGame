@@ -31,7 +31,6 @@ namespace ActionGame.People
 
         private bool running = false;
         readonly Point defaultMousePosition;
-        double lookAngle = 0f;
         private int lastMouseWheelState = 0;
         readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
 
@@ -79,9 +78,9 @@ namespace ActionGame.People
                 if (keyboardState.IsKeyDown(TurnRight))
                     Rotate(false, seconds);
                 if (keyboardState.IsKeyDown(TurnUp))
-                    lookAngle += Human.RotateAngle * seconds;
+                    LookAngle += Human.RotateAngle * seconds;
                 if (keyboardState.IsKeyDown(TurnDown))
-                    lookAngle -= Human.RotateAngle * seconds;
+                    LookAngle -= Human.RotateAngle * seconds;
                 if (keyboardState.IsKeyDown(RunSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[RunSwitch] > KeyPressedTimeout)
                 {
                     running = !running;
@@ -116,12 +115,11 @@ namespace ActionGame.People
                 if (Game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
                 {
                     azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * Game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseXInvert ? -1 : 1);
-                    lookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
-                    if (lookAngle > MathHelper.PiOver2)
-                        lookAngle = MathHelper.PiOver2;
-                    if (lookAngle < -MathHelper.PiOver2)
-                        lookAngle = -MathHelper.PiOver2;
-                    lookingAtHeight = (float)Math.Sin(lookAngle) * LookingAtDistance + size.Y;
+                    LookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
+                    if (LookAngle > MathHelper.PiOver2)
+                        LookAngle = MathHelper.PiOver2;
+                    if (LookAngle < -MathHelper.PiOver2)
+                        LookAngle = -MathHelper.PiOver2;
                     //lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
                 Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);

@@ -42,6 +42,8 @@ namespace ActionGame
 
 
         Player player;
+        Opponent opponent;
+        readonly Dictionary<Human, PositionInTown> defaultPositions = new Dictionary<Human, PositionInTown>();
         Camera camera;
         Debug debug;
         Drawer drawer;
@@ -196,18 +198,34 @@ namespace ActionGame
             using (Loading loadingForm = new Loading())
             {
                 loadingForm.Show();
+
                 loadingForm.SetLabel("Loading graphics device...");
                 spriteBatch = new SpriteBatch(GraphicsDevice);
+
                 loadingForm.SetLabel("Loading gun types...");
                 LoadGunTypes();
+
                 player = new Player(this);
+                opponent = new Opponent(this);
+
                 town = new Town(this, loadingForm);
+
                 loadingForm.SetLabel("Loading player...");
                 loadingForm.SetValue(0);
                 Point playerPoint =  town.CurrentQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                 PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth);
+                defaultPositions.Add(player, playerPosition);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 town.CurrentQuarter.SpaceGrid.AddObject(player);
+
+                loadingForm.SetLabel("Loading opponent...");
+                loadingForm.SetValue(0);
+                Random rand = new Random();
+                TownQuarter oppQuarter = (from q in town.Quarters orderby rand.Next() select q).First();
+                Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
+                PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
+                opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
+
                 drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
@@ -265,6 +283,7 @@ namespace ActionGame
             base.Dispose(disposing);
 
             if(player != null) player.Dispose();
+            if(backgroundSound != null) backgroundSound.Dispose();
         }
     }
 }

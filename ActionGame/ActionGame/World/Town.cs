@@ -28,6 +28,7 @@ namespace ActionGame.World
         const float MinQuarterSideLength = 100;
 
         public Texture2D Map;
+        public IEnumerable<TownQuarter> Quarters { get { return quarters; } }
         readonly TownQuarter[] quarters;
         TownQuarter currentQuarter;
         public TownQuarter CurrentQuarter

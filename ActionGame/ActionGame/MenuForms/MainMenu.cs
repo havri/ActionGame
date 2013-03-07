@@ -52,7 +52,8 @@ namespace ActionGame.MenuForms
                         MouseIgnoresWindow = mouseIgnoreWindowCB.Checked,
                         MouseXInvert = mouseInvertXCB.Checked,
                         MouseYInvert = mouseInvertYCB.Checked,
-                        GunSetFilename = gunSetFileTB.Text
+                        GunSetFilename = gunSetFileTB.Text,
+                        OpponentCount = (int)opponentsCountNB.Value
                     };
             }
         }

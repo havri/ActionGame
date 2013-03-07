@@ -46,6 +46,8 @@ namespace ActionGame.People
 
         readonly HashSet<Human> friends;
         readonly HashSet<Human> enemies;
+        readonly HashSet<Human> hasMeAsFriend;
+        readonly HashSet<Human> hasMeAsEnemy;
         Human lastSeenEnemy;
         TimeSpan lastTimeSawEnemy;
 
@@ -168,7 +170,7 @@ namespace ActionGame.People
 
         bool BalkReflex(GameTime gameTime)
         {
-            const float balkDistance = 0.8f;
+            const float balkDistance = 0.9f;
             Quadrangle viewCone = GetViewCone(balkDistance);
             IEnumerable<Quadrangle> balks = position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
             if(balks.Any(x => x != this))
@@ -332,6 +334,7 @@ namespace ActionGame.People
         {
             if(!enemies.Contains(enemy))
             {
+                enemy.hasMeAsEnemy.Add(this);
                 enemies.Add(enemy);
                 RemoveFriend(enemy);
             }
@@ -341,6 +344,7 @@ namespace ActionGame.People
         {
             if (!friends.Contains(friend))
             {
+                friend.hasMeAsFriend.Add(this);
                 friends.Add(friend);
                 RemoveEnemy(friend);
             }
@@ -351,6 +355,7 @@ namespace ActionGame.People
         {
             if (enemies.Contains(enemy))
             {
+                enemy.hasMeAsEnemy.Remove(this);
                 enemies.Remove(enemy);
             }
         }
@@ -359,8 +364,22 @@ namespace ActionGame.People
         {
             if (friends.Contains(friend))
             {
+                friend.hasMeAsFriend.Remove(this);
                 friends.Remove(friend);
             }
+        }
+
+        public override void Destroy()
+        {
+            foreach (Human hasMe in new List<Human>(hasMeAsEnemy))
+            {
+                hasMe.RemoveEnemy(this);
+            }
+            foreach (Human hasMe in new List<Human>(hasMeAsFriend))
+            {
+                hasMe.RemoveFriend(this);
+            }
+            base.Destroy();
         }
     }
 }

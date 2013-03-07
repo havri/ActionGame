@@ -89,7 +89,7 @@ namespace ActionGame.Space
             model = null;
         }
 
-        public void Destroy()
+        public virtual void Destroy()
         {
             position.Quarter.DestroyObject(this);
         }

@@ -131,6 +131,7 @@
     <Compile Include="MenuForms\MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="People\Opponent.cs" />
     <Compile Include="QSP\Grid.cs" />
     <Compile Include="QSP\GridField.cs" />
     <Compile Include="QSP\LeafNode.cs" />

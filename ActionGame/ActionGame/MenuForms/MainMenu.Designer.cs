@@ -61,6 +61,9 @@
             this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.opponentsCountNB = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
@@ -75,6 +78,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).BeginInit();
             this.panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -115,6 +120,7 @@
             // 
             // gameSettingsPage
             // 
+            this.gameSettingsPage.Controls.Add(this.groupBox4);
             this.gameSettingsPage.Controls.Add(this.groupBox3);
             this.gameSettingsPage.Controls.Add(this.groupBox1);
             this.gameSettingsPage.Location = new System.Drawing.Point(4, 22);
@@ -132,7 +138,7 @@
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox3.Location = new System.Drawing.Point(3, 99);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(570, 57);
+            this.groupBox3.Size = new System.Drawing.Size(570, 51);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Guns & tools";
@@ -470,6 +476,49 @@
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.opponentsCountNB);
+            this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(3, 150);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(570, 100);
+            this.groupBox4.TabIndex = 6;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Opponents";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 16);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(109, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Number of opponents";
+            // 
+            // opponentsCountNB
+            // 
+            this.opponentsCountNB.Location = new System.Drawing.Point(121, 14);
+            this.opponentsCountNB.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.opponentsCountNB.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.opponentsCountNB.Name = "opponentsCountNB";
+            this.opponentsCountNB.Size = new System.Drawing.Size(40, 20);
+            this.opponentsCountNB.TabIndex = 1;
+            this.opponentsCountNB.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -500,6 +549,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -540,5 +592,8 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox gunSetFileTB;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.NumericUpDown opponentsCountNB;
+        private System.Windows.Forms.Label label11;
     }
 }

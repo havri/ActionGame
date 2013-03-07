@@ -59,7 +59,7 @@ namespace ActionGame.People
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
             float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (health > 0)
+            if (Health > 0 || true)
             {
                 if (keyboardState.IsKeyDown(Left))
                     Step(true, seconds);

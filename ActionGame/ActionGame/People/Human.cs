@@ -29,8 +29,13 @@ namespace ActionGame.People
         const float ThirdHeadVerticalDistance = 0.1f;
         public const float LookingAtDistance = 10;
         public const float EpsilonDistance = 0.5f;
+        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 0);
 
-        protected int health;
+        /// <summary>
+        /// Gets current health of human. In percents.
+        /// </summary>
+        public int Health { get { return health; } }
+        int health;
         protected float lookingAtHeight;
         private readonly Queue<Task> tasks;
         private readonly List<Tool> tools;
@@ -38,6 +43,11 @@ namespace ActionGame.People
         private Vector2 lastPosition;
         protected ActionGame Game { get { return game; } }
         private readonly ActionGame game;
+
+        readonly HashSet<Human> friends;
+        readonly HashSet<Human> enemies;
+        Human lastSeenEnemy;
+        TimeSpan lastTimeSawEnemy;
 
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -52,6 +62,11 @@ namespace ActionGame.People
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
             lookingAtHeight = size.Y;
+
+            friends = new HashSet<Human>();
+            enemies = new HashSet<Human>();
+            lastSeenEnemy = null;
+            lastTimeSawEnemy = TimeSpan.Zero;
         }
 
         protected void Go(bool forward, float seconds)
@@ -131,21 +146,81 @@ namespace ActionGame.People
 
         public virtual void Update(GameTime gameTime)
         {
-            if (tasks.Count > 0)
+            bool moved = false;
+            moved = KillEnemyReflex(gameTime);
+
+            //Solve tasks reflex
+            if (!moved)
             {
-                Task currentTask = tasks.Peek();
-                currentTask.Update(gameTime);
-                if (currentTask.IsComplete())
-                    tasks.Dequeue();
+                if (tasks.Count > 0)
+                {
+                    Task currentTask = tasks.Peek();
+                    currentTask.Update(gameTime);
+                    if (currentTask.IsComplete())
+                        tasks.Dequeue();
+                }
             }
         }
 
-        public int Health
+        bool KillEnemyReflex(GameTime gameTime)
         {
-            get
+            if (tools.Any(x => (x is Gun && x.Usable)))
             {
-                return health;
+                Human seenEnemy = null;
+                float enemyShotDistance = tools.Max(x => (x is Gun && x.Usable ? ((Gun)x).Type.Range : 0f));
+                Quadrangle viewCone = GetViewCone(enemyShotDistance);
+                if (lastSeenEnemy != null && viewCone.IsInCollisionWith(lastSeenEnemy))
+                {
+                    Quadrangle clearViewQuad = new Quadrangle(lastSeenEnemy.PositionInQuarter.XZToVector2(), lastSeenEnemy.PositionInQuarter.XZToVector2(), UpperLeftCorner, UpperRightCorner);
+                    IEnumerable<Quadrangle> inView = from obj in position.Quarter.SpaceGrid.GetAllCollisions(clearViewQuad) where obj != this && obj != lastSeenEnemy select obj;
+                    if (inView.Any())
+                    {
+                        lastSeenEnemy = null;
+                    }
+                    else
+                    {
+                        seenEnemy = lastSeenEnemy;
+                    }
+                }
+                else
+                {
+                    lastSeenEnemy = null;
+                }
+                if (gameTime.TotalGameTime - lastTimeSawEnemy >= CheckEnemiesInViewConeTimeout && seenEnemy == null)
+                {
+                    IEnumerable<Human> seenEnemies = from obj in position.Quarter.SpaceGrid.GetAllCollisions(viewCone)
+                                                     where obj is Human && obj != this && enemies.Contains((Human)obj)
+                                                     select obj as Human;
+                    if (seenEnemies.Any())
+                    {
+                        seenEnemy = seenEnemies.First();
+                    }
+                    lastTimeSawEnemy = gameTime.TotalGameTime;
+                }
+                if (seenEnemy != null)
+                {
+                    lastSeenEnemy = seenEnemy;
+                    selectedToolIndex = tools.FindIndex(x => (x is Gun && ((Gun)x).Type.Range == enemyShotDistance));
+                    GoThisWay(seenEnemy.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    float direction = (seenEnemy.PositionInQuarter.XZToVector2() - position.PositionInQuarter).GetAngle() + 1 * MathHelper.PiOver2;
+                    if (direction == azimuth)
+                    {
+                        DoToolAction(gameTime);
+                    }
+                    return true;
+                }
             }
+            return false;
+        }
+
+        Quadrangle GetViewCone(float distance)
+        { 
+            const float viewConeWidthCoef = 1.2f;
+            float humanWidth = (UpperLeftCorner - UpperRightCorner).Length();
+            float coneExpansion = ((distance * viewConeWidthCoef) - humanWidth) * 0.5f;
+            Vector2 ul = UpperLeftCorner.Go(distance, azimuth).Go(coneExpansion, azimuth - MathHelper.PiOver2);
+            Vector2 ur = UpperLeftCorner.Go(distance, azimuth).Go(coneExpansion, azimuth + MathHelper.PiOver2);
+            return new Quadrangle(ul, ur, UpperLeftCorner, UpperRightCorner);
         }
 
         public void AddTask(Task task)
@@ -229,6 +304,14 @@ namespace ActionGame.People
             if(tools.Count != 0 && !(SelectedTool is Gun && game.HumanDefaultGuns.Contains(((Gun)SelectedTool).Type)))
             {
                 tools.RemoveAt(selectedToolIndex);
+            }
+        }
+
+        public void AddEnemy(Human enemy)
+        {
+            if(!enemies.Contains(enemy))
+            {
+                enemies.Add(enemy);
             }
         }
     }

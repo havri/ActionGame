@@ -212,12 +212,13 @@ namespace ActionGame.World
         {
             if (pathVertecies.Count > 2)
             {
+                Model[] models = new Model[]{game.Content.Load<Model>("Objects\\Humans\\botYellow"), game.Content.Load<Model>("Objects\\Humans\\botBlue")};
                 Random rand = new Random();
                 for (int i = 0; i < WalkerCount; i++)
                 {
                     IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
                     ///TODO: Take human model from central repository.
-                    Human walker = new Human(game, game.Content.Load<Model>("Objects\\Humans\\human0"), walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
+                    Human walker = new Human(game, models[rand.Next(models.Length)], walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
                     walker.AddTask(task);
                     walkers.AddFirst(walker);

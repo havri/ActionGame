@@ -35,11 +35,21 @@ namespace ActionGame.Space
             spacePartitioningFields = new HashSet<GridField>();
         }
 
+        public bool HasInside(Vector2 point)
+        {
+            Triangle myUp = new Triangle(UpperLeftCorner, UpperRightCorner, LowerRightCorner);
+            Triangle myDown = new Triangle(UpperLeftCorner, LowerLeftCorner, LowerRightCorner);
+            return myUp.HasInside(point) || myDown.HasInside(point);
+        }
+
         public bool IsInCollisionWith(Quadrangle obj)
         {
-            Triangle up = new Triangle(UpperLeftCorner, UpperRightCorner, LowerRightCorner);
-            Triangle down = new Triangle(UpperLeftCorner, LowerLeftCorner, LowerRightCorner);
+            Triangle myUp = new Triangle(UpperLeftCorner, UpperRightCorner, LowerRightCorner);
+            Triangle myDown = new Triangle(UpperLeftCorner, LowerLeftCorner, LowerRightCorner);
+            Triangle itsUp = new Triangle(obj.UpperLeftCorner, obj.UpperRightCorner, obj.LowerRightCorner);
+            Triangle itsDown = new Triangle(obj.UpperLeftCorner, obj.LowerLeftCorner, obj.LowerRightCorner);
 
+            return myUp.IsInCollisionWith(itsUp) || myUp.IsInCollisionWith(itsDown) || myDown.IsInCollisionWith(itsUp) || myDown.IsInCollisionWith(itsDown);
 
             return ZapCollisionDetect(obj);
             

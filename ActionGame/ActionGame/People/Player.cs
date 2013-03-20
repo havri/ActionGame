@@ -131,8 +131,7 @@ namespace ActionGame.People
             Debug.Write("Player azimuth", azimuth.ToString());
             Debug.Write("Player's grid fields", SpacePartitioningFields.Count.ToString());
             Debug.Write("Wheel", mouseState.ScrollWheelValue.ToString());
-
-
+            
             //Supress human instincts
             //base.Update(gameTime);
         }

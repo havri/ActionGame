@@ -6,6 +6,8 @@ using ActionGame.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ActionGame.Extensions;
+using ActionGame.People;
 
 namespace ActionGame.Components
 {
@@ -55,8 +57,39 @@ namespace ActionGame.Components
 
         public void StartDrawingObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta)
         {
-            DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta );
-            objects.Add(dObj);   
+            DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
+            objects.Add(dObj);
+
+            if (obj is SpatialObject && !(obj is Human))
+            {
+                GameObject q = obj as GameObject;
+                Tuple<Vector2, Texture2D>[] corners = new Tuple<Vector2, Texture2D>[]
+                {
+                    new Tuple<Vector2, Texture2D>(q.UpperLeftCorner,Drawer.Blue__),
+                    new Tuple<Vector2, Texture2D>(q.UpperRightCorner,Drawer.Blue__),
+                    new Tuple<Vector2, Texture2D>(q.LowerLeftCorner,Drawer.Blue__),
+                    new Tuple<Vector2, Texture2D>(q.LowerRightCorner,Drawer.Blue__),
+
+                    //new Tuple<Vector2, Texture2D>(q.Pivot.PositionInQuarter,Drawer.Green__),
+
+                    //new Tuple<Vector2, Texture2D>(q.Position.PositionInQuarter,Drawer.Red__)
+                };
+
+                foreach (Tuple<Vector2, Texture2D> corner in corners)
+                {
+                    const float pointHeight = 0.02f;
+                    const float radius = 0.15f;
+                    Plate vplate = new Plate(
+                        q.Position.Quarter,
+                        corner.Item1.Go(radius, 0).ToVector3(pointHeight),
+                        corner.Item1.Go(radius, MathHelper.PiOver2).ToVector3(pointHeight),
+                        corner.Item1.Go(radius, -MathHelper.PiOver2).ToVector3(pointHeight),
+                        corner.Item1.Go(radius, MathHelper.Pi).ToVector3(pointHeight),
+                        corner.Item2,
+                        corner.Item2);
+                    objects.Add(new DrawedObject(vplate, azimuthDelta, positionDelta));
+                }
+            }
         }
 
         public void StopDrawingObject(IDrawableObject obj)

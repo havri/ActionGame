@@ -10,9 +10,17 @@ namespace ActionGame.Space
 {
     public class GameObject : Quadrangle
     {
-        protected PositionInTown position;
+        PositionInTown position;
         double azimuth_;
-        protected Vector2 size;
+        Vector2 size;
+        protected Vector2 Size
+        {
+            get { return size; }
+            set
+            {
+                size = value;
+            }
+        }
 
         public GameObject(PositionInTown position, double azimuth, Vector2 size)
         {
@@ -73,13 +81,13 @@ namespace ActionGame.Space
         public void MoveTo(PositionInTown newPosition, double azimuth)
         {
             position = newPosition;
-            azimuth_ = azimuth;
+            this.azimuth = azimuth;
         }
 
         public void MoveTo(Vector2 newPositionInQuarter, double azimuth)
         {
             position.PositionInQuarter = newPositionInQuarter;
-            azimuth_ = azimuth;
+            this.azimuth = azimuth;
         }
 
         public PositionInTown Position

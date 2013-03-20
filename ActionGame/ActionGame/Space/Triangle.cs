@@ -45,5 +45,28 @@ namespace ActionGame.Space
             else
                 return false;
         }
+
+        public bool IsInCollisionWith(Triangle triangle)
+        {
+            Line2 ab1 = new Line2(A, B);
+            Line2 ac1 = new Line2(A, C);
+            Line2 bc1 = new Line2(B, C);
+
+            Line2 ab2 = new Line2(triangle.A, triangle.B);
+            Line2 ac2 = new Line2(triangle.A, triangle.C);
+            Line2 bc2 = new Line2(triangle.B, triangle.C);
+
+            return ab1.IsCrossing(ab2)
+                || ab1.IsCrossing(ac2)
+                || ab1.IsCrossing(bc2)
+                || ac1.IsCrossing(ab2)
+                || ac1.IsCrossing(ac2)
+                || ac1.IsCrossing(bc2)
+                || bc1.IsCrossing(ab2)
+                || bc1.IsCrossing(ac2)
+                || bc1.IsCrossing(bc2)
+                || HasInside(triangle.A)
+                || triangle.HasInside(A);
+        }
     }
 }

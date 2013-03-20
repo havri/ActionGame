@@ -69,20 +69,20 @@ namespace ActionGame.People
 
         protected void Go(bool forward, float seconds)
         {
-            lastPosition = position.PositionInQuarter;
-            position.PositionInQuarter = position.PositionInQuarter.Go(WalkSpeed * seconds * (forward ? 1 : -1), azimuth);
+            lastPosition = Position.PositionInQuarter;
+            MoveTo(Position.PositionInQuarter.Go(WalkSpeed * seconds * (forward ? 1 : -1), azimuth), Azimuth);
         }
 
         protected void Run(float seconds)
         {
-            lastPosition = position.PositionInQuarter;
-            position.PositionInQuarter = position.PositionInQuarter.Go(RunSpeed * seconds, azimuth);
+            lastPosition = Position.PositionInQuarter;
+            MoveTo(Position.PositionInQuarter.Go(RunSpeed * seconds, azimuth), Azimuth);
         }
 
         protected void Step(bool toLeft, float seconds)
         {
-            lastPosition = position.PositionInQuarter;
-            position.PositionInQuarter = position.PositionInQuarter.Go(WalkSpeed * seconds, azimuth + (toLeft ? -MathHelper.PiOver2 : MathHelper.PiOver2));
+            lastPosition = Position.PositionInQuarter;
+            MoveTo(Position.PositionInQuarter.Go(WalkSpeed * seconds, azimuth + (toLeft ? -MathHelper.PiOver2 : MathHelper.PiOver2)), Azimuth);
         }
 
         protected void Rotate(bool toLeft, float seconds)
@@ -94,8 +94,8 @@ namespace ActionGame.People
         {
             get
             { 
-                Vector2 ret = Pivot.PositionInQuarter.Go(2*size.Z, azimuth);
-                return ret.ToVector3(size.Y);
+                Vector2 ret = Pivot.PositionInQuarter.Go(2*Size.Z, azimuth);
+                return ret.ToVector3(Size.Y);
             }
         }
 
@@ -103,8 +103,8 @@ namespace ActionGame.People
         {
             get
             {
-                Vector2 ret = Pivot.PositionInQuarter.Go(-(size.Z + ThirdHeadHorizontalDistance), azimuth);
-                return ret.ToVector3(size.Y + ThirdHeadVerticalDistance);
+                Vector2 ret = Pivot.PositionInQuarter.Go(-(Size.Z + ThirdHeadHorizontalDistance), azimuth);
+                return ret.ToVector3(Size.Y + ThirdHeadVerticalDistance);
             }
         }
 
@@ -113,16 +113,16 @@ namespace ActionGame.People
             get
             {
                 float distance2D = (float)Math.Cos(lookAngle) * LookingAtDistance;
-                Vector2 ret = Pivot.PositionInQuarter.Go((size.Z + distance2D), azimuth);
-                return ret.ToVector3((float)Math.Sin(lookAngle) * LookingAtDistance + size.Y);
+                Vector2 ret = Pivot.PositionInQuarter.Go((Size.Z + distance2D), azimuth);
+                return ret.ToVector3((float)Math.Sin(lookAngle) * LookingAtDistance + Size.Y);
             }
         }
 
         public void GoThisWay(PositionInTown destination, float seconds)
         {
-            if (destination.Quarter == position.Quarter)
+            if (destination.Quarter == Position.Quarter)
             {
-                float direction = (destination.PositionInQuarter - position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
+                float direction = (destination.PositionInQuarter - Position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
                 while (direction >= MathHelper.TwoPi) direction -= MathHelper.TwoPi;
                 if (Math.Abs(azimuth - direction) > RotateAngle || (azimuth + MathHelper.TwoPi - direction) > RotateAngle && direction > azimuth)
                 {
@@ -169,7 +169,7 @@ namespace ActionGame.People
         {
             const float balkDistance = 0.9f;
             Quadrangle viewCone = GetViewCone(balkDistance);
-            IEnumerable<Quadrangle> balks = position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
+            IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
             if(balks.Any(x => x != this))
             {
                 Step(false, (float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -188,7 +188,7 @@ namespace ActionGame.People
                 if (lastSeenEnemy != null && viewCone.IsInCollisionWith(lastSeenEnemy))
                 {
                     Quadrangle clearViewQuad = new Quadrangle(lastSeenEnemy.PositionInQuarter.XZToVector2(), lastSeenEnemy.PositionInQuarter.XZToVector2(), UpperLeftCorner, UpperRightCorner);
-                    IEnumerable<Quadrangle> inView = from obj in position.Quarter.SpaceGrid.GetAllCollisions(clearViewQuad) where obj != this && obj != lastSeenEnemy select obj;
+                    IEnumerable<Quadrangle> inView = from obj in Position.Quarter.SpaceGrid.GetAllCollisions(clearViewQuad) where obj != this && obj != lastSeenEnemy select obj;
                     if (inView.Any())
                     {
                         lastSeenEnemy = null;
@@ -204,7 +204,7 @@ namespace ActionGame.People
                 }
                 if (gameTime.TotalGameTime - lastTimeSawEnemy >= CheckEnemiesInViewConeTimeout && seenEnemy == null)
                 {
-                    IEnumerable<Human> seenEnemies = from obj in position.Quarter.SpaceGrid.GetAllCollisions(viewCone)
+                    IEnumerable<Human> seenEnemies = from obj in Position.Quarter.SpaceGrid.GetAllCollisions(viewCone)
                                                      where obj is Human && obj != this && enemies.Contains((Human)obj)
                                                      select obj as Human;
                     if (seenEnemies.Any())
@@ -218,7 +218,7 @@ namespace ActionGame.People
                     lastSeenEnemy = seenEnemy;
                     selectedToolIndex = tools.FindIndex(x => (x is Gun && ((Gun)x).Type.Range == enemyShotDistance));
                     GoThisWay(seenEnemy.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    float direction = (seenEnemy.PositionInQuarter.XZToVector2() - position.PositionInQuarter).GetAngle() + 1 * MathHelper.PiOver2;
+                    float direction = (seenEnemy.PositionInQuarter.XZToVector2() - Position.PositionInQuarter).GetAngle() + 1 * MathHelper.PiOver2;
                     if (direction == azimuth)
                     {
                         DoToolAction(gameTime);
@@ -265,7 +265,7 @@ namespace ActionGame.People
         {
             if (SelectedTool != null)
             {
-                SelectedTool.DoAction(gameTime, position, (float)azimuth);
+                SelectedTool.DoAction(gameTime, Position, (float)azimuth);
             }
         }
         public override void Hit(Quadrangle something)
@@ -276,7 +276,7 @@ namespace ActionGame.People
             }
             else
             {
-                position.PositionInQuarter = lastPosition;
+                MoveTo(lastPosition, Azimuth);
             }
         }
 

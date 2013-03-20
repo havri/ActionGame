@@ -63,59 +63,18 @@ namespace ActionGame.Space
                 }
                 mesh.Draw();
             }
-
-            /*
-            #region onlyTestingCode
-            Tuple<Vector2, Texture2D>[] corners = new Tuple<Vector2, Texture2D>[]
-            {
-                new Tuple<Vector2, Texture2D>(UpperLeftCorner,Drawer.Blue__),
-                new Tuple<Vector2, Texture2D>(UpperRightCorner,Drawer.Blue__),
-                new Tuple<Vector2, Texture2D>(LowerLeftCorner,Drawer.Blue__),
-                new Tuple<Vector2, Texture2D>(LowerRightCorner,Drawer.Blue__),
-
-                new Tuple<Vector2, Texture2D>(Pivot.PositionInQuarter,Drawer.Green__),
-
-                new Tuple<Vector2, Texture2D>(Position.PositionInQuarter,Drawer.Red__)
-            };
-
-            foreach (Tuple<Vector2, Texture2D> corner in corners)
-            {
-                const float pointHeight = 0.02f;
-                const float radius = 0.05f;
-                using (Plate vplate = new Plate(
-                            position.Quarter,
-                            corner.Item1.Go(radius, 0).ToVector3(pointHeight),
-                            corner.Item1.Go(radius, MathHelper.PiOver2).ToVector3(pointHeight),
-                            corner.Item1.Go(radius, -MathHelper.PiOver2).ToVector3(pointHeight),
-                            corner.Item1.Go(radius, MathHelper.Pi).ToVector3(pointHeight),
-                            corner.Item2,
-                            corner.Item2))
-                {
-                    vplate.Draw(view, projection, world);
-                }
-            }
-            #endregion
-             * */
         }
 
 
 
         public Vector3 PositionInQuarter
         {
-            get { return base.position.PositionInQuarter.ToVector3(verticalPosition); }
+            get { return base.Position.PositionInQuarter.ToVector3(verticalPosition); }
         }
 
-        public PositionInTown Position
+        protected Vector3 Size
         {
-            get
-            {
-                return position;
-            }
-        }
-
-        protected new Vector3 size
-        {
-            get { return base.size.ToVector3(verticalSize); }
+            get { return base.Size.ToVector3(verticalSize); }
         }
 
         public void Dispose()
@@ -125,7 +84,7 @@ namespace ActionGame.Space
 
         public virtual void Destroy()
         {
-            position.Quarter.DestroyObject(this);
+            Position.Quarter.DestroyObject(this);
         }
     }
 }

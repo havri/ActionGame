@@ -12,18 +12,9 @@ namespace ActionGame.Extensions
     {
         public static Vector2 Rotate(this Vector2 vector, double radians, Vector2 pivot)
         {
-            //return Vector3.Transform(vector.ToVector3(0), Matrix.CreateTranslation(vector.ToVector3(0))
-            //            * Matrix.CreateTranslation((-pivot).ToVector3(0))
-            //            * Matrix.CreateRotationY(-(float)radians)
-            //            * Matrix.CreateTranslation(pivot.ToVector3(0))).XZToVector2();
-            Vector2 rotatedVector = new Vector2()
-            {
-                X =
-                (float)(pivot.X + (vector.X - pivot.X) * Math.Cos(radians) - (vector.Y - pivot.Y) * Math.Sin(radians)),
-                Y =
-                (float)(pivot.Y + (vector.Y - pivot.Y) * Math.Cos(radians) - (vector.X - pivot.X) * Math.Sin(radians))
-            };
-            return rotatedVector;
+            Vector2 byOrigin = vector - pivot;
+            Vector2 rotatedVector = Vector2.Transform(byOrigin, Matrix.CreateRotationZ((float)radians));
+            return rotatedVector + pivot;
         }
 
         public static Vector2 XZToVector2(this Vector3 vector)

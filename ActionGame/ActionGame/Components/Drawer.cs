@@ -39,9 +39,13 @@ namespace ActionGame.Components
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
         }
 
+        public static Texture2D Blue__, Green__, Red__;
         public override void Initialize()
         {
             base.Initialize();
+            Blue__ = game.Content.Load<Texture2D>("Textures/blue");
+            Red__ = game.Content.Load<Texture2D>("Textures/red");
+            Green__ = game.Content.Load<Texture2D>("Textures/green");
         }
 
         public Matrix WorldTransformMatrix

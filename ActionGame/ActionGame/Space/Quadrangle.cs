@@ -5,6 +5,7 @@ using ActionGame.Extensions;
 using ActionGame.People;
 using ActionGame.QSP;
 using Microsoft.Xna.Framework;
+using System.Drawing;
 
 namespace ActionGame.Space
 {
@@ -36,8 +37,12 @@ namespace ActionGame.Space
 
         public bool IsInCollisionWith(Quadrangle obj)
         {
+            Triangle up = new Triangle(UpperLeftCorner, UpperRightCorner, LowerRightCorner);
+            Triangle down = new Triangle(UpperLeftCorner, LowerLeftCorner, LowerRightCorner);
+
+
             return ZapCollisionDetect(obj);
-            /*
+            
             Line leftAxis = Line.FromTwoPoints(UpperLeftCorner, LowerLeftCorner);
             Line rightAxis = Line.FromTwoPoints(UpperRightCorner, LowerRightCorner);
             Line upperAxis = Line.FromTwoPoints(UpperLeftCorner, UpperRightCorner);
@@ -49,7 +54,7 @@ namespace ActionGame.Space
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj)) // vertical switched
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // both switched
                 ;
-            */
+            
         }
 
         public void CheckHits()

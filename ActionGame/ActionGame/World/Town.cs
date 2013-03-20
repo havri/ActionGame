@@ -237,6 +237,7 @@ namespace ActionGame.World
 
         void FillDrawer()
         {
+            
             int nearestInterfaceIndex = -2;
             float length = float.MaxValue;
             for (int i = 0; i < currentQuarter.Interfaces.Count; i++)

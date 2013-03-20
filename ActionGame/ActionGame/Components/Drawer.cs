@@ -60,7 +60,7 @@ namespace ActionGame.Components
             DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
             objects.Add(dObj);
 
-            if (obj is SpatialObject && !(obj is Human))
+            /*if (obj is SpatialObject && !(obj is Human))
             {
                 GameObject q = obj as GameObject;
                 Tuple<Vector2, Texture2D>[] corners = new Tuple<Vector2, Texture2D>[]
@@ -89,7 +89,7 @@ namespace ActionGame.Components
                         corner.Item2);
                     objects.Add(new DrawedObject(vplate, azimuthDelta, positionDelta));
                 }
-            }
+            }*/
         }
 
         public void StopDrawingObject(IDrawableObject obj)
@@ -111,13 +111,12 @@ namespace ActionGame.Components
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
             panorama.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
-
-            //DrawPanoramaBackground();
-
-
-            Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             foreach (DrawedObject dObj in objects)
             {

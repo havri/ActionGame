@@ -6,7 +6,7 @@ using ActionGame.World;
 using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ActionGame.Components;
+using ActionGame.People;
 
 namespace ActionGame.Space
 {
@@ -43,19 +43,20 @@ namespace ActionGame.Space
 
         public void Draw(Matrix view, Matrix projection, Matrix world)
         {
-            //Matrix[] transforms = new Matrix[model.Bones.Count];
-            //model.CopyAbsoluteBoneTransformsTo(transforms);
+            Matrix[] transforms = new Matrix[model.Bones.Count];
+            model.CopyAbsoluteBoneTransformsTo(transforms);
             
+
             foreach(ModelMesh mesh in model.Meshes)
             {
                 foreach(BasicEffect effect in mesh.Effects)
                 {
                     effect.World =
-                        //transforms[mesh.ParentBone.Index] * 
-                        Matrix.CreateTranslation(PositionInQuarter)
+                        transforms[mesh.ParentBone.Index]
+                        * Matrix.CreateTranslation(PositionInQuarter)
                         * Matrix.CreateTranslation((-Pivot.PositionInQuarter).ToVector3(0)) 
-                        * Matrix.CreateRotationY(-(float)azimuth) 
-                        * Matrix.CreateTranslation(Pivot.PositionInQuarter.ToVector3(0)) 
+                        * Matrix.CreateRotationY(-(float)azimuth)
+                        * Matrix.CreateTranslation(Pivot.PositionInQuarter.ToVector3(0))
                         * world ;
                     effect.View = view;
                     effect.Projection = projection;

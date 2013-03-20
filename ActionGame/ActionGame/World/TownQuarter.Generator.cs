@@ -106,7 +106,7 @@ namespace ActionGame.World
                     Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
                     GunType gunType = game.BoxDefaultGuns[random.Next(game.BoxDefaultGuns.Count)];
                     ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount),
-                        game.Content.Load<Model>("Objects/Decorations/Box"),
+                        game.Content.Load<Model>("Objects/Decorations/ammoBox"),
                         new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                         game.Drawer.WorldTransformMatrix
                         );
@@ -119,7 +119,7 @@ namespace ActionGame.World
             {
                 Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
                 ToolBox tb = new ToolBox(null,
-                    game.Content.Load<Model>("Objects/Decorations/Box"),
+                    game.Content.Load<Model>("Objects/Decorations/healthBox"),
                     new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                     game.Drawer.WorldTransformMatrix
                     );

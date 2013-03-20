@@ -5,11 +5,8 @@ Content\Textures\house1\Brick_Rough_Dark.xnb
 Content\Textures\house1\Roofing_Shingles_Wood.xnb
 Content\Textures\house1\Brick_Rough_Dark_0.xnb
 Content\Textures\house1\Roofing_Shingles_Wood_0.xnb
-Content\Objects\Decorations\bin.xnb
 Content\Textures\bin\Metal_Rough.xnb
 Content\Textures\bin\Metal_Seamed.xnb
-Content\Textures\bin\Metal_Rough_0.xnb
-Content\Textures\bin\Metal_Seamed_0.xnb
 Content\Objects\Buildings\panelak.xnb
 Content\Textures\panelak\White.xnb
 Content\Textures\panelak\White_0.xnb
@@ -46,9 +43,6 @@ Content\Textures\metal.xnb
 Content\Textures\blue.xnb
 Content\Textures\toolPanel.xnb
 Content\Textures\ToolIcons\fists.xnb
-Content\Objects\Decorations\box.xnb
-Content\Objects\Decorations\box\Wood_Plywood_Knots.xnb
-Content\Objects\Decorations\box\Wood_Plywood_Knots_0.xnb
 Content\Textures\ToolIcons\pistol.xnb
 Content\Textures\ToolIcons\ak47.xnb
 Content\Sounds\background.xnb
@@ -60,4 +54,10 @@ Content\Objects\panorama\panorama.xnb
 Content\Objects\panorama\panorama_0.xnb
 Content\Textures\green.xnb
 Content\Textures\red.xnb
+Content\Objects\Decorations\ammoBox.xnb
+Content\Objects\Decorations\healthBox.xnb
+Content\Objects\Decorations\ammoBox\w.xnb
+Content\Objects\Decorations\healthBox\wh.xnb
+Content\Objects\Decorations\ammoBox\w_0.xnb
+Content\Objects\Decorations\healthBox\wh_0.xnb
 Content\Config\DefaultGunSet.xml

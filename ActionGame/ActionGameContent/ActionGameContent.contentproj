@@ -75,13 +75,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\Decorations\bin.fbx">
-      <Name>bin</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\bin\Metal_Rough.jpg">
       <Name>Metal_Rough</Name>
       <Importer>TextureImporter</Importer>
@@ -281,20 +274,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\Decorations\box.fbx">
-      <Name>box</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Objects\Decorations\box\Wood_Plywood_Knots.jpg">
-      <Name>Wood_Plywood_Knots</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Config\DefaultGunSet.xml">
       <Name>DefaultGunSet</Name>
       <Importer>XmlImporter</Importer>
@@ -303,6 +282,16 @@
     </None>
     <Compile Include="Objects\panorama.fbx">
       <Name>panorama</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\ammoBox.fbx">
+      <Name>ammoBox</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\healthBox.fbx">
+      <Name>healthBox</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
@@ -362,6 +351,19 @@
     </Compile>
     <Compile Include="Textures\red.png">
       <Name>red</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Objects\Decorations\ammoBox\w.jpg">
+      <Name>w</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\healthBox\wh.jpg">
+      <Name>wh</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

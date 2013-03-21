@@ -305,6 +305,11 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="Objects\Buildings\transformer.fbx">
+      <Name>transformer</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\ToolIcons\pistol.png">
@@ -405,6 +410,13 @@
     </Compile>
     <Compile Include="Objects\Decorations\healthBox\wh.jpg">
       <Name>wh</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\Buildings\transformer\texture.jpg">
+      <Name>texture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

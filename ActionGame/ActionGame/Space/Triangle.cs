@@ -48,13 +48,13 @@ namespace ActionGame.Space
 
         public bool IsInCollisionWith(Triangle triangle)
         {
-            Line2 ab1 = new Line2(A, B);
-            Line2 ac1 = new Line2(A, C);
-            Line2 bc1 = new Line2(B, C);
+            LineSegment ab1 = new LineSegment(A, B);
+            LineSegment ac1 = new LineSegment(A, C);
+            LineSegment bc1 = new LineSegment(B, C);
 
-            Line2 ab2 = new Line2(triangle.A, triangle.B);
-            Line2 ac2 = new Line2(triangle.A, triangle.C);
-            Line2 bc2 = new Line2(triangle.B, triangle.C);
+            LineSegment ab2 = new LineSegment(triangle.A, triangle.B);
+            LineSegment ac2 = new LineSegment(triangle.A, triangle.C);
+            LineSegment bc2 = new LineSegment(triangle.B, triangle.C);
 
             return ab1.IsCrossing(ab2)
                 || ab1.IsCrossing(ac2)

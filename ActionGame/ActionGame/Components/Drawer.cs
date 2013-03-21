@@ -41,6 +41,7 @@ namespace ActionGame.Components
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
         }
 
+        /// TODO: remove this
         public static Texture2D Blue__, Green__, Red__;
         public override void Initialize()
         {

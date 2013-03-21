@@ -140,7 +140,7 @@
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\IDrawableObject.cs" />
     <Compile Include="Space\Line.cs" />
-    <Compile Include="Space\Line2.cs" />
+    <Compile Include="Space\LineSegment.cs" />
     <Compile Include="Space\Plate.cs" />
     <Compile Include="QSP\Node.cs" />
     <Compile Include="Space\RangeF.cs" />

@@ -449,9 +449,9 @@ namespace ActionGame.World
             {
                 game.Content.Load<Model>("Objects/Buildings/panelak"),
                 game.Content.Load<Model>("Objects/Buildings/panelak2"),
-                game.Content.Load<Model>("Objects/Buildings/house1")
+                game.Content.Load<Model>("Objects/Buildings/house1"),
+                game.Content.Load<Model>("Objects/Buildings/transformer")
             };
-
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
             {
                 float realWidth = emptyRect.Width * SquareWidth,

@@ -74,4 +74,7 @@ Content\Objects\Humans\botBlue\Metal_Rough_0.xnb
 Content\Objects\Humans\botYellow\Material2_0.xnb
 Content\Objects\Humans\botYellow\Material1_0.xnb
 Content\Objects\Humans\botYellow\Metal_Rough_0.xnb
+Content\Objects\Buildings\transformer.xnb
+Content\Objects\Buildings\transformer\texture.xnb
+Content\Objects\Buildings\transformer\texture_0.xnb
 Content\Config\DefaultGunSet.xml

@@ -159,7 +159,7 @@ namespace ActionGame.World
         private void GenerateRoadSignPicture()
         {
             //Stuff from Content Manager doesn't need manual disposing.
-            Texture2D bgTex = game.Content.Load<Texture2D>("Textures/roadSign");
+            Texture2D bgTex = owner.Content.RoadSignTexture;
             using (MemoryStream bgStream = new MemoryStream())
             {
                 bgTex.SaveAsPng(bgStream, 768, 256);
@@ -1098,6 +1098,7 @@ namespace ActionGame.World
                 lowerRight.Y -= height;
                 Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, game.Content.Load<Texture2D>("Textures/metal"));
                 magicPlates.AddLast(signPlate);
+                iface.OppositeInterface.Quarter.RegisterNewRoadSign(signPlate);
             }
 
         }

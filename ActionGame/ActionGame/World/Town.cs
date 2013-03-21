@@ -48,6 +48,8 @@ namespace ActionGame.World
         public Town(ActionGame game, Loading loadingFrom)
             : base(game)
         {
+            EmptyTownQuarterOwner.LoadContent(game.Content);
+
             quarters = new TownQuarter[game.Settings.TownQuarterCount];
 
             //Town graph creation

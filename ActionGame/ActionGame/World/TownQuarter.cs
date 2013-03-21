@@ -40,6 +40,7 @@ namespace ActionGame.World
         });
         readonly static string emptyName = "Unnamed";
 
+        ITownQuarterOwner owner;
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
@@ -48,6 +49,7 @@ namespace ActionGame.World
         readonly HashSet<BulletVisualisation> magicBullets = new HashSet<BulletVisualisation>();
         readonly List<KeyValuePair<BulletVisualisation, TimeSpan>> bulletAddedTimes = new List<KeyValuePair<BulletVisualisation,TimeSpan>>();
         readonly LinkedList<Human> walkers = new LinkedList<Human>();
+        readonly List<Plate> roadSignsPointingToMe = new List<Plate>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
         /// </summary>
@@ -100,6 +102,8 @@ namespace ActionGame.World
         /// <param name="graphicsDevice">Graphics device for creating textures</param>
         public TownQuarter(ActionGame game, Vector2 size, int degree)
         {
+            owner = EmptyTownQuarterOwner.Instance;
+
             this.game = game;
             interfaces = new List<TownQuarterInterface>(degree);
             if (nameRepository.Count > 0)
@@ -138,6 +142,21 @@ namespace ActionGame.World
             spaceGrid.Fill(GetAllSolidObjects());
         }
 
+        public void SetOwner(ITownQuarterOwner newOwner)
+        {
+            owner = newOwner;
+            roadSignTexture.Dispose();
+            GenerateRoadSignPicture();
+            foreach (Plate roadSign in roadSignsPointingToMe)
+            { 
+                roadSign.SetFront(roadSignTexture);
+            }
+        }
+
+        public void RegisterNewRoadSign(Plate roadSign)
+        {
+            roadSignsPointingToMe.Add(roadSign);
+        }
         /// <summary>
         /// Configures drawer for drawing this quarter as main.
         /// </summary>

@@ -131,6 +131,8 @@
     <Compile Include="MenuForms\MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="World\EmptyTownQuarterOwner.cs" />
+    <Compile Include="World\ITownQuarterOwner.cs" />
     <Compile Include="People\Opponent.cs" />
     <Compile Include="QSP\Grid.cs" />
     <Compile Include="QSP\GridField.cs" />
@@ -174,6 +176,7 @@
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Space\RectangleF.cs" />
     <Compile Include="World\PositionInTown.cs" />
+    <Compile Include="World\TownQuarterOwnerContent.cs" />
     <Compile Include="World\TownQuatterInterfacePosition.cs" />
     <Compile Include="World\Town.cs" />
     <Compile Include="World\TownQuarter.Generator.cs" />
@@ -211,9 +214,6 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MenuForms\Loading.resx">

@@ -217,6 +217,7 @@ namespace ActionGame
                 defaultPositions.Add(player, playerPosition);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 town.CurrentQuarter.SpaceGrid.AddObject(player);
+                town.CurrentQuarter.SetOwner(player);
 
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);

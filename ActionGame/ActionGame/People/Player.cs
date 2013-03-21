@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame.People
 {
-    public class Player : Human
+    public class Player : Human, ITownQuarterOwner
     {
         const float MouseXSensitivityCoef = 0.5f;
         const float MouseYSensitivityCoef = 0.4f;
@@ -33,6 +33,7 @@ namespace ActionGame.People
         readonly Point defaultMousePosition;
         private int lastMouseWheelState = 0;
         readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
+        TownQuarterOwnerContent content;
 
         public Player(ActionGame game)
             :base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
@@ -51,6 +52,12 @@ namespace ActionGame.People
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, 0, azimuth, worldTransform);
+            content = new TownQuarterOwnerContent
+            {
+                AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botBlue"),
+                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagBlue"),
+                RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignBlue")
+            };
         }
 
         public override void Update(GameTime gameTime)
@@ -134,6 +141,11 @@ namespace ActionGame.People
             
             //Supress human instincts
             //base.Update(gameTime);
+        }
+
+        public TownQuarterOwnerContent Content
+        {
+            get { return content; }
         }
     }
 }

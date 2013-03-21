@@ -239,13 +239,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\roadSign.jpg">
-      <Name>roadSign</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\metal.jpg">
       <Name>metal</Name>
       <Importer>TextureImporter</Importer>
@@ -307,6 +300,21 @@
     </Compile>
     <Compile Include="Objects\Buildings\transformer.fbx">
       <Name>transformer</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagBlue.fbx">
+      <Name>flagBlue</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty.fbx">
+      <Name>flagEmpty</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow.fbx">
+      <Name>flagYellow</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
@@ -417,6 +425,70 @@
   <ItemGroup>
     <Compile Include="Objects\Buildings\transformer\texture.jpg">
       <Name>texture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\roadSignBlue.jpg">
+      <Name>roadSignBlue</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\roadSignGreen.jpg">
+      <Name>roadSignGreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\roadSignYellow.jpg">
+      <Name>roadSignYellow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\Decorations\flagBlue\Brick_Antique.jpg">
+      <Name>Brick_Antique</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagBlue\Cladding_Stucco_White.jpg">
+      <Name>Cladding_Stucco_White</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagBlue\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty\Brick_Antique.jpg">
+      <Name>Brick_Antique</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty\Cladding_Stucco_White.jpg">
+      <Name>Cladding_Stucco_White</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow\Brick_Antique.jpg">
+      <Name>Brick_Antique</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow\Cladding_Stucco_White.jpg">
+      <Name>Cladding_Stucco_White</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

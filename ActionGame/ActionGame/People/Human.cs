@@ -8,6 +8,7 @@ using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Tools;
+using ActionGame.Objects;
 
 namespace ActionGame.People
 {
@@ -50,6 +51,7 @@ namespace ActionGame.People
         readonly HashSet<Human> hasMeAsEnemy = new HashSet<Human>();
         Human lastSeenEnemy;
         TimeSpan lastTimeSawEnemy;
+        readonly HashSet<ActionObject> actionObjects = new HashSet<ActionObject>();
 
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -377,6 +379,16 @@ namespace ActionGame.People
                 hasMe.RemoveFriend(this);
             }
             base.Destroy();
+        }
+
+        public void RegisterAvailibleAction(ActionObject actionObject)
+        {
+            actionObjects.Add(actionObject);
+        }
+
+        public void UnregisterAvailibleAction(ActionObject actionObject)
+        {
+            actionObjects.Remove(actionObject);
         }
     }
 }

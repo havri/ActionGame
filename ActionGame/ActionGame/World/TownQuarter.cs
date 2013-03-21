@@ -92,6 +92,7 @@ namespace ActionGame.World
         readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
         readonly ActionGame game;
 
+
         /// <summary>
         /// Creates new town quarter as map fragment. Generates roads, buildings, etc.
         /// </summary>

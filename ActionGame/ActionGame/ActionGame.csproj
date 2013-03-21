@@ -131,6 +131,8 @@
     <Compile Include="MenuForms\MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="Objects\ActionObject.cs" />
+    <Compile Include="Objects\Flag.cs" />
     <Compile Include="World\EmptyTownQuarterOwner.cs" />
     <Compile Include="World\ITownQuarterOwner.cs" />
     <Compile Include="People\Opponent.cs" />

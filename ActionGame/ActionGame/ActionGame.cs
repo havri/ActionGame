@@ -242,6 +242,7 @@ namespace ActionGame
 
                 backgroundSound.IsLooped = true;
                 backgroundSound.Play();
+                drawer.ShowMessage(new GameTime(), "Wellcome in the game. You're in " + player.Position.Quarter.Name + ".");
             }
         }
         /// <summary>

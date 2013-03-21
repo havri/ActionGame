@@ -40,7 +40,7 @@ namespace ActionGame.World
         }
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
-        public ActionGame Game
+        public new ActionGame Game
         { 
             get {return (ActionGame)base.Game;}
         }
@@ -224,6 +224,7 @@ namespace ActionGame.World
 
                 //Assings player to new space grid
                 currentQuarter.SpaceGrid.AddObject(Game.Player);
+                Game.Drawer.ShowMessage(gameTime, "You've entered " + currentQuarter.Name + ".");
 
                 //Restart for drawing
                 lastNearestInterfaceIndex = -1;

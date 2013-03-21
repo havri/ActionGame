@@ -16,6 +16,8 @@ namespace ActionGame.Components
     /// </summary>
     public class Drawer : DrawableGameComponent
     {
+        static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
+
         readonly ActionGame game;
         readonly List<DrawedObject> objects;
         readonly Matrix projectionMatrix;
@@ -33,6 +35,10 @@ namespace ActionGame.Components
         float progressBarValue = 0;
         public Texture2D ProgressBarTexture { set { progressBarTexture = value; } }
         Texture2D progressBarTexture;
+        TimeSpan messageShowBegin = TimeSpan.Zero;
+        bool showMessage = false;
+        string message = string.Empty;
+        Texture2D messageBackground;
 
 
         /// <summary>
@@ -106,9 +112,21 @@ namespace ActionGame.Components
             objects.RemoveAll(x => x.Object == obj);
         }
 
+        public void ShowMessage(GameTime gameTime, String text)
+        {
+            showMessage = true;
+            messageShowBegin = gameTime.TotalGameTime;
+            message = text;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            if (gameTime.TotalGameTime - messageShowBegin > MessageTimeout)
+            {
+                showMessage = false;
+            }
 
             ///TODO: Maybe this should be called from other Update. For ex. Player's.
             ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
@@ -151,6 +169,14 @@ namespace ActionGame.Components
                 const float height = 0.05f;
                 Rectangle destRect = new Rectangle(0,0, (int)(game.Settings.ScreenSize.Width * width * progressBarValue), (int)(game.Settings.ScreenSize.Height * height));
                 game.SpriteBatch.Draw(progressBarTexture, destRect, Color.White);
+            }
+            if (showMessage)
+            {
+                const float height = 0.1f;
+                const float width = 0.7f;
+                Rectangle destRect = new Rectangle((int)((1f - width) * 0.5f * game.Settings.ScreenSize.Width), 0, (int)(game.Settings.ScreenSize.Width * width), (int)(game.Settings.ScreenSize.Height * height));
+                game.SpriteBatch.Draw(messageBackground, destRect, Color.White);
+                game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2()  + new Vector2(2,1), Color.Black);
             }
             game.SpriteBatch.End();
 
@@ -212,6 +238,7 @@ namespace ActionGame.Components
             actionAvailableIcon = Game.Content.Load<Texture2D>("Textures/actionIcon");
             font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
             panorama = new SpatialObject(game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
+            messageBackground = game.Content.Load<Texture2D>("Textures/green");
         }
 
         protected override void Dispose(bool disposing)

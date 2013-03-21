@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.World
@@ -11,5 +12,6 @@ namespace ActionGame.World
         public Model FlagModel { get; set; }
         public Model AllyHumanModel { get; set; }
         public Texture2D RoadSignTexture { get; set; }
+        public Texture2D ColorTexture { get; set; }
     }
 }

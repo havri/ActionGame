@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionGame.Objects;
 using ActionGame.Tools;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
@@ -9,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame.People
 {
-    public class Player : Human, ITownQuarterOwner
+    public class Player : Human
     {
         const float MouseXSensitivityCoef = 0.5f;
         const float MouseYSensitivityCoef = 0.4f;
@@ -20,8 +21,6 @@ namespace ActionGame.People
         static readonly Keys GunUp = Keys.LeftAlt;
         static readonly Keys GunDown = Keys.LeftControl;
         static readonly Keys GunDrop = Keys.Back;
-        static readonly Keys ShotKey = Keys.Space;
-        static readonly Keys EnterCar = Keys.Enter;
         static readonly Keys TurnLeft = Keys.Left;
         static readonly Keys TurnRight = Keys.Right;
         static readonly Keys TurnUp = Keys.Up;
@@ -33,7 +32,7 @@ namespace ActionGame.People
         readonly Point defaultMousePosition;
         private int lastMouseWheelState = 0;
         readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
-        TownQuarterOwnerContent content;
+        ActionObject usedActionObject = null;
 
         public Player(ActionGame game)
             :base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
@@ -49,14 +48,16 @@ namespace ActionGame.People
             lastKeyPressedGameTime.Add(GunDrop, TimeSpan.Zero);
         }
 
-        public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
+        public new void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
-            base.Load(model, position, 0, azimuth, worldTransform);
-            content = new TownQuarterOwnerContent
+            base.Load(model, position, azimuth, worldTransform);
+            
+            Content = new TownQuarterOwnerContent
             {
                 AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botBlue"),
                 FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagBlue"),
-                RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignBlue")
+                RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignBlue"),
+                ColorTexture = Game.Content.Load<Texture2D>("Textures/blue")
             };
         }
 
@@ -112,6 +113,22 @@ namespace ActionGame.People
                 {
                     DoToolAction(gameTime);
                 }
+                if (mouseState.RightButton == ButtonState.Pressed && HasAvailableAnyAction)
+                {
+                    if (usedActionObject != FirstActionObject && usedActionObject != null)
+                    {
+                        usedActionObject.EndAction(this, gameTime);
+                    }
+                    usedActionObject = FirstActionObject;
+                    usedActionObject.StartAction(this, gameTime);
+                }
+                else
+                {
+                    if (usedActionObject != null)
+                    {
+                        usedActionObject.EndAction(this, gameTime);
+                    }
+                }
 
                 SelectNextGun((mouseState.ScrollWheelValue - lastMouseWheelState) / 120);
                 lastMouseWheelState = mouseState.ScrollWheelValue;
@@ -141,11 +158,6 @@ namespace ActionGame.People
             
             //Supress human instincts
             //base.Update(gameTime);
-        }
-
-        public TownQuarterOwnerContent Content
-        {
-            get { return content; }
         }
     }
 }

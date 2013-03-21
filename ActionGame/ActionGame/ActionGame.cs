@@ -285,8 +285,6 @@ namespace ActionGame
         {
             base.Dispose(disposing);
 
-            if(player != null) player.Dispose();
-            if (opponent != null) opponent.Dispose();
             if(backgroundSound != null) backgroundSound.Dispose();
         }
     }

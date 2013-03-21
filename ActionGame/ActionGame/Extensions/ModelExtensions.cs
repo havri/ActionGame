@@ -22,7 +22,7 @@ namespace ActionGame.Extensions
         {
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-
+            
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
@@ -62,7 +62,7 @@ namespace ActionGame.Extensions
                 sizeCache.Clear();
             }
             BoundingBox box = model.GetBoundingBox(worldTransform);
-            Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            /*Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
             Vector3[] corners = box.GetCorners();
             foreach (Vector3 corner in corners)
@@ -79,8 +79,8 @@ namespace ActionGame.Extensions
                     max.Z = corner.Z;
                 if (corner.Z < min.Z)
                     min.Z = corner.Z;
-            }
-            Vector3 size = (max - min);
+            }*/
+            Vector3 size = (box.Max -box.Min);
             sizeCache.Add(model, size);
             return size;
         }

@@ -23,9 +23,17 @@ namespace ActionGame.Components
         Texture2D toolPanelBackground;
         Texture2D townGraphPicture;
         Texture2D playerIcon;
+        Texture2D actionAvailableIcon;
         TownQuarter currentQuarter;
         SpriteFont font;
         SpatialObject panorama;
+        public bool DrawProgressBar { set { drawProgressBar = value; } }
+        bool drawProgressBar = false;
+        public float ProgressBarValue { set { progressBarValue = value; } }
+        float progressBarValue = 0;
+        public Texture2D ProgressBarTexture { set { progressBarTexture = value; } }
+        Texture2D progressBarTexture;
+
 
         /// <summary>
         /// Constructs new drawing component.
@@ -133,6 +141,17 @@ namespace ActionGame.Components
                 game.SpriteBatch.Draw(game.Player.SelectedTool.Icon, new Vector2(100, 0), Color.AliceBlue);
                 game.SpriteBatch.DrawString(font, game.Player.SelectedTool.ToolBarText.ToString(), new Vector2(120, 80), Color.Black);
             }
+            if (game.Player.HasAvailableAnyAction)
+            {
+                game.SpriteBatch.Draw(actionAvailableIcon, new Vector2(0, game.Settings.ScreenSize.Height - 100), Color.White);
+            }
+            if (drawProgressBar)
+            { 
+                const float width = 1f;
+                const float height = 0.05f;
+                Rectangle destRect = new Rectangle(0,0, (int)(game.Settings.ScreenSize.Width * width * progressBarValue), (int)(game.Settings.ScreenSize.Height * height));
+                game.SpriteBatch.Draw(progressBarTexture, destRect, Color.White);
+            }
             game.SpriteBatch.End();
 
             DrawMaps();
@@ -190,6 +209,7 @@ namespace ActionGame.Components
 
             playerIcon = Game.Content.Load<Texture2D>("Textures/player");
             toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
+            actionAvailableIcon = Game.Content.Load<Texture2D>("Textures/actionIcon");
             font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
             panorama = new SpatialObject(game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
         }

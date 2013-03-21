@@ -12,6 +12,7 @@ using ActionGame.People;
 using ActionGame.Exceptions;
 using ActionGame.QSP;
 using ActionGame.Tools;
+using ActionGame.Objects;
 
 namespace ActionGame.World
 {

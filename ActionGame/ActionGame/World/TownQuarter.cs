@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.QSP;
+using ActionGame.Objects;
 
 
 namespace ActionGame.World
@@ -40,6 +41,7 @@ namespace ActionGame.World
         });
         readonly static string emptyName = "Unnamed";
 
+        public ITownQuarterOwner Owner { get { return owner; } }
         ITownQuarterOwner owner;
         /// <summary>
         /// Object what makes ground textures.
@@ -91,6 +93,7 @@ namespace ActionGame.World
         bool updateProcessing = false;
         readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
         readonly ActionGame game;
+        readonly Flag flag;
 
 
         /// <summary>
@@ -140,6 +143,15 @@ namespace ActionGame.World
                 throw ex;
             }
 
+            {
+                Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.Sidewalk);
+                Model flagModel = owner.Content.FlagModel;
+                Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
+                PositionInTown pos = new PositionInTown(this, ((square.ToVector2() + new Vector2(0.5f, 0.5f)) * SquareWidth) - (flagSize.XZToVector2() * 0.5f));
+                flag = new Flag(game, flagModel, pos, 0, game.Drawer.WorldTransformMatrix);
+                solidObjects.AddLast(flag);
+            }
+
             spaceGrid.Fill(GetAllSolidObjects());
         }
 
@@ -152,6 +164,7 @@ namespace ActionGame.World
             { 
                 roadSign.SetFront(roadSignTexture);
             }
+            flag.SetModel(owner.Content.FlagModel, game.Drawer.WorldTransformMatrix);
         }
 
         public void RegisterNewRoadSign(Plate roadSign)
@@ -208,11 +221,7 @@ namespace ActionGame.World
         {
             foreach (var obj in groundObjects)
                 obj.Dispose();
-            foreach (var obj in solidObjects)
-                obj.Dispose();
             map.Dispose();
-            foreach (var walker in walkers)
-                walker.Dispose();
             roadSignTexture.Dispose();
         }
 
@@ -222,6 +231,7 @@ namespace ActionGame.World
             foreach (var walker in walkers)
                 walker.Update(gameTime);
             spaceGrid.Update();
+            flag.Update(gameTime);
 
             foreach (KeyValuePair<BulletVisualisation, TimeSpan> bulletAddedTime in bulletAddedTimes)
             {

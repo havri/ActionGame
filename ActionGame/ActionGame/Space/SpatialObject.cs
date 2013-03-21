@@ -10,12 +10,11 @@ using ActionGame.People;
 
 namespace ActionGame.Space
 {
-    public class SpatialObject : GameObject, IDisposable, IDrawableObject
+    public class SpatialObject : GameObject, IDrawableObject
     {
         Model model;
         float verticalPosition;
         float verticalSize;
-
         public SpatialObject(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(position, azimuth, (model == null ? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()))
         {
@@ -28,10 +27,15 @@ namespace ActionGame.Space
             Load(model, new PositionInTown(quarter, positionInQuarter.XZToVector2()), positionInQuarter.Y, azimuth, worldTransform);
         }
 
+        public void SetModel(Model newModel, Matrix worldTransform)
+        {
+            Load(newModel, Position, verticalPosition, Azimuth, worldTransform);
+        }
+
         protected void Load(Model model, PositionInTown position, float verticalPosition, double azimuth, Matrix worldTransform)
         {
             this.model = model;
-            verticalPosition = position.PositionInQuarter.Y;
+            this.verticalPosition = verticalPosition;
             Vector3 size = Vector3.Zero;
             if (model != null)
             {
@@ -76,11 +80,6 @@ namespace ActionGame.Space
         protected Vector3 Size
         {
             get { return base.Size.ToVector3(verticalSize); }
-        }
-
-        public void Dispose()
-        {
-            model = null;
         }
 
         public virtual void Destroy()

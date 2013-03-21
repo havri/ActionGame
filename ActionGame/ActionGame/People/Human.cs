@@ -12,7 +12,7 @@ using ActionGame.Objects;
 
 namespace ActionGame.People
 {
-    public class Human : SpatialObject
+    public class Human : SpatialObject, ITownQuarterOwner
     {
         /// <summary>
         /// Speed of human walk. In meters per second.
@@ -51,7 +51,9 @@ namespace ActionGame.People
         readonly HashSet<Human> hasMeAsEnemy = new HashSet<Human>();
         Human lastSeenEnemy;
         TimeSpan lastTimeSawEnemy;
-        readonly HashSet<ActionObject> actionObjects = new HashSet<ActionObject>();
+        readonly HashSet<ActionObject> availableActionObjects = new HashSet<ActionObject>();
+        public TownQuarterOwnerContent Content { get { return content; } set { content = value; } }
+        TownQuarterOwnerContent content;
 
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -67,6 +69,11 @@ namespace ActionGame.People
             lastPosition = position.PositionInQuarter;
             lastSeenEnemy = null;
             lastTimeSawEnemy = TimeSpan.Zero;
+        }
+
+        public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
+        {
+            base.Load(model, position, 0, azimuth, worldTransform);
         }
 
         protected void Go(bool forward, float seconds)
@@ -381,14 +388,30 @@ namespace ActionGame.People
             base.Destroy();
         }
 
-        public void RegisterAvailibleAction(ActionObject actionObject)
+        public void RegisterAvailableAction(ActionObject actionObject)
         {
-            actionObjects.Add(actionObject);
+            availableActionObjects.Add(actionObject);
         }
 
-        public void UnregisterAvailibleAction(ActionObject actionObject)
+        public void UnregisterAvailableAction(ActionObject actionObject)
         {
-            actionObjects.Remove(actionObject);
+            availableActionObjects.Remove(actionObject);
+        }
+
+        public bool HasAvailableAnyAction
+        {
+            get
+            {
+                return availableActionObjects.Count != 0;
+            }
+        }
+
+        protected ActionObject FirstActionObject
+        {
+            get
+            {
+                return availableActionObjects.First();
+            }
         }
     }
 }

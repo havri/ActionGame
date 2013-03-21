@@ -9,21 +9,27 @@ using ActionGame.People;
 
 namespace ActionGame.Objects
 {
-    public class ActionObject : SpatialObject
+    public abstract class ActionObject : SpatialObject
     {
         static readonly TimeSpan CheckRangeTimeout = new TimeSpan(0, 0, 0, 0, 250);
 
         readonly float actionDistance;
         TimeSpan lastTimeRangeChecked = TimeSpan.Zero;
         HashSet<Human> availibleHumans = new HashSet<Human>();
+        public bool ActionRunning { get { return actionRunning; } }
+        bool actionRunning = false;
+        protected ActionGame Game { get { return game; } } 
+        readonly ActionGame game;
 
-        public ActionObject(float actionDistance, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
+
+        public ActionObject(ActionGame game, float actionDistance, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
         {
             this.actionDistance = actionDistance;
+            this.game = game;
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             if (gameTime.TotalGameTime - lastTimeRangeChecked > CheckRangeTimeout)
             {
@@ -48,10 +54,10 @@ namespace ActionGame.Objects
                 {
                     if (collision is Human)
                     {
-                        Human human = ((Human)collisions);
+                        Human human = ((Human)collision);
                         if (!availibleHumans.Contains(human))
                         {
-                            human.RegisterAvailibleAction(this);
+                            human.RegisterAvailableAction(this);
                         }
                         newHumans.Add(human);
                     }
@@ -59,10 +65,20 @@ namespace ActionGame.Objects
                 availibleHumans.ExceptWith(newHumans);
                 foreach (Human oldHuman in availibleHumans)
                 {
-                    oldHuman.UnregisterAvailibleAction(this);
+                    oldHuman.UnregisterAvailableAction(this);
                 }
                 availibleHumans = newHumans;
             }
+        }
+
+        public virtual void StartAction(Human actor, GameTime gameTime)
+        {
+            actionRunning = true;
+        }
+
+        public virtual void EndAction(Human actor, GameTime gameTime)
+        {
+            actionRunning = false;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.People;
 
 namespace ActionGame.World
 {
@@ -11,5 +12,7 @@ namespace ActionGame.World
         {
             get;
         }
+
+        Human CreateAllyGuard(TownQuarter targetQuarter);
     }
 }

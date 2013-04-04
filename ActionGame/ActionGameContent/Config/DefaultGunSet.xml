@@ -8,7 +8,7 @@
     <infinity>true</infinity>
     <sound>pistol</sound>
   </gun>
-  <gun name="Pistol" available="player">
+  <gun name="Pistol" available="guard">
     <icon>pistol</icon>
     <damage>40</damage>
     <range>100</range>
@@ -27,3 +27,6 @@
     <sound>ak47</sound>
   </gun>
 </guns>
+<!--
+  available human -> guard -> player -> box
+-->

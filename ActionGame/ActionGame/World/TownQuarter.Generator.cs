@@ -13,6 +13,7 @@ using ActionGame.Exceptions;
 using ActionGame.QSP;
 using ActionGame.Tools;
 using ActionGame.Objects;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.World
 {
@@ -90,10 +91,12 @@ namespace ActionGame.World
             GenerateGrass(grassTexture, emptyRectaglesInsideSidewalks);
 
             GenerateBuildings(emptyRectaglesInsideSidewalks);
+            BuildFlag();
             GenerateMapPicture();
             GenerateRoadSignPicture();
             GenerateBoxes();
-            GenerateWalkers(pathVertecies);
+            pathGraph = pathVertecies;
+            GenerateWalkers();
         }
 
         private void GenerateBoxes()
@@ -107,6 +110,7 @@ namespace ActionGame.World
                     Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
                     GunType gunType = game.BoxDefaultGuns[random.Next(game.BoxDefaultGuns.Count)];
                     ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount),
+                        game.Content.Load<SoundEffect>("Sounds/gunLoading"),
                         game.Content.Load<Model>("Objects/Decorations/ammoBox"),
                         new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                         game.Drawer.WorldTransformMatrix
@@ -120,6 +124,7 @@ namespace ActionGame.World
             {
                 Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
                 ToolBox tb = new ToolBox(null,
+                    game.Content.Load<SoundEffect>("Sounds/heal"),
                     game.Content.Load<Model>("Objects/Decorations/healthBox"),
                     new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                     game.Drawer.WorldTransformMatrix
@@ -209,18 +214,26 @@ namespace ActionGame.World
             }
         }
 
-        void GenerateWalkers(IList<PathGraphVertex> pathVertecies)
+        public IEnumerable<PositionInTown> GetRandomWalkingWaypoints()
         {
-            if (pathVertecies.Count > 2)
+            Random rand = new Random();
+            return pathGraph.OrderBy(x => rand.Next()).Take(WalkerWayPointCount).Select(x => x.Position);
+        }
+
+        void GenerateWalkers()
+        {
+            if (pathGraph.Count > 2)
             {
-                Model[] models = new Model[]{game.Content.Load<Model>("Objects\\Humans\\botYellow"), game.Content.Load<Model>("Objects\\Humans\\botBlue")};
+                Model[] models = new Model[]{
+                    game.Content.Load<Model>("Objects\\Humans\\human0")
+                };
                 Random rand = new Random();
                 for (int i = 0; i < WalkerCount; i++)
                 {
-                    IEnumerable<PathGraphVertex> walkerPathVertecies = pathVertecies.OrderBy(x => rand.Next()).Take(WalkerWayPointCount);
+                    IEnumerable<PositionInTown> waypoints = GetRandomWalkingWaypoints();
                     ///TODO: Take human model from central repository.
-                    Human walker = new Human(game, models[rand.Next(models.Length)], walkerPathVertecies.First().Position, 0, game.Drawer.WorldTransformMatrix);
-                    InfinityWalkingTask task = new InfinityWalkingTask(walker, walkerPathVertecies.Select(x => x.Position));
+                    Human walker = new Human(game, models[rand.Next(models.Length)], waypoints.First(), 0, game.Drawer.WorldTransformMatrix);
+                    InfinityWalkingTask task = new InfinityWalkingTask(walker, waypoints);
                     walker.AddTask(task);
                     walkers.AddFirst(walker);
                 }
@@ -873,6 +886,11 @@ namespace ActionGame.World
                     System.Drawing.PointF[] points = new System.Drawing.PointF[] { (obj.UpperLeftCorner * (PictureMapRoadWidth / SquareWidth)).ToPointF(), (obj.UpperRightCorner * (PictureMapRoadWidth / SquareWidth)).ToPointF(), (obj.LowerRightCorner * (PictureMapRoadWidth / SquareWidth)).ToPointF(), (obj.LowerLeftCorner * (PictureMapRoadWidth / SquareWidth)).ToPointF() };
                     g.FillPolygon(System.Drawing.Brushes.SaddleBrown, points);
                 }
+
+                System.Drawing.PointF flagPos = (flag.Pivot.PositionInQuarter * (PictureMapRoadWidth / SquareWidth)).ToPointF();
+                g.FillEllipse(System.Drawing.Brushes.White, flagPos.X - 5, flagPos.Y - 5,10 ,10);
+                g.DrawEllipse(System.Drawing.Pens.Black, flagPos.X - 5, flagPos.Y - 5, 10, 10);
+                g.FillEllipse(System.Drawing.Brushes.Black, flagPos.X - 1, flagPos.Y - 1, 2, 2);
             }
 
             using (MemoryStream ms = new MemoryStream())

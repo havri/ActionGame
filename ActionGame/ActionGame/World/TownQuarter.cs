@@ -40,7 +40,10 @@ namespace ActionGame.World
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
         });
         readonly static string emptyName = "Unnamed";
+        readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 1, 0);
+        const int MaxGuardCount = 20;
 
+        TimeSpan lastTimeGuardAdded = TimeSpan.Zero;
         public ITownQuarterOwner Owner { get { return owner; } }
         ITownQuarterOwner owner;
         /// <summary>
@@ -60,7 +63,7 @@ namespace ActionGame.World
 
         readonly List<TownQuarterInterface> interfaces;
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
-
+        IList<PathGraphVertex> pathGraph;
         readonly Grid spaceGrid;
         public Grid SpaceGrid { get { return spaceGrid; } }
         /// <summary>
@@ -93,7 +96,7 @@ namespace ActionGame.World
         bool updateProcessing = false;
         readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
         readonly ActionGame game;
-        readonly Flag flag;
+        Flag flag;
 
 
         /// <summary>
@@ -142,17 +145,17 @@ namespace ActionGame.World
                 }
                 throw ex;
             }
-
-            {
-                Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.Sidewalk);
-                Model flagModel = owner.Content.FlagModel;
-                Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
-                PositionInTown pos = new PositionInTown(this, ((square.ToVector2() + new Vector2(0.5f, 0.5f)) * SquareWidth) - (flagSize.XZToVector2() * 0.5f));
-                flag = new Flag(game, flagModel, pos, 0, game.Drawer.WorldTransformMatrix);
-                solidObjects.AddLast(flag);
-            }
-
             spaceGrid.Fill(GetAllSolidObjects());
+        }
+
+        private void BuildFlag()
+        {
+            Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.Sidewalk);
+            Model flagModel = owner.Content.FlagModel;
+            Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
+            PositionInTown pos = new PositionInTown(this, ((square.ToVector2() + new Vector2(0.5f, 0.5f)) * SquareWidth) - (flagSize.XZToVector2() * 0.5f));
+            flag = new Flag(game, flagModel, pos, 0, game.Drawer.WorldTransformMatrix);
+            solidObjects.AddLast(flag);
         }
 
         public void SetOwner(ITownQuarterOwner newOwner)
@@ -228,6 +231,16 @@ namespace ActionGame.World
         public void Update(GameTime gameTime)
         {
             updateProcessing = true;
+            if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && walkers.Count < WalkerCount + MaxGuardCount)
+            {
+                lastTimeGuardAdded = gameTime.TotalGameTime;
+                Human newGuard = owner.CreateAllyGuard(this);
+                walkers.AddLast(newGuard);
+                solidObjects.AddLast(newGuard);
+                spaceGrid.AddObject(newGuard);
+                game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+            }
+
             foreach (var walker in walkers)
                 walker.Update(gameTime);
             spaceGrid.Update();

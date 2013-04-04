@@ -413,5 +413,24 @@ namespace ActionGame.People
                 return availableActionObjects.First();
             }
         }
+
+
+        public Human CreateAllyGuard(TownQuarter targetQuarter)
+        {
+            PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.Empty).ToVector2() * TownQuarter.SquareWidth);
+            Human guard = new Human(game, Content.AllyHumanModel, pos, 0, game.Drawer.WorldTransformMatrix);
+            foreach (Human enemy in enemies)
+                guard.AddEnemy(enemy);
+            foreach (Human friend in friends)
+                guard.AddFriend(friend);
+            foreach (Human has in hasMeAsEnemy)
+                has.AddEnemy(guard);
+            guard.AddTask(new InfinityWalkingTask(guard, targetQuarter.GetRandomWalkingWaypoints()));
+            foreach(GunType gt in game.GuardDefaultGuns)
+            {
+                guard.AddTool(new Gun(gt, gt.DefaultBulletCount, guard));
+            }
+            return guard;
+        }
     }
 }

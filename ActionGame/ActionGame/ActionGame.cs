@@ -105,6 +105,11 @@ namespace ActionGame
         {
             get { return playerDefaultGuns; }
         }
+        readonly List<GunType> guardDefaultGuns = new List<GunType>();
+        public List<GunType> GuardDefaultGuns
+        {
+            get { return guardDefaultGuns; }
+        }
 
         SoundEffectInstance backgroundSound;
 
@@ -174,13 +179,17 @@ namespace ActionGame
                 gunTypes.Add(gunNode.Attributes["name"].Value, gunType);
                 if (gunNode.Attributes["available"].Value == "human")
                     humanDefaultGuns.Add(gunType);
-                if (gunNode.Attributes["available"].Value == "box" || gunNode.Attributes["available"].Value == "player")
+                if (gunNode.Attributes["available"].Value == "guard" || gunNode.Attributes["available"].Value == "player" || gunNode.Attributes["available"].Value == "box")
                 {
-                    if (gunNode.Attributes["available"].Value == "player")
+                    boxDefaultGuns.Add(gunType);
+                    if (gunNode.Attributes["available"].Value == "player" || gunNode.Attributes["available"].Value == "guard")
                     {
                         playerDefaultGuns.Add(gunType);
+                        if (gunNode.Attributes["available"].Value == "guard")
+                        {
+                            guardDefaultGuns.Add(gunType);
+                        }
                     }
-                    boxDefaultGuns.Add(gunType);
                 }
             }
         }
@@ -226,6 +235,7 @@ namespace ActionGame
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 town.CurrentQuarter.SpaceGrid.AddObject(player);
                 town.CurrentQuarter.SetOwner(player);
+                player.AddEnemy(opponent);
 
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);

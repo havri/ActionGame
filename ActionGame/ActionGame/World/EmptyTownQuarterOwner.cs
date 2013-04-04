@@ -25,6 +25,7 @@ namespace ActionGame.World
         {
             get { return EmptyTownQuarterOwner.instance; }
         } 
+
         internal static void LoadContent(ContentManager contentManager)
         {
             instance = new EmptyTownQuarterOwner(new TownQuarterOwnerContent
@@ -33,6 +34,11 @@ namespace ActionGame.World
                     FlagModel = contentManager.Load<Model>("Objects/Decorations/flagEmpty"),
                     AllyHumanModel = contentManager.Load<Model>("Objects/Humans/human0")
                 });
+        }
+
+        public People.Human CreateAllyGuard(TownQuarter targetQuarter)
+        {
+            return null;
         }
     }
 }

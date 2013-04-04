@@ -7,6 +7,7 @@ using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.People;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.Space
 {
@@ -15,6 +16,7 @@ namespace ActionGame.Space
         Model model;
         float verticalPosition;
         float verticalSize;
+
         public SpatialObject(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(position, azimuth, (model == null ? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()))
         {

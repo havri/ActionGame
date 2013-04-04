@@ -114,6 +114,7 @@
     <Compile Include="Components\Camera\CameraMode.cs" />
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
+    <Compile Include="Components\SoundPlayer.cs" />
     <Compile Include="Exceptions\PathGraphNotConnectedException.cs" />
     <Compile Include="Exceptions\PathNotFoundException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />

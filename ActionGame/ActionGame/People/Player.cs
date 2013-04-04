@@ -57,7 +57,8 @@ namespace ActionGame.People
                 AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botBlue"),
                 FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagBlue"),
                 RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignBlue"),
-                ColorTexture = Game.Content.Load<Texture2D>("Textures/blue")
+                ColorTexture = Game.Content.Load<Texture2D>("Textures/blue"),
+                DrawingColor = System.Drawing.Color.Blue
             };
         }
 

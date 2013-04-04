@@ -49,6 +49,14 @@ namespace ActionGame
         Drawer drawer;
         Town town;
 
+
+        public Town Town
+        {
+            get
+            {
+                return town;
+            }
+        }
         /// <summary>
         /// Gets active player.
         /// </summary>
@@ -222,14 +230,14 @@ namespace ActionGame
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);
                 Random rand = new Random();
-                TownQuarter oppQuarter = (from q in town.Quarters orderby rand.Next() select q).First();
+                TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby rand.Next() select q).First();
                 Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                 PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
                 opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
                 oppQuarter.SpaceGrid.AddObject(opponent);
+                oppQuarter.SetOwner(opponent);
                 opponent.AddEnemy(player);
 
-                drawer.TownGraphPicture = town.Map;
                 Components.Add(town);
 
 

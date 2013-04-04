@@ -18,12 +18,10 @@ namespace ActionGame.Components
     {
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
-        readonly ActionGame game;
         readonly List<DrawedObject> objects;
         readonly Matrix projectionMatrix;
         readonly Matrix worldMatrix = Matrix.Identity;
         Texture2D toolPanelBackground;
-        Texture2D townGraphPicture;
         Texture2D playerIcon;
         Texture2D actionAvailableIcon;
         TownQuarter currentQuarter;
@@ -50,9 +48,16 @@ namespace ActionGame.Components
         public Drawer(ActionGame game, float resolutionWidth, float resolutionHeight)
             : base(game)
         {
-            this.game = game;
             objects = new List<DrawedObject>();
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
+        }
+
+        protected new ActionGame Game
+        {
+            get
+            {
+                return (ActionGame)base.Game;
+            }
         }
 
         /// TODO: remove this
@@ -60,9 +65,9 @@ namespace ActionGame.Components
         public override void Initialize()
         {
             base.Initialize();
-            Blue__ = game.Content.Load<Texture2D>("Textures/blue");
-            Red__ = game.Content.Load<Texture2D>("Textures/red");
-            Green__ = game.Content.Load<Texture2D>("Textures/green");
+            Blue__ = Game.Content.Load<Texture2D>("Textures/blue");
+            Red__ = Game.Content.Load<Texture2D>("Textures/red");
+            Green__ = Game.Content.Load<Texture2D>("Textures/green");
         }
 
         public Matrix WorldTransformMatrix
@@ -143,42 +148,42 @@ namespace ActionGame.Components
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
-            panorama.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+            panorama.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
             foreach (DrawedObject dObj in objects)
             {
-                dObj.Object.Draw(game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
+                dObj.Object.Draw(Game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
             }
-            game.Player.Draw(game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+            Game.Player.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
-            game.SpriteBatch.Begin();
-            game.SpriteBatch.Draw(toolPanelBackground, new Vector2(0, 0), Color.AliceBlue);
-            game.SpriteBatch.DrawString(font, game.Player.Health.ToString(), new Vector2(20, 80), Color.Maroon);
-            if (game.Player.SelectedTool != null)
+            Game.SpriteBatch.Begin();
+            Game.SpriteBatch.Draw(toolPanelBackground, new Vector2(0, 0), Color.AliceBlue);
+            Game.SpriteBatch.DrawString(font, Game.Player.Health.ToString(), new Vector2(20, 80), Color.Maroon);
+            if (Game.Player.SelectedTool != null)
             {
-                game.SpriteBatch.Draw(game.Player.SelectedTool.Icon, new Vector2(100, 0), Color.AliceBlue);
-                game.SpriteBatch.DrawString(font, game.Player.SelectedTool.ToolBarText.ToString(), new Vector2(120, 80), Color.Black);
+                Game.SpriteBatch.Draw(Game.Player.SelectedTool.Icon, new Vector2(100, 0), Color.AliceBlue);
+                Game.SpriteBatch.DrawString(font, Game.Player.SelectedTool.ToolBarText.ToString(), new Vector2(120, 80), Color.Black);
             }
-            if (game.Player.HasAvailableAnyAction)
+            if (Game.Player.HasAvailableAnyAction)
             {
-                game.SpriteBatch.Draw(actionAvailableIcon, new Vector2(0, game.Settings.ScreenSize.Height - 100), Color.White);
+                Game.SpriteBatch.Draw(actionAvailableIcon, new Vector2(0, Game.Settings.ScreenSize.Height - 100), Color.White);
             }
             if (drawProgressBar)
             { 
                 const float width = 1f;
                 const float height = 0.05f;
-                Rectangle destRect = new Rectangle(0,0, (int)(game.Settings.ScreenSize.Width * width * progressBarValue), (int)(game.Settings.ScreenSize.Height * height));
-                game.SpriteBatch.Draw(progressBarTexture, destRect, Color.White);
+                Rectangle destRect = new Rectangle(0,0, (int)(Game.Settings.ScreenSize.Width * width * progressBarValue), (int)(Game.Settings.ScreenSize.Height * height));
+                Game.SpriteBatch.Draw(progressBarTexture, destRect, Color.White);
             }
             if (showMessage)
             {
                 const float height = 0.1f;
                 const float width = 0.7f;
-                Rectangle destRect = new Rectangle((int)((1f - width) * 0.5f * game.Settings.ScreenSize.Width), 0, (int)(game.Settings.ScreenSize.Width * width), (int)(game.Settings.ScreenSize.Height * height));
-                game.SpriteBatch.Draw(messageBackground, destRect, Color.White);
-                game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2()  + new Vector2(2,1), Color.Black);
+                Rectangle destRect = new Rectangle((int)((1f - width) * 0.5f * Game.Settings.ScreenSize.Width), 0, (int)(Game.Settings.ScreenSize.Width * width), (int)(Game.Settings.ScreenSize.Height * height));
+                Game.SpriteBatch.Draw(messageBackground, destRect, Color.White);
+                Game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2()  + new Vector2(2,1), Color.Black);
             }
-            game.SpriteBatch.End();
+            Game.SpriteBatch.End();
 
             DrawMaps();
         }
@@ -187,23 +192,24 @@ namespace ActionGame.Components
         /// </summary>
         private void DrawMaps()
         {
-            game.SpriteBatch.Begin();
+            Game.SpriteBatch.Begin();
             if (ShowQuatterMap)
             {
-                Vector2 mapPosition = new Vector2((game.Settings.ScreenSize.Width - currentQuarter.Map.Width) / 2, (game.Settings.ScreenSize.Height - currentQuarter.Map.Height) / 2);
-                game.SpriteBatch.Draw(currentQuarter.Map, mapPosition, Color.White);
+                Vector2 mapPosition = new Vector2((Game.Settings.ScreenSize.Width - currentQuarter.Map.Width) / 2, (Game.Settings.ScreenSize.Height - currentQuarter.Map.Height) / 2);
+                Game.SpriteBatch.Draw(currentQuarter.Map, mapPosition, Color.White);
 
                 Vector2 playerPosition = new Vector2(
-                    currentQuarter.Map.Width * (game.Player.PositionInQuarter.X / currentQuarter.QuarterSize.X) - playerIcon.Width / 2,
-                    currentQuarter.Map.Height * (game.Player.PositionInQuarter.Z / currentQuarter.QuarterSize.Y) - playerIcon.Height / 2);
+                    currentQuarter.Map.Width * (Game.Player.PositionInQuarter.X / currentQuarter.QuarterSize.X) - playerIcon.Width / 2,
+                    currentQuarter.Map.Height * (Game.Player.PositionInQuarter.Z / currentQuarter.QuarterSize.Y) - playerIcon.Height / 2);
                 playerPosition += mapPosition;
-                game.SpriteBatch.Draw(playerIcon, playerPosition, null, Color.White, (float)game.Player.Azimuth, new Vector2(playerIcon.Width / 2, playerIcon.Height / 2), 1, SpriteEffects.None, 0);
+                Game.SpriteBatch.Draw(playerIcon, playerPosition, null, Color.White, (float)Game.Player.Azimuth, new Vector2(playerIcon.Width / 2, playerIcon.Height / 2), 1, SpriteEffects.None, 0);
             }
-            if (ShowTownGraph && townGraphPicture != null)
+            if (ShowTownGraph)
             {
-                game.SpriteBatch.Draw(townGraphPicture, new Vector2((game.Settings.ScreenSize.Width - townGraphPicture.Width) / 2, (game.Settings.ScreenSize.Height - townGraphPicture.Height) / 2), Color.White);
+                Texture2D townGraphPicture = Game.Town.CreateTownMap();
+                Game.SpriteBatch.Draw(townGraphPicture, new Vector2((Game.Settings.ScreenSize.Width - townGraphPicture.Width) / 2, (Game.Settings.ScreenSize.Height - townGraphPicture.Height) / 2), Color.White);
             }
-            game.SpriteBatch.End();
+            Game.SpriteBatch.End();
         }
         /// <summary>
         /// Sets current quarter.
@@ -211,16 +217,6 @@ namespace ActionGame.Components
         public TownQuarter CurrentQuarter
         {
             set { currentQuarter = value; }
-        }
-        /// <summary>
-        /// Sets town graph scheme picture.
-        /// </summary>
-        public Texture2D TownGraphPicture
-        { 
-            set
-            {
-            	townGraphPicture = value;
-            }
         }
 
         public bool ShowQuatterMap
@@ -236,17 +232,15 @@ namespace ActionGame.Components
             playerIcon = Game.Content.Load<Texture2D>("Textures/player");
             toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
             actionAvailableIcon = Game.Content.Load<Texture2D>("Textures/actionIcon");
-            font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
-            panorama = new SpatialObject(game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
-            messageBackground = game.Content.Load<Texture2D>("Textures/green");
+            font = Game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
+            panorama = new SpatialObject(Game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
+            messageBackground = Game.Content.Load<Texture2D>("Textures/green");
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
-            if (townGraphPicture != null)
-                townGraphPicture.Dispose();
             if(playerIcon != null)
                 playerIcon.Dispose();
         }

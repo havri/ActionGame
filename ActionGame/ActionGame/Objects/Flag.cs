@@ -65,11 +65,11 @@ namespace ActionGame.Objects
                     Position.Quarter.SetOwner(actor);
                     if (actor is Player)
                     {
-                        Game.Drawer.ShowMessage(gameTime, "Congratulations! You've captured " + Position.Quarter.Name + ".");
+                        Game.Drawer.ShowMessage(gameTime, String.Format("Congratulations! You've captured {0}.", Position.Quarter.Name));
                     }
                     else
                     {
-                        Game.Drawer.ShowMessage(gameTime, "Warning! Your enemy has captured " + Position.Quarter.Name + ".");
+                        Game.Drawer.ShowMessage(gameTime, String.Format("Warning! Your enemy has captured {0}.", Position.Quarter.Name));
                     }
                 }
                 taker = null;

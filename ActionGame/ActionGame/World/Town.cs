@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.World
 {
-    class Town : GameComponent, IDisposable
+    public class Town : GameComponent, IDisposable
     {
         /// <summary>
         /// Maximum interface count per one quarter
@@ -27,7 +27,7 @@ namespace ActionGame.World
         ///TODO: This constant can be calculated!
         const float MinQuarterSideLength = 100;
 
-        public Texture2D Map;
+        
         public IEnumerable<TownQuarter> Quarters { get { return quarters; } }
         readonly TownQuarter[] quarters;
         TownQuarter currentQuarter;
@@ -44,7 +44,9 @@ namespace ActionGame.World
         { 
             get {return (ActionGame)base.Game;}
         }
-        
+
+        readonly Image mapImage;
+
         public Town(ActionGame game, Loading loadingFrom)
             : base(game)
         {
@@ -58,8 +60,8 @@ namespace ActionGame.World
             int[] degrees = new int[game.Settings.TownQuarterCount];
             bool[,] edges = new bool[game.Settings.TownQuarterCount, game.Settings.TownQuarterCount]; // Graph is unoriented (symetric). edges[i, j] can be true only if i<j!
             for (int i = 0; i < game.Settings.TownQuarterCount - 1; i++) // First is made path through all. Graph has to have only one component.
-            { 
-                int j = i+1;
+            {
+                int j = i + 1;
                 degrees[i]++;
                 degrees[j]++;
                 edges[i, j] = true;
@@ -77,7 +79,7 @@ namespace ActionGame.World
                             degrees[i]++;
                             degrees[j]++;
                             edges[i, j] = true;
-                        } 
+                        }
                     }
                 }
             }
@@ -138,52 +140,76 @@ namespace ActionGame.World
                 quarter.BuildInterfaceRoadSigns();
             }
 
-            //Town graph raster map creation
-            loadingFrom.SetLabel("Creating maps for player...");
-            loadingFrom.SetValue(0);
-            Bitmap mapRaster = new Bitmap(MapImageWidth, MapImageHeight);
-            using (Graphics graphics = Graphics.FromImage(mapRaster))
+            //Town map base creating
             {
-                graphics.FillRectangle(Brushes.White, 0, 0, mapRaster.Width, mapRaster.Height);
-                float angleJump = MathHelper.TwoPi / game.Settings.TownQuarterCount;
-                float radius = Math.Min(MapImageWidth, MapImageHeight)/2f - 20f;
-                PointF center = new PointF(MapImageWidth/2f, MapImageHeight/2f);
-
-                for (int i = 0; i < game.Settings.TownQuarterCount; i++)
+                Bitmap mapRaster = new Bitmap(MapImageWidth, MapImageHeight);
+                using (Graphics graphics = Graphics.FromImage(mapRaster))
                 {
-                    loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
-                    for (int j = i + 1; j < game.Settings.TownQuarterCount; j++)
+                    graphics.FillRectangle(Brushes.White, 0, 0, mapRaster.Width, mapRaster.Height);
+                    float angleJump = MathHelper.TwoPi / Game.Settings.TownQuarterCount;
+                    float radius = Math.Min(MapImageWidth, MapImageHeight) / 2f - 20f;
+                    PointF center = new PointF(MapImageWidth / 2f, MapImageHeight / 2f);
+
+                    for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
                     {
-                        if (edges[i, j])
+                        for (int j = i + 1; j < Game.Settings.TownQuarterCount; j++)
                         {
-                            graphics.DrawLine(Pens.Green,
-                                center.X + (float)Math.Cos(i * angleJump) * radius,
-                                center.Y + (float)Math.Sin(i * angleJump) * radius,
-                                center.X + (float)Math.Cos(j * angleJump) * radius,
-                                center.Y + (float)Math.Sin(j * angleJump) * radius
-                                );
+                            if (edges[i, j])
+                            {
+                                graphics.DrawLine(Pens.Green,
+                                    center.X + (float)Math.Cos(i * angleJump) * radius,
+                                    center.Y + (float)Math.Sin(i * angleJump) * radius,
+                                    center.X + (float)Math.Cos(j * angleJump) * radius,
+                                    center.Y + (float)Math.Sin(j * angleJump) * radius
+                                    );
+                            }
                         }
                     }
-                }
 
-                for (int i = 0; i < game.Settings.TownQuarterCount; i++)
-                {
-                    loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
-                    graphics.FillEllipse(Brushes.Blue,
-                        center.X + (float)Math.Cos(i * angleJump) * radius - 3.5f,
-                        center.Y + (float)Math.Sin(i * angleJump) * radius - 3.5f,
-                        7, 7);
-                    graphics.DrawString(quarters[i].Name, new Font("Verdana", 12), Brushes.Black, center.X + (float)Math.Cos(i * angleJump) * radius, center.Y + (float)Math.Sin(i * angleJump) * radius - 16);
+                    for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
+                    {
+                        graphics.FillEllipse(Brushes.Black,
+                            center.X + (float)Math.Cos(i * angleJump) * radius - 3.5f,
+                            center.Y + (float)Math.Sin(i * angleJump) * radius - 3.5f,
+                            7, 7);
+                        graphics.DrawString(quarters[i].Name, new Font("Verdana", 12), Brushes.Black, center.X + (float)Math.Cos(i * angleJump) * radius, center.Y + (float)Math.Sin(i * angleJump) * radius - 16);
+                    }
                 }
-            }
-            using (MemoryStream ms = new MemoryStream())
-            {
-                mapRaster.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                Map = Texture2D.FromStream(game.GraphicsDevice, ms);
+                mapImage = mapRaster;
             }
 
             //Selecting starting quarter
             currentQuarter = quarters[0];
+        }
+
+        public Texture2D CreateTownMap()
+        {
+            Texture2D map;
+            using (Bitmap bmp = new Bitmap(mapImage))
+            {
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    float angleJump = MathHelper.TwoPi / Game.Settings.TownQuarterCount;
+                    float radius = Math.Min(MapImageWidth, MapImageHeight) / 2f - 20f;
+                    PointF center = new PointF(MapImageWidth / 2f, MapImageHeight / 2f);
+                    for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
+                    {
+                        if (quarters[i].Owner != null)
+                        {
+                            graphics.DrawEllipse(new Pen(quarters[i].Owner.Content.DrawingColor, 2),
+                                center.X + (float)Math.Cos(i * angleJump) * radius - 7f,
+                                center.Y + (float)Math.Sin(i * angleJump) * radius - 7f,
+                                14, 14);
+                        }
+                    }
+                }
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    map = Texture2D.FromStream(Game.GraphicsDevice, ms);
+                }
+            }
+            return map;
         }
 
         static readonly TimeSpan quarterChangeTimeOut = new TimeSpan(0, 0, 1);
@@ -416,7 +442,7 @@ namespace ActionGame.World
 
         public void Dispose()
         {
-            Map.Dispose();
+            mapImage.Dispose();
             foreach (TownQuarter quarter in quarters)
                 quarter.Dispose();
         }

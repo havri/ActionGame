@@ -17,6 +17,15 @@ namespace ActionGame.People
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, 0, azimuth, worldTransform);
+
+            Content = new TownQuarterOwnerContent
+            {
+                AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botYellow"),
+                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagYellow"),
+                RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignYellow"),
+                ColorTexture = Game.Content.Load<Texture2D>("Textures/yellow"),
+                DrawingColor = System.Drawing.Color.Yellow
+            };
         }
     }
 }

@@ -13,5 +13,6 @@ namespace ActionGame.World
         public Model AllyHumanModel { get; set; }
         public Texture2D RoadSignTexture { get; set; }
         public Texture2D ColorTexture { get; set; }
+        public System.Drawing.Color DrawingColor { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Tools;
 using ActionGame.Objects;
+using ActionGame.Exceptions;
 
 namespace ActionGame.People
 {
@@ -147,8 +148,38 @@ namespace ActionGame.People
             }
             else
             {
-                ///TODO: Impletemnt going to another quarter using interfaces.
-                throw new NotImplementedException("Going to another quarter isn't implemented.");
+                TownQuarterInterface rightIface = null;
+                foreach (TownQuarterInterface iface in Position.Quarter.Interfaces)
+                {
+                    if (iface.OppositeInterface.Quarter == destination.Quarter)
+                    {
+                        rightIface = iface;
+                    }
+                }
+                if(rightIface != null)
+                {
+                    if(Position.MinimalDistanceTo(rightIface.LeftPathGraphVertex.Position) <= Human.EpsilonDistance
+                        || Position.MinimalDistanceTo(rightIface.RightPathGraphVertex.Position) <= Human.EpsilonDistance)
+                    {
+                        //Changes home quarter
+                        Position.Quarter.SpaceGrid.RemoveObject(this);
+                        Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
+                        float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
+                        MoveTo(
+                            new PositionInTown(rightIface.OppositeInterface.Quarter, Vector3.Transform(PositionInQuarter, Matrix.CreateTranslation(-posDelta.ToVector3(0)) * Matrix.CreateRotationY(azDelta)).XZToVector2()),
+                            Azimuth - azDelta
+                                );
+                        rightIface.OppositeInterface.Quarter.SpaceGrid.AddObject(this);
+                    }
+                    else
+                    {
+                        GoThisWay(rightIface.LeftPathGraphVertex.Position, seconds);
+                    }
+                }
+                else
+                {
+                    throw new PathNotFoundException("Reached quarter isn't connected to this one.");
+                }
             }
         }
 

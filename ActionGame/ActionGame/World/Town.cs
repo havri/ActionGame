@@ -240,7 +240,7 @@ namespace ActionGame.World
 
                 //Moves player into new current quarter
                 float angle = ResolveQuarterAzimuthDelta(usedInterface.SidePosition, usedInterface.OppositeInterface.SidePosition);
-                Vector2 delta = ResolveQuarterPositionDelta(TownQuarter.SquareWidth, usedInterface);
+                Vector2 delta = ResolveQuarterPositionDelta(usedInterface);
                 Game.Player.MoveTo(
                     new PositionInTown(currentQuarter,
                         Vector3.Transform(Game.Player.PositionInQuarter, Matrix.CreateTranslation(-delta.ToVector3(0)) * Matrix.CreateRotationY(angle)).XZToVector2() // reverse transform of nearest quarter
@@ -289,7 +289,7 @@ namespace ActionGame.World
 
                 float squareWidth = TownQuarter.SquareWidth;
                 TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
-                Vector2 delta = ResolveQuarterPositionDelta(squareWidth, iface);
+                Vector2 delta = ResolveQuarterPositionDelta(iface);
                 float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);
                 iface.OppositeInterface.Quarter.FillDrawer(angle, delta);
 
@@ -302,7 +302,7 @@ namespace ActionGame.World
             }
         }
 
-        private static Vector2 ResolveQuarterPositionDelta(float squareWidth, TownQuarterInterface iface)
+        public static Vector2 ResolveQuarterPositionDelta(TownQuarterInterface iface)
         {
             Vector2 delta = Vector2.Zero;
             switch (iface.SidePosition)
@@ -311,19 +311,19 @@ namespace ActionGame.World
                     switch (iface.OppositeInterface.SidePosition)
                     {
                         case TownQuarterInterfacePosition.Top:
-                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
+                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
                             delta.Y = 0;
                             break;
                         case TownQuarterInterfacePosition.Right:
-                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
-                            delta.Y = -(iface.OppositeInterface.Quarter.BitmapSize.Width * squareWidth);
+                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
+                            delta.Y = -(iface.OppositeInterface.Quarter.BitmapSize.Width * TownQuarter.SquareWidth);
                             break;
                         case TownQuarterInterfacePosition.Bottom:
-                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
-                            delta.Y = -(iface.OppositeInterface.Quarter.BitmapSize.Height * squareWidth);
+                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
+                            delta.Y = -(iface.OppositeInterface.Quarter.BitmapSize.Height * TownQuarter.SquareWidth);
                             break;
                         case TownQuarterInterfacePosition.Left:
-                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
                             delta.Y = 0;
                             break;
                     }
@@ -332,20 +332,20 @@ namespace ActionGame.World
                     switch (iface.OppositeInterface.SidePosition)
                     {
                         case TownQuarterInterfacePosition.Top:
-                            delta.X = iface.Quarter.BitmapSize.Width * squareWidth;
-                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
+                            delta.X = iface.Quarter.BitmapSize.Width * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Right:
-                            delta.X = (iface.Quarter.BitmapSize.Width + iface.OppositeInterface.Quarter.BitmapSize.Width) * squareWidth;
-                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
+                            delta.X = (iface.Quarter.BitmapSize.Width + iface.OppositeInterface.Quarter.BitmapSize.Width) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Bottom:
-                            delta.X = (iface.Quarter.BitmapSize.Width + iface.OppositeInterface.Quarter.BitmapSize.Height) * squareWidth;
-                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                            delta.X = (iface.Quarter.BitmapSize.Width + iface.OppositeInterface.Quarter.BitmapSize.Height) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Left:
-                            delta.X = iface.Quarter.BitmapSize.Width * squareWidth;
-                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                            delta.X = iface.Quarter.BitmapSize.Width * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
                             break;
                     }
                     break;
@@ -354,20 +354,20 @@ namespace ActionGame.World
                     switch (iface.OppositeInterface.SidePosition)
                     {
                         case TownQuarterInterfacePosition.Top:
-                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
-                            delta.Y = (iface.Quarter.BitmapSize.Height * squareWidth);
+                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.Quarter.BitmapSize.Height * TownQuarter.SquareWidth);
                             break;
                         case TownQuarterInterfacePosition.Right:
-                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
-                            delta.Y = ((iface.Quarter.BitmapSize.Height + iface.OppositeInterface.Quarter.BitmapSize.Width) * squareWidth);
+                            delta.X = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
+                            delta.Y = ((iface.Quarter.BitmapSize.Height + iface.OppositeInterface.Quarter.BitmapSize.Width) * TownQuarter.SquareWidth);
                             break;
                         case TownQuarterInterfacePosition.Bottom:
-                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
-                            delta.Y = ((iface.Quarter.BitmapSize.Height + iface.OppositeInterface.Quarter.BitmapSize.Height) * squareWidth);
+                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
+                            delta.Y = ((iface.Quarter.BitmapSize.Height + iface.OppositeInterface.Quarter.BitmapSize.Height) * TownQuarter.SquareWidth);
                             break;
                         case TownQuarterInterfacePosition.Left:
-                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
-                            delta.Y = (iface.Quarter.BitmapSize.Height * squareWidth);
+                            delta.X = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.Quarter.BitmapSize.Height * TownQuarter.SquareWidth);
                             break;
                     }
                     break;
@@ -378,19 +378,19 @@ namespace ActionGame.World
                     {
                         case TownQuarterInterfacePosition.Top:
                             delta.X = 0;
-                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Right:
-                            delta.X = -(iface.OppositeInterface.Quarter.BitmapSize.Width) * squareWidth;
-                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * squareWidth;
+                            delta.X = -(iface.OppositeInterface.Quarter.BitmapSize.Width) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition - iface.OppositeInterface.BitmapPosition) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Bottom:
-                            delta.X = -(iface.OppositeInterface.Quarter.BitmapSize.Height) * squareWidth;
-                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
+                            delta.X = -(iface.OppositeInterface.Quarter.BitmapSize.Height) * TownQuarter.SquareWidth;
+                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
                             break;
                         case TownQuarterInterfacePosition.Left:
                             delta.X = 0;
-                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * squareWidth;
+                            delta.Y = (iface.BitmapPosition + iface.OppositeInterface.BitmapPosition + 1) * TownQuarter.SquareWidth;
                             break;
                     }
                     break;
@@ -398,7 +398,7 @@ namespace ActionGame.World
             return delta;
         }
 
-        private static float ResolveQuarterAzimuthDelta(TownQuarterInterfacePosition mainQuarterPosition, TownQuarterInterfacePosition neighborQuarterPosition)
+        public static float ResolveQuarterAzimuthDelta(TownQuarterInterfacePosition mainQuarterPosition, TownQuarterInterfacePosition neighborQuarterPosition)
         {
             float angle = 0; //clockwise
             if (

@@ -236,7 +236,8 @@ namespace ActionGame.World
                     Human walker = new Human(game, models[rand.Next(models.Length)], waypoints.First(), 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, waypoints);
                     walker.AddTask(task);
-                    walkers.AddFirst(walker);
+                    walkers.Add(walker);
+                    updatablePeople.Add(walker);
                 }
             }
         }

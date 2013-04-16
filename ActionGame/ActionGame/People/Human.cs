@@ -75,6 +75,7 @@ namespace ActionGame.People
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, 0, azimuth, worldTransform);
+            lastPosition = position.PositionInQuarter;
         }
 
         protected void Go(bool forward, float seconds)
@@ -163,7 +164,7 @@ namespace ActionGame.People
                     {
                         //Changes home quarter
                         TownQuarter newQuarter = rightIface.OppositeInterface.Quarter;
-                        Position.Quarter.SpaceGrid.RemoveObject(this);
+                        Position.Quarter.BeLeftBy(this);
                         bool currentlyDrawed = Game.Drawer.StopDrawingObject(this);
                         Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
                         float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
@@ -172,7 +173,7 @@ namespace ActionGame.People
                                 Matrix.CreateTranslation(-posDelta.ToVector3(0)) * Matrix.CreateRotationY(azDelta)).XZToVector2()),
                             Azimuth - azDelta
                                 );
-                        newQuarter.SpaceGrid.AddObject(this);
+                        newQuarter.BeEnteredBy(this);
                         if (currentlyDrawed)
                         {
                             Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta);

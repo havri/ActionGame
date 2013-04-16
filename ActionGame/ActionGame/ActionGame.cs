@@ -113,7 +113,7 @@ namespace ActionGame
 
         SoundEffectInstance backgroundSound;
 
-        bool doInitialize = true;
+        readonly bool doInitialize = true;
         public ActionGame()
         {
             using (MainMenu mainMenuForm = new MainMenu(this))
@@ -230,7 +230,7 @@ namespace ActionGame
                 loadingForm.SetLabel("Loading player...");
                 loadingForm.SetValue(0);
                 Point playerPoint =  town.CurrentQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
-                PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth);
+                PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth + Vector2.One * 0.5f * TownQuarter.SquareWidth);
                 defaultPositions.Add(player, playerPosition);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 town.CurrentQuarter.SpaceGrid.AddObject(player);
@@ -240,14 +240,20 @@ namespace ActionGame
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);
                 Random rand = new Random();
-                TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby rand.Next() select q).First();
+                /*TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby rand.Next() select q).First();
                 Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
-                PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
+                PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);*/
+                TownQuarter oppQuarter = town.CurrentQuarter;
+                Point oppPoint = playerPoint;
+                PositionInTown oppPosition = playerPosition;
                 opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
-                oppQuarter.SpaceGrid.AddObject(opponent);
+                oppQuarter.BeEnteredBy(opponent);
                 oppQuarter.SetOwner(opponent);
-                opponent.AddEnemy(player);
-
+                //opponent.AddEnemy(player);
+                foreach (var quarter in town.Quarters)
+                {
+                    opponent.AddTask(new ActionObjectTask(quarter.Flag, opponent));
+                }
                 Components.Add(town);
 
 

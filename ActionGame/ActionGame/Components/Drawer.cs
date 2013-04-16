@@ -72,10 +72,6 @@ namespace ActionGame.Components
         public void StartDrawingObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta)
         {
             DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
-            if (!objects.Contains(dObj))
-            {
-                objects.Remove(dObj);
-            }
             objects.Add(dObj);
 
             /*if (obj is SpatialObject && !(obj is Human))
@@ -112,13 +108,8 @@ namespace ActionGame.Components
 
         public bool StopDrawingObject(IDrawableObject obj)
         {
-            DrawedObject dObj = new DrawedObject(obj, 0, Vector2.Zero);
-            if(objects.Contains(dObj))
-            {
-                objects.Remove(dObj);
-                return true;
-            }
-            return false;
+            int count = objects.RemoveWhere(dObj => dObj.Object == obj);
+            return count != 0;
         }
 
         public void ShowMessage(GameTime gameTime, String text)
@@ -251,7 +242,7 @@ namespace ActionGame.Components
             toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
             actionAvailableIcon = Game.Content.Load<Texture2D>("Textures/actionIcon");
             font = Game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
-            panorama = new SpatialObject(Game.Content.Load<Model>("Objects/panorama"), null, Vector3.Zero, 0, worldMatrix);
+            panorama = new SpatialObject(Game.Content.Load<Model>("Objects/panorama"), null, new Vector3(0, -1,0), 0, worldMatrix);
             messageBackground = Game.Content.Load<Texture2D>("Textures/green");
         }
 

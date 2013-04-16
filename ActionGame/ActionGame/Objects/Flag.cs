@@ -44,11 +44,10 @@ namespace ActionGame.Objects
         public override void StartAction(Human actor, GameTime gameTime)
         {
             if (!ActionRunning)
-            {
-                base.StartAction(actor, gameTime);
-
+            {  
                 if (Position.Quarter.Owner != actor)
                 {
+                    base.StartAction(actor, gameTime);
                     if (taker != actor)
                     {
                         taker = actor;

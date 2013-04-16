@@ -53,8 +53,10 @@ namespace ActionGame.World
         readonly LinkedList<Plate> magicPlates = new LinkedList<Plate>();
         readonly HashSet<BulletVisualisation> magicBullets = new HashSet<BulletVisualisation>();
         readonly List<KeyValuePair<BulletVisualisation, TimeSpan>> bulletAddedTimes = new List<KeyValuePair<BulletVisualisation,TimeSpan>>();
-        readonly LinkedList<Human> walkers = new LinkedList<Human>();
+        readonly List<Human> walkers = new List<Human>(WalkerCount);
+        readonly List<Human> guards = new List<Human>();
         readonly List<Plate> roadSignsPointingToMe = new List<Plate>();
+        readonly List<Human> updatablePeople = new List<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
         /// </summary>
@@ -95,8 +97,17 @@ namespace ActionGame.World
         Vector2 currentDrawingPositionDelta;
         bool updateProcessing = false;
         readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
+        readonly List<Human> awaitingLeave = new List<Human>();
+        readonly List<Human> awaitingEnter = new List<Human>();
         readonly ActionGame game;
         Flag flag;
+        public Flag Flag
+        {
+            get
+            {
+                return flag;
+            }
+        }
         public float CurrentDrawingAzimuthDelta
         {
             get
@@ -243,17 +254,20 @@ namespace ActionGame.World
         public void Update(GameTime gameTime)
         {
             updateProcessing = true;
-            if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && walkers.Count < WalkerCount + MaxGuardCount)
+            if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && guards.Count < MaxGuardCount)
             {
                 lastTimeGuardAdded = gameTime.TotalGameTime;
                 Human newGuard = owner.CreateAllyGuard(this);
-                walkers.AddLast(newGuard);
+                guards.Add(newGuard);
+                updatablePeople.Add(newGuard);
                 spaceGrid.AddObject(newGuard);
                 game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }
 
-            foreach (var walker in walkers)
-                walker.Update(gameTime);
+            foreach (Human updatableHuman in updatablePeople)
+            {
+                updatableHuman.Update(gameTime);
+            }
             spaceGrid.Update();
             flag.Update(gameTime);
 
@@ -268,11 +282,28 @@ namespace ActionGame.World
             }
             bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
             updateProcessing = false;
+
+
+            SolveAwaings();
+        }
+
+        private void SolveAwaings()
+        {
             foreach (SpatialObject obj in awaitingDestroy)
             {
                 DestroyObject(obj);
             }
             awaitingDestroy.Clear();
+            foreach (Human human in awaitingLeave)
+            {
+                BeLeftBy(human);
+            }
+            awaitingLeave.Clear();
+            foreach (Human human in awaitingEnter)
+            {
+                BeEnteredBy(human);
+            }
+            awaitingEnter.Clear();
         }
 
         public Texture2D RoadSignTexture
@@ -286,7 +317,7 @@ namespace ActionGame.World
             result.AddRange(magicPlates);
             result.AddRange(solidPlates);
             result.AddRange(solidObjects);
-            result.AddRange(walkers);
+            result.AddRange(updatablePeople);
             result.AddRange(magicBullets);
             return result;
         }
@@ -295,7 +326,7 @@ namespace ActionGame.World
         {
             LinkedList<Quadrangle> result = new LinkedList<Quadrangle>(solidPlates);
             result.AddRange(solidObjects);
-            result.AddRange(walkers);
+            result.AddRange(updatablePeople);
             return result;
         }
 
@@ -310,6 +341,8 @@ namespace ActionGame.World
             {
                 if (obj is Human)
                 {
+                    updatablePeople.Remove(obj as Human);
+                    guards.Remove(obj as Human);
                     walkers.Remove(obj as Human);
                 }
                 else
@@ -330,6 +363,32 @@ namespace ActionGame.World
             magicBullets.Add(bullet);
             bulletAddedTimes.Add(new KeyValuePair<BulletVisualisation, TimeSpan>(bullet, gameTime.TotalGameTime));
             game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+        }
+
+        public void BeLeftBy(Human human)
+        {
+            if (!updateProcessing)
+            {
+                spaceGrid.RemoveObject(human);
+                updatablePeople.Remove(human);
+            }
+            else
+            {
+                awaitingLeave.Add(human);
+            }
+        }
+
+        public void BeEnteredBy(Human human)
+        {
+            if (!updateProcessing)
+            {
+                spaceGrid.AddObject(human);
+                updatablePeople.Add(human);
+            }
+            else
+            {
+                awaitingEnter.Add(human);
+            }
         }
     }
 }

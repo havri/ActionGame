@@ -56,5 +56,10 @@ namespace ActionGame.World
                 quarter = value;
             }
         }
+
+        public override string ToString()
+        {
+            return Quarter.Name + " " + positionInQuarter.ToString();
+        }
     }
 }

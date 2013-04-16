@@ -13,7 +13,8 @@ namespace ActionGame.Tasks
 
         readonly ActionObject actionObject;
         TimeSpan actionStart = TimeSpan.Zero;
-
+        bool started = false;
+        bool complete = false;
         public ActionObjectTask(ActionObject actionObject, Human holder)
             :base(holder)
         {
@@ -26,14 +27,16 @@ namespace ActionGame.Tasks
 
             if (actionObject.IsAvailableFor(Holder))
             {
-                if (actionStart == TimeSpan.Zero)
+                if (!started)
                 {
                     actionObject.StartAction(Holder, gameTime);
                     actionStart = gameTime.TotalGameTime;
+                    started = true;
                 }
                 else if(gameTime.TotalGameTime - actionStart > actionObject.ActionDuration)
                 {
                     actionObject.EndAction(Holder, gameTime);
+                    complete = true;
                 }
             }
             if (WayPoints.Count == 0 && !IsComplete())
@@ -44,7 +47,7 @@ namespace ActionGame.Tasks
 
         public override bool IsComplete()
         {
-            throw new NotImplementedException();
+            return complete;
         }
     }
 }

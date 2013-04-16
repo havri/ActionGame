@@ -25,7 +25,7 @@ namespace ActionGame.World
         /// <summary>
         /// Number of walkers in  quarter.
         /// </summary>
-        const int WalkerCount = 10;
+        const int WalkerCount = 15;
         /// <summary>
         /// Number of each walker waypoints.
         /// </summary>
@@ -40,7 +40,7 @@ namespace ActionGame.World
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
         });
         readonly static string emptyName = "Unnamed";
-        readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 1, 0);
+        readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 0, 30);
         const int MaxGuardCount = 20;
 
         TimeSpan lastTimeGuardAdded = TimeSpan.Zero;

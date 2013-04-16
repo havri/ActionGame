@@ -290,6 +290,10 @@ namespace ActionGame
                 this.Exit();
             if(doInitialize)
             {
+                if (opponent.Position.Quarter != town.CurrentQuarter)
+                {
+                    opponent.Position.Quarter.Update(gameTime);
+                }
                 player.Update(gameTime);
                 base.Update(gameTime);
                 if (player.Health <= 0)

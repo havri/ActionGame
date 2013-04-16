@@ -260,7 +260,7 @@ namespace ActionGame
 
                 backgroundSound.IsLooped = true;
                 backgroundSound.Play();
-                drawer.ShowMessage(new GameTime(), "Wellcome in the game. You're in " + player.Position.Quarter.Name + ".");
+                drawer.ShowMessage(new GameTime(), String.Format("Wellcome in the game. You're in {0}.", player.Position.Quarter.Name));
             }
         }
         /// <summary>

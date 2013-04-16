@@ -169,7 +169,9 @@ namespace ActionGame.People
                     Task currentTask = tasks.Peek();
                     currentTask.Update(gameTime);
                     if (currentTask.IsComplete())
+                    {
                         tasks.Dequeue();
+                    }
                 }
             }
         }
@@ -179,9 +181,11 @@ namespace ActionGame.People
             const float balkDistance = 0.9f;
             Quadrangle viewCone = GetViewCone(balkDistance);
             IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
-            if(balks.Any(x => x != this))
+            if(balks.Any(x => x != this && x is Human))
             {
-                Step(false, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Step(false, totalSeconds);
+                //Rotate(false, totalSeconds);
                 return true;
             }
             return false;

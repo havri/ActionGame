@@ -85,6 +85,7 @@ namespace ActionGame.World
                 }
                 */
             }
+            pathGraph = pathVertecies;
 
             
 
@@ -435,7 +436,7 @@ namespace ActionGame.World
                             }
                             if (clearForWalking)
                             {
-                                vertex1.AddNeighborBothDirection(vertex2, vertex1.Position.DistanceTo(vertex2.Position));
+                                vertex1.AddNeighborBothDirection(vertex2, vertex1.Position.MinimalDistanceTo(vertex2.Position));
                             }
                             //Special foreach end
                             vertex1 = vertex2;

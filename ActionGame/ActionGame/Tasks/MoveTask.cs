@@ -24,32 +24,25 @@ namespace ActionGame.Tasks
         {
             if (wayPoints.Count == 0 && !IsComplete())
             {
-                computeWayPoints();
+                ComputeWayPoints();
             }
 
             base.Update(gameTime);
         }
 
-        void computeWayPoints()
+        void ComputeWayPoints()
         {
-            computeWayPointsFrom(holder.Position);
+            ComputeWayPointsFrom(holder.Position);
         }
 
-        void computeWayPointsFrom(PositionInTown from)
+        void ComputeWayPointsFrom(PositionInTown from)
         {
-            wayPoints.Clear();
-            PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
-            PathGraphVertex end = destination.Quarter.FindNearestPathGraphVertex(destination.PositionInQuarter);
-            foreach(var v in PathGraph.FindShortestPath(start, end))
-            {
-                wayPoints.Enqueue(new WayPoint(v.Position));
-            }
-            wayPoints.Enqueue(new WayPoint(destination));
+            RecomputeWaypoints(from, destination);
         }
 
         public override bool IsComplete()
         {
-            return (holder.Pivot.DistanceTo(destination) <= Human.EpsilonDistance);
+            return (holder.Pivot.MinimalDistanceTo(destination) <= Human.EpsilonDistance);
         }
     }
 }

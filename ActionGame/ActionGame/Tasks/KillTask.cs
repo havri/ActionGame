@@ -9,6 +9,8 @@ namespace ActionGame.Tasks
 {
     public class KillTask : Task
     {
+        static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 30);
+        TimeSpan lastUpdatedWaypoints = TimeSpan.Zero;
         readonly Human target;
         public KillTask(Human holder, Human target)
             : base(holder)
@@ -20,7 +22,11 @@ namespace ActionGame.Tasks
         {
             base.Update(gameTime);
 
-            ///TODO: Shut if you see the target.
+            if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout)
+            {
+                lastUpdatedWaypoints = gameTime.TotalGameTime;
+                RecomputeWaypoints(holder.Position, target.Position);
+            }
         }
 
         public override bool IsComplete()

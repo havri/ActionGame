@@ -22,7 +22,7 @@ namespace ActionGame.World
         /// </summary>
         /// <param name="otherPosition">Destination location</param>
         /// <returns>Distance in meters.</returns>
-        public float DistanceTo(PositionInTown otherPosition)
+        public float MinimalDistanceTo(PositionInTown otherPosition)
         {
             if (quarter == otherPosition.quarter)
             {
@@ -31,16 +31,7 @@ namespace ActionGame.World
             else
             {
                 ///TODO: This is used as heuristic in A* graph search. Set this not breaking validity and monotone. Or verify this establishment.
-
-                return Math.Min(
-                        Math.Min(positionInQuarter.X, positionInQuarter.Y),
-                        Math.Min(quarter.QuarterSize.X - positionInQuarter.X, quarter.QuarterSize.X - positionInQuarter.Y)
-                    )
-                    +
-                    Math.Min(
-                        Math.Min(otherPosition.positionInQuarter.X, otherPosition.positionInQuarter.Y),
-                        Math.Min(otherPosition.quarter.QuarterSize.X - otherPosition.positionInQuarter.X, otherPosition.quarter.QuarterSize.X - otherPosition.positionInQuarter.Y)
-                    );
+                return TownQuarter.SquareWidth;
             }
         }
         public Vector2 PositionInQuarter

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using ActionGame.World;
 using Microsoft.Xna.Framework;
 
 namespace ActionGame.Tasks
@@ -25,7 +26,7 @@ namespace ActionGame.Tasks
             if (wayPoints.Count > 0)
             {
                 WayPoint nextWayPoint = wayPoints.Peek();
-                if (holder.Pivot.DistanceTo(nextWayPoint.Point) <= Human.EpsilonDistance)
+                if (holder.Pivot.MinimalDistanceTo(nextWayPoint.Point) <= Human.EpsilonDistance)
                 {
                     wayPoints.Dequeue();
                 }
@@ -37,6 +38,18 @@ namespace ActionGame.Tasks
                 float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 holder.GoThisWay(nextWayPoint.Point, seconds);
             }
+        }
+
+        protected void RecomputeWaypoints(PositionInTown from, PositionInTown to)
+        {
+            wayPoints.Clear();
+            PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
+            PathGraphVertex end = to.Quarter.FindNearestPathGraphVertex(to.PositionInQuarter);
+            foreach (PathGraphVertex v in PathGraph.FindShortestPath(start, end))
+            {
+                wayPoints.Enqueue(new WayPoint(v.Position));
+            }
+            wayPoints.Enqueue(new WayPoint(to));
         }
     }
 }

@@ -236,7 +236,6 @@ namespace ActionGame.World
                 lastTimeGuardAdded = gameTime.TotalGameTime;
                 Human newGuard = owner.CreateAllyGuard(this);
                 walkers.AddLast(newGuard);
-                solidObjects.AddLast(newGuard);
                 spaceGrid.AddObject(newGuard);
                 game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }

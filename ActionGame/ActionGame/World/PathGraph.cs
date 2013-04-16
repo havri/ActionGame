@@ -55,7 +55,7 @@ namespace ActionGame.World
             Dictionary<PathGraphVertex, float> gScore = new Dictionary<PathGraphVertex, float>();
             gScore.Add(from, 0);
             Dictionary<PathGraphVertex, float> fScore = new Dictionary<PathGraphVertex, float>();
-            fScore.Add(from, gScore[from] + EuklidDistance(from, to));
+            fScore.Add(from, gScore[from] + HeuristicDistance(from, to));
 
             while (open.Count != 0)
             {
@@ -87,7 +87,7 @@ namespace ActionGame.World
                         {
                             cameFrom.SetValue(n, current);
                             gScore.SetValue(n, tempGSore);
-                            fScore.SetValue(n, gScore[n] + EuklidDistance(current, n));
+                            fScore.SetValue(n, gScore[n] + HeuristicDistance(current, n));
                             if (!open.Contains(n))
                             {
                                 open.Add(n);
@@ -100,9 +100,9 @@ namespace ActionGame.World
             throw new PathNotFoundException("Source and target vertices aren't in the same component.");
         }
 
-        static float EuklidDistance(PathGraphVertex u, PathGraphVertex v)
+        static float HeuristicDistance(PathGraphVertex u, PathGraphVertex v)
         {
-            return u.Position.DistanceTo(v.Position);
+            return u.Position.MinimalDistanceTo(v.Position);
         }
     }
 }

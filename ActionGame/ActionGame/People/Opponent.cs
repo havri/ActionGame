@@ -27,5 +27,6 @@ namespace ActionGame.People
                 DrawingColor = System.Drawing.Color.Yellow
             };
         }
+
     }
 }

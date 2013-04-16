@@ -29,6 +29,8 @@ namespace ActionGame.Objects
             this.game = game;
         }
 
+        public abstract TimeSpan ActionDuration { get; }
+
         public virtual void Update(GameTime gameTime)
         {
             if (gameTime.TotalGameTime - lastTimeRangeChecked > CheckRangeTimeout)
@@ -69,6 +71,11 @@ namespace ActionGame.Objects
                 }
                 availibleHumans = newHumans;
             }
+        }
+
+        public bool IsAvailableFor(Human human)
+        { 
+            return availibleHumans.Contains(human);
         }
 
         public virtual void StartAction(Human actor, GameTime gameTime)

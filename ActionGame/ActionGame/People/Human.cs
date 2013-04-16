@@ -174,6 +174,8 @@ namespace ActionGame.People
                     }
                 }
             }
+
+            CheckHits();
         }
 
         bool BalkReflex(GameTime gameTime)

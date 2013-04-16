@@ -22,7 +22,7 @@ namespace ActionGame.Tasks
 
         public override void Update(GameTime gameTime)
         {
-            if (wayPoints.Count == 0 && !IsComplete())
+            if (WayPoints.Count == 0 && !IsComplete())
             {
                 ComputeWayPoints();
             }
@@ -32,7 +32,7 @@ namespace ActionGame.Tasks
 
         void ComputeWayPoints()
         {
-            ComputeWayPointsFrom(holder.Position);
+            ComputeWayPointsFrom(Holder.Position);
         }
 
         void ComputeWayPointsFrom(PositionInTown from)
@@ -42,7 +42,7 @@ namespace ActionGame.Tasks
 
         public override bool IsComplete()
         {
-            return (holder.Pivot.MinimalDistanceTo(destination) <= Human.EpsilonDistance);
+            return (Holder.Pivot.MinimalDistanceTo(destination) <= Human.EpsilonDistance);
         }
     }
 }

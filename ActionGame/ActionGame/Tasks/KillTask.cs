@@ -25,7 +25,7 @@ namespace ActionGame.Tasks
             if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout)
             {
                 lastUpdatedWaypoints = gameTime.TotalGameTime;
-                RecomputeWaypoints(holder.Position, target.Position);
+                RecomputeWaypoints(Holder.Position, target.Position);
             }
         }
 

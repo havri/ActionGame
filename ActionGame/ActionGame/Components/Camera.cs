@@ -6,7 +6,7 @@ using ActionGame.People;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace ActionGame
+namespace ActionGame.Components
 {
     public class Camera : GameComponent
     {

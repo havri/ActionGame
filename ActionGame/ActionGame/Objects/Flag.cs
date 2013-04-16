@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using ActionGame.World;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.People;
+using ActionGame.Components;
 
 namespace ActionGame.Objects
 {
@@ -16,11 +17,17 @@ namespace ActionGame.Objects
 
         Human taker = null;
         TimeSpan takeBeginTime = TimeSpan.Zero;
+        ProgressBar drawedProgressBar;
 
         public Flag(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(game, ActionDistance, model, position, azimuth, worldTransform)
         {
             
+        }
+
+        public override TimeSpan ActionDuration
+        {
+            get { return TakeTheFlagTimeout; }
         }
 
         public override void Update(GameTime gameTime)
@@ -30,7 +37,7 @@ namespace ActionGame.Objects
             if (ActionRunning)
             {
                 float progress = (float)(gameTime.TotalGameTime - takeBeginTime).TotalMilliseconds / (float)TakeTheFlagTimeout.TotalMilliseconds;
-                Game.Drawer.ProgressBarValue = progress;
+                drawedProgressBar.Value = progress;
             }
         }
 
@@ -46,9 +53,7 @@ namespace ActionGame.Objects
                     {
                         taker = actor;
                         takeBeginTime = gameTime.TotalGameTime;
-                        Game.Drawer.DrawProgressBar = true;
-                        Game.Drawer.ProgressBarValue = 0f;
-                        Game.Drawer.ProgressBarTexture = actor.Content.ColorTexture;
+                        drawedProgressBar = Game.Drawer.CreateProgressBar(actor.Content.ColorTexture);
                     }
                 }
             }
@@ -73,7 +78,8 @@ namespace ActionGame.Objects
                     }
                 }
                 taker = null;
-                Game.Drawer.DrawProgressBar = false;
+                Game.Drawer.DestroyProgressBar(drawedProgressBar);
+                drawedProgressBar = null;
             }
         }
     }

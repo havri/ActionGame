@@ -27,16 +27,11 @@ namespace ActionGame.Components
         TownQuarter currentQuarter;
         SpriteFont font;
         SpatialObject panorama;
-        public bool DrawProgressBar { set { drawProgressBar = value; } }
-        bool drawProgressBar = false;
-        public float ProgressBarValue { set { progressBarValue = value; } }
-        float progressBarValue = 0;
-        public Texture2D ProgressBarTexture { set { progressBarTexture = value; } }
-        Texture2D progressBarTexture;
         TimeSpan messageShowBegin = TimeSpan.Zero;
         bool showMessage = false;
         string message = string.Empty;
         Texture2D messageBackground;
+        readonly HashSet<ProgressBar> progressBars = new HashSet<ProgressBar>();
 
 
         /// <summary>
@@ -140,6 +135,18 @@ namespace ActionGame.Components
             Debug.Write("Drawed objects", objects.Count.ToString());
         }
 
+        public ProgressBar CreateProgressBar(Texture2D texture)
+        {
+            ProgressBar pb = new ProgressBar(texture);
+            progressBars.Add(pb);
+            return pb;
+        }
+
+        public void DestroyProgressBar(ProgressBar progressBar)
+        {
+            progressBars.Remove(progressBar);
+        }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
@@ -168,12 +175,14 @@ namespace ActionGame.Components
             {
                 Game.SpriteBatch.Draw(actionAvailableIcon, new Vector2(0, Game.Settings.ScreenSize.Height - 100), Color.White);
             }
-            if (drawProgressBar)
-            { 
-                const float width = 1f;
-                const float height = 0.05f;
-                Rectangle destRect = new Rectangle(0,0, (int)(Game.Settings.ScreenSize.Width * width * progressBarValue), (int)(Game.Settings.ScreenSize.Height * height));
-                Game.SpriteBatch.Draw(progressBarTexture, destRect, Color.White);
+            {
+                int i = 0;
+                foreach (ProgressBar prograssBar in progressBars)
+                {
+                    const float height = 0.05f;
+                    Rectangle destRect = new Rectangle(0, (int)((i++) * height * Game.Settings.ScreenSize.Height), Game.Settings.ScreenSize.Width, (int)(height * Game.Settings.ScreenSize.Height));
+                    prograssBar.Draw(Game.SpriteBatch, destRect);
+                }
             }
             if (showMessage)
             {
@@ -181,7 +190,7 @@ namespace ActionGame.Components
                 const float width = 0.7f;
                 Rectangle destRect = new Rectangle((int)((1f - width) * 0.5f * Game.Settings.ScreenSize.Width), 0, (int)(Game.Settings.ScreenSize.Width * width), (int)(Game.Settings.ScreenSize.Height * height));
                 Game.SpriteBatch.Draw(messageBackground, destRect, Color.White);
-                Game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2()  + new Vector2(2,1), Color.Black);
+                Game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2() + new Vector2(2, 1), Color.Black);
             }
             Game.SpriteBatch.End();
 

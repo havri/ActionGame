@@ -162,14 +162,21 @@ namespace ActionGame.People
                         || Position.MinimalDistanceTo(rightIface.RightPathGraphVertex.Position) <= Human.EpsilonDistance)
                     {
                         //Changes home quarter
+                        TownQuarter newQuarter = rightIface.OppositeInterface.Quarter;
                         Position.Quarter.SpaceGrid.RemoveObject(this);
+                        bool currentlyDrawed = Game.Drawer.StopDrawingObject(this);
                         Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
                         float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
                         MoveTo(
-                            new PositionInTown(rightIface.OppositeInterface.Quarter, Vector3.Transform(PositionInQuarter, Matrix.CreateTranslation(-posDelta.ToVector3(0)) * Matrix.CreateRotationY(azDelta)).XZToVector2()),
+                            new PositionInTown(newQuarter, Vector3.Transform(PositionInQuarter,
+                                Matrix.CreateTranslation(-posDelta.ToVector3(0)) * Matrix.CreateRotationY(azDelta)).XZToVector2()),
                             Azimuth - azDelta
                                 );
-                        rightIface.OppositeInterface.Quarter.SpaceGrid.AddObject(this);
+                        newQuarter.SpaceGrid.AddObject(this);
+                        if (currentlyDrawed)
+                        {
+                            Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta);
+                        }
                     }
                     else
                     {

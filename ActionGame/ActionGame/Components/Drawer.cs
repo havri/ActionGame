@@ -18,7 +18,7 @@ namespace ActionGame.Components
     {
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
-        readonly List<DrawedObject> objects;
+        readonly HashSet<DrawedObject> objects = new HashSet<DrawedObject>();
         readonly Matrix projectionMatrix;
         readonly Matrix worldMatrix = Matrix.Identity;
         Texture2D toolPanelBackground;
@@ -43,7 +43,6 @@ namespace ActionGame.Components
         public Drawer(ActionGame game, float resolutionWidth, float resolutionHeight)
             : base(game)
         {
-            objects = new List<DrawedObject>();
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
         }
 
@@ -73,6 +72,10 @@ namespace ActionGame.Components
         public void StartDrawingObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta)
         {
             DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
+            if (!objects.Contains(dObj))
+            {
+                objects.Remove(dObj);
+            }
             objects.Add(dObj);
 
             /*if (obj is SpatialObject && !(obj is Human))
@@ -107,9 +110,15 @@ namespace ActionGame.Components
             }*/
         }
 
-        public void StopDrawingObject(IDrawableObject obj)
+        public bool StopDrawingObject(IDrawableObject obj)
         {
-            objects.RemoveAll(x => x.Object == obj);
+            DrawedObject dObj = new DrawedObject(obj, 0, Vector2.Zero);
+            if(objects.Contains(dObj))
+            {
+                objects.Remove(dObj);
+                return true;
+            }
+            return false;
         }
 
         public void ShowMessage(GameTime gameTime, String text)

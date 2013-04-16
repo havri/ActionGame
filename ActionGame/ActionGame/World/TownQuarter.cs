@@ -97,8 +97,20 @@ namespace ActionGame.World
         readonly List<SpatialObject> awaitingDestroy = new List<SpatialObject>();
         readonly ActionGame game;
         Flag flag;
-
-
+        public float CurrentDrawingAzimuthDelta
+        {
+            get
+            {
+                return currentDrawingAzimuthDelta;
+            }
+        }
+        public Vector2 CurrentDrawingPositionDelta
+        {
+            get
+            {
+                return currentDrawingPositionDelta;
+            }
+        }
         /// <summary>
         /// Creates new town quarter as map fragment. Generates roads, buildings, etc.
         /// </summary>

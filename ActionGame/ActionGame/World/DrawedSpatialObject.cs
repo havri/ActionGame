@@ -34,5 +34,27 @@ namespace ActionGame.World
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is DrawedObject)
+            {
+                ((DrawedObject)obj).Object.Equals(this.Object);
+            }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Object.GetHashCode();
+        }
+
+        public static bool operator ==(DrawedObject a, DrawedObject b)
+        {
+            return a.Object == b.Object;
+        }
+        public static bool operator !=(DrawedObject a, DrawedObject b)
+        {
+            return a.Object != b.Object;
+        }
     }
 }

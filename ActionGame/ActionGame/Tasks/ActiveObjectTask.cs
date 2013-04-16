@@ -33,15 +33,21 @@ namespace ActionGame.Tasks
                     actionStart = gameTime.TotalGameTime;
                     started = true;
                 }
-                else if(gameTime.TotalGameTime - actionStart > actionObject.ActionDuration)
+                else
                 {
-                    actionObject.EndAction(Holder, gameTime);
-                    complete = true;
+                    if (gameTime.TotalGameTime - actionStart > actionObject.ActionDuration)
+                    {
+                        actionObject.EndAction(Holder, gameTime);
+                        complete = true;
+                    }
                 }
             }
-            if (WayPoints.Count == 0 && !IsComplete())
+            else
             {
-                RecomputeWaypoints(Holder.Position, actionObject.Position);
+                if (WayPoints.Count == 0 && !IsComplete())
+                {
+                    RecomputeWaypoints(Holder.Position, actionObject.Position);
+                }
             }
         }
 

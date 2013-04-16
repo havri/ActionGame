@@ -161,16 +161,23 @@ namespace ActionGame.QSP
 
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
         {
-            foreach (GridField field in GetFieldsByRounds(from))
+            PathGraphVertex res = null;
+            float minDistance = float.MaxValue;
+            foreach (GridField field in fields)
             {
-                foreach (PathGraphVertex v in field.PathGraphVertices)
+                foreach (PathGraphVertex vertex in field.PathGraphVertices)
                 {
-                    Quadrangle pathObj = new Quadrangle(v.Position.PositionInQuarter, v.Position.PositionInQuarter, from, from);
-                    if (!IsInCollision(pathObj))
+                    Quadrangle pathObj = new Quadrangle(vertex.Position.PositionInQuarter, vertex.Position.PositionInQuarter, from, from);
+                    if ((vertex.Position.PositionInQuarter - from).Length() < minDistance && !IsInCollision(pathObj))
                     {
-                        return v;
+                        res = vertex;
+                        minDistance = (vertex.Position.PositionInQuarter - from).Length();
                     }
                 }
+            }
+            if (res != null)
+            {
+                return res;
             }
             throw new PathNotFoundException("Couldn't find path graph vertex witch has clear way to specified position.");
         }

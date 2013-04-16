@@ -28,7 +28,6 @@ namespace ActionGame.People
         static readonly Keys RunSwitch = Keys.CapsLock;
         static readonly TimeSpan KeyPressedTimeout = new TimeSpan(0, 0, 0, 0, 250);
 
-        private bool running = false;
         readonly Point defaultMousePosition;
         private int lastMouseWheelState = 0;
         readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
@@ -75,7 +74,7 @@ namespace ActionGame.People
                     Step(false, seconds);
                 if (keyboardState.IsKeyDown(Forward))
                 {
-                    if (running)
+                    if (Running)
                         Run(seconds);
                     else
                         Go(true, seconds);
@@ -92,7 +91,7 @@ namespace ActionGame.People
                     LookAngle -= Human.RotateAngle * seconds;
                 if (keyboardState.IsKeyDown(RunSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[RunSwitch] > KeyPressedTimeout)
                 {
-                    running = !running;
+                    Running = !Running;
                     lastKeyPressedGameTime[RunSwitch] = gameTime.TotalGameTime;
                 }
                 if (keyboardState.IsKeyDown(GunUp) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunUp] > KeyPressedTimeout)

@@ -26,6 +26,8 @@ namespace ActionGame.People
                 ColorTexture = Game.Content.Load<Texture2D>("Textures/yellow"),
                 DrawingColor = System.Drawing.Color.Yellow
             };
+
+            Running = true;
         }
 
         

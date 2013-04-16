@@ -55,6 +55,20 @@ namespace ActionGame.People
         readonly HashSet<ActionObject> availableActionObjects = new HashSet<ActionObject>();
         public TownQuarterOwnerContent Content { get { return content; } set { content = value; } }
         TownQuarterOwnerContent content;
+        bool running;
+        protected bool Running
+        {
+            get
+            {
+                return running;
+            }
+            set
+            {
+                if (running == value)
+                    return;
+                running = value;
+            }
+        }
 
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -144,7 +158,14 @@ namespace ActionGame.People
                 else
                 {
                     azimuth = direction;
-                    Go(true, seconds);
+                    if (Running)
+                    {
+                        Run(seconds);
+                    }
+                    else
+                    {
+                        Go(true, seconds);
+                    }
                 }
             }
             else

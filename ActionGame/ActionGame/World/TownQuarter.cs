@@ -254,6 +254,7 @@ namespace ActionGame.World
         public void Update(GameTime gameTime)
         {
             updateProcessing = true;
+            //Add guard if it's time
             if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && guards.Count < MaxGuardCount)
             {
                 lastTimeGuardAdded = gameTime.TotalGameTime;
@@ -264,6 +265,7 @@ namespace ActionGame.World
                 game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }
 
+            //Update humans
             foreach (Human updatableHuman in updatablePeople)
             {
                 updatableHuman.Update(gameTime);
@@ -289,21 +291,24 @@ namespace ActionGame.World
 
         private void SolveAwaings()
         {
-            foreach (SpatialObject obj in awaitingDestroy)
+            if (awaitingDestroy.Count + awaitingEnter.Count + awaitingLeave.Count != 0)
             {
-                DestroyObject(obj);
+                foreach (SpatialObject obj in awaitingDestroy)
+                {
+                    DestroyObject(obj);
+                }
+                awaitingDestroy.Clear();
+                foreach (Human human in awaitingLeave)
+                {
+                    BeLeftBy(human);
+                }
+                awaitingLeave.Clear();
+                foreach (Human human in awaitingEnter)
+                {
+                    BeEnteredBy(human);
+                }
+                awaitingEnter.Clear();
             }
-            awaitingDestroy.Clear();
-            foreach (Human human in awaitingLeave)
-            {
-                BeLeftBy(human);
-            }
-            awaitingLeave.Clear();
-            foreach (Human human in awaitingEnter)
-            {
-                BeEnteredBy(human);
-            }
-            awaitingEnter.Clear();
         }
 
         public Texture2D RoadSignTexture

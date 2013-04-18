@@ -217,23 +217,24 @@ namespace ActionGame.World
 
         public IEnumerable<PositionInTown> GetRandomWalkingWaypoints()
         {
-            Random rand = new Random();
-            return pathGraph.OrderBy(x => rand.Next()).Take(WalkerWayPointCount).Select(x => x.Position);
+            return pathGraph.OrderBy(x => game.Random.Next()).Take(WalkerWayPointCount).Select(x => x.Position);
         }
 
         void GenerateWalkers()
         {
             if (pathGraph.Count > 2)
             {
+                HashSet<Point> points = new HashSet<Point>();
                 Model[] models = new Model[]{
                     game.Content.Load<Model>("Objects\\Humans\\human0")
                 };
-                Random rand = new Random();
+                Point point= GetRandomSquare((Point p) => mapBitmap.Index2D(bitmapSize.Height, p.X, p.Y) == MapFillType.Sidewalk && !points.Contains(p));
+                points.Add(point);
                 for (int i = 0; i < WalkerCount; i++)
                 {
                     IEnumerable<PositionInTown> waypoints = GetRandomWalkingWaypoints();
                     ///TODO: Take human model from central repository.
-                    Human walker = new Human(game, models[rand.Next(models.Length)], waypoints.First(), 0, game.Drawer.WorldTransformMatrix);
+                    Human walker = new Human(game, models[game.Random.Next(models.Length)], waypoints.First(), 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, waypoints);
                     walker.AddTask(task);
                     walkers.Add(walker);

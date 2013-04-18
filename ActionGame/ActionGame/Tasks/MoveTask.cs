@@ -13,7 +13,7 @@ namespace ActionGame.Tasks
     /// </summary>
     public class MoveTask : Task
     {
-        PositionInTown destination;
+        readonly PositionInTown destination;
         public MoveTask(Human holder, PositionInTown destination)
             : base(holder)
         {

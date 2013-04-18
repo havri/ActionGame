@@ -12,7 +12,7 @@ namespace ActionGame.Objects
 {
     public class Flag : ActionObject
     {
-        const float ActionDistance = 1f;
+        const float ActionDistance = 1.5f;
         static readonly TimeSpan TakeTheFlagTimeout = new TimeSpan(0, 0, 5);
 
         Human taker = null;

@@ -66,7 +66,7 @@ namespace ActionGame.People
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
             float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (Health > 0)
+            if (Health > 0 && System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Game.Window.Handle) as System.Windows.Forms.Form))
             {
                 if (keyboardState.IsKeyDown(Left))
                     Step(true, seconds);
@@ -74,13 +74,10 @@ namespace ActionGame.People
                     Step(false, seconds);
                 if (keyboardState.IsKeyDown(Forward))
                 {
-                    if (Running)
-                        Run(seconds);
-                    else
-                        Go(true, seconds);
+                    Go(seconds);
                 }
                 if (keyboardState.IsKeyDown(Backward))
-                    Go(false, seconds);
+                    GoBack(seconds);
                 if (keyboardState.IsKeyDown(TurnLeft))
                     Rotate(true, seconds);
                 if (keyboardState.IsKeyDown(TurnRight))

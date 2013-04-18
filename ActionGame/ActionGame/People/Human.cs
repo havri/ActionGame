@@ -30,7 +30,10 @@ namespace ActionGame.People
         const float ThirdHeadHorizontalDistance = 1.5f;
         const float ThirdHeadVerticalDistance = 0.1f;
         public const float LookingAtDistance = 10;
-        public const float EpsilonDistance = 0.5f;
+        /// <summary>
+        /// Distance from target where human decides he's there.
+        /// </summary>
+        public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
 
         /// <summary>
@@ -55,18 +58,23 @@ namespace ActionGame.People
         readonly HashSet<ActionObject> availableActionObjects = new HashSet<ActionObject>();
         public TownQuarterOwnerContent Content { get { return content; } set { content = value; } }
         TownQuarterOwnerContent content;
-        bool running;
+        float actualMoveSpeed = WalkSpeed;
         protected bool Running
         {
             get
             {
-                return running;
+                return actualMoveSpeed == RunSpeed;
             }
             set
             {
-                if (running == value)
-                    return;
-                running = value;
+                if (value)
+                {
+                    actualMoveSpeed = RunSpeed;
+                }
+                else
+                {
+                    actualMoveSpeed = WalkSpeed;
+                }
             }
         }
 
@@ -92,16 +100,16 @@ namespace ActionGame.People
             lastPosition = position.PositionInQuarter;
         }
 
-        protected void Go(bool forward, float seconds)
+        protected void Go(float seconds)
         {
             lastPosition = Position.PositionInQuarter;
-            MoveTo(Position.PositionInQuarter.Go(WalkSpeed * seconds * (forward ? 1 : -1), azimuth), Azimuth);
+            MoveTo(Position.PositionInQuarter.Go(actualMoveSpeed * seconds, Azimuth), Azimuth);
         }
 
-        protected void Run(float seconds)
+        protected void GoBack(float seconds)
         {
             lastPosition = Position.PositionInQuarter;
-            MoveTo(Position.PositionInQuarter.Go(RunSpeed * seconds, azimuth), Azimuth);
+            MoveTo(Position.PositionInQuarter.Go(WalkSpeed * seconds * -1, Azimuth), Azimuth);
         }
 
         protected void Step(bool toLeft, float seconds)
@@ -143,29 +151,33 @@ namespace ActionGame.People
             }
         }
 
+
+        /// <summary>
+        /// Performs move to the spcifed target.
+        /// </summary>
+        /// <param name="destination">Wished destination</param>
+        /// <param name="seconds">Duration</param>
         public void GoThisWay(PositionInTown destination, float seconds)
         {
             if (destination.Quarter == Position.Quarter)
             {
+                double actualRotateAngle = RotateAngle * seconds;
                 float direction = (destination.PositionInQuarter - Position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
-                while (direction >= MathHelper.TwoPi) direction -= MathHelper.TwoPi;
-                if (Math.Abs(azimuth - direction) > RotateAngle || (azimuth + MathHelper.TwoPi - direction) > RotateAngle && direction > azimuth)
+                direction = direction % MathHelper.TwoPi;
+                if (Math.Abs(azimuth - direction) > actualRotateAngle || ((azimuth + MathHelper.TwoPi - direction) > actualRotateAngle && direction > azimuth))
                 {
                     Rotate(
                         (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi),
                         seconds);
+                    if(Math.Abs(azimuth - direction) < MathHelper.PiOver2 && Position.MinimalDistanceTo(destination) > TownQuarter.SquareWidth)
+                    {
+                        Go(seconds);
+                    }
                 }
                 else
                 {
                     azimuth = direction;
-                    if (Running)
-                    {
-                        Run(seconds);
-                    }
-                    else
-                    {
-                        Go(true, seconds);
-                    }
+                    Go(seconds);
                 }
             }
             else

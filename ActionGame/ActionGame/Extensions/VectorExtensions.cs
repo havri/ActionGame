@@ -42,11 +42,11 @@ namespace ActionGame.Extensions
         /// Computes angle between this vector and Y axis. Angle is clockwise.
         /// </summary>
         /// <param name="vector">This vector</param>
-        /// <returns>Angle in radians</returns>
+        /// <returns>Angle in radians. Value between 0 - 2PI.</returns>
         public static float GetAngle(this Vector2 vector)
         {
             float atan = (float)Math.Atan2(vector.Y, vector.X);
-            if (atan < 0) atan += MathHelper.TwoPi;
+            atan = (MathHelper.TwoPi + atan) % MathHelper.TwoPi;
             return atan;
         }
 

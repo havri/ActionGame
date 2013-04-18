@@ -33,6 +33,9 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.opponentsCountNB = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.gunSetFileTB = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -61,12 +64,11 @@
             this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.opponentsCountNB = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).BeginInit();
@@ -78,8 +80,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).BeginInit();
             this.panel1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -130,6 +130,49 @@
             this.gameSettingsPage.TabIndex = 0;
             this.gameSettingsPage.Text = "Game";
             this.gameSettingsPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.opponentsCountNB);
+            this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(3, 150);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(570, 100);
+            this.groupBox4.TabIndex = 6;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Opponents";
+            // 
+            // opponentsCountNB
+            // 
+            this.opponentsCountNB.Location = new System.Drawing.Point(121, 14);
+            this.opponentsCountNB.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.opponentsCountNB.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.opponentsCountNB.Name = "opponentsCountNB";
+            this.opponentsCountNB.Size = new System.Drawing.Size(40, 20);
+            this.opponentsCountNB.TabIndex = 1;
+            this.opponentsCountNB.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 16);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(109, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Number of opponents";
             // 
             // groupBox3
             // 
@@ -232,7 +275,7 @@
             // 
             this.quartersCountNB.Location = new System.Drawing.Point(140, 14);
             this.quartersCountNB.Maximum = new decimal(new int[] {
-            20,
+            10,
             0,
             0,
             0});
@@ -245,7 +288,7 @@
             this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
             this.quartersCountNB.TabIndex = 3;
             this.quartersCountNB.Value = new decimal(new int[] {
-            4,
+            8,
             0,
             0,
             0});
@@ -303,7 +346,7 @@
             this.resolutionCmb.Name = "resolutionCmb";
             this.resolutionCmb.Size = new System.Drawing.Size(121, 21);
             this.resolutionCmb.TabIndex = 3;
-            this.resolutionCmb.Text = "800x600";
+            this.resolutionCmb.Text = "1280x800";
             this.resolutionCmb.TextChanged += new System.EventHandler(this.resolutionCmb_TextChanged);
             // 
             // label2
@@ -476,49 +519,6 @@
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.opponentsCountNB);
-            this.groupBox4.Controls.Add(this.label11);
-            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox4.Location = new System.Drawing.Point(3, 150);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(570, 100);
-            this.groupBox4.TabIndex = 6;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Opponents";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 16);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(109, 13);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Number of opponents";
-            // 
-            // opponentsCountNB
-            // 
-            this.opponentsCountNB.Location = new System.Drawing.Point(121, 14);
-            this.opponentsCountNB.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.opponentsCountNB.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.opponentsCountNB.Name = "opponentsCountNB";
-            this.opponentsCountNB.Size = new System.Drawing.Size(40, 20);
-            this.opponentsCountNB.TabIndex = 1;
-            this.opponentsCountNB.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -534,6 +534,9 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.gameSettingsPage.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -549,9 +552,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).EndInit();
             this.panel1.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

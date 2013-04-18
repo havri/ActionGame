@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using ActionGame.World;
 using ActionGame.People;
 using ActionGame.Components;
@@ -15,7 +12,6 @@ using ActionGame.Tasks;
 using ActionGame.MenuForms;
 using ActionGame.Tools;
 using ActionGame.Extensions;
-using System.Threading;
 using System.Xml;
 using System.Globalization;
 using ActionGame.Space;
@@ -48,6 +44,14 @@ namespace ActionGame
         Debug debug;
         Drawer drawer;
         Town town;
+        readonly Random random = new Random();
+        public Random Random
+        {
+            get
+            {
+                return random;
+            }
+        }
 
 
         public Town Town
@@ -239,7 +243,6 @@ namespace ActionGame
 
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);
-                Random rand = new Random();
                 /*TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby rand.Next() select q).First();
                 Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                 PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);*/
@@ -290,12 +293,12 @@ namespace ActionGame
                 this.Exit();
             if(doInitialize)
             {
+                base.Update(gameTime);
                 if (opponent.Position.Quarter != town.CurrentQuarter)
                 {
                     opponent.Position.Quarter.Update(gameTime);
                 }
                 player.Update(gameTime);
-                base.Update(gameTime);
                 if (player.Health <= 0)
                     Exit();
             }

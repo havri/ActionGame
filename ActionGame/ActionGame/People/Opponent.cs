@@ -28,6 +28,7 @@ namespace ActionGame.People
             };
 
             Running = true;
+
         }
 
         

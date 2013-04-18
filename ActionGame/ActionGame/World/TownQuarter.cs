@@ -56,7 +56,6 @@ namespace ActionGame.World
         readonly List<Human> walkers = new List<Human>(WalkerCount);
         readonly List<Human> guards = new List<Human>();
         readonly List<Plate> roadSignsPointingToMe = new List<Plate>();
-        readonly List<Human> updatablePeople = new List<Human>();
         /// <summary>
         /// Really spatial objects - buildings, etc.
         /// </summary>
@@ -120,6 +119,14 @@ namespace ActionGame.World
             get
             {
                 return currentDrawingPositionDelta;
+            }
+        }
+        bool currentlyDrawed = false;
+        public bool CurrentlyDrawed
+        {
+            get
+            {
+                return currentlyDrawed;
             }
         }
         /// <summary>
@@ -220,6 +227,7 @@ namespace ActionGame.World
             {
                 game.Drawer.StartDrawingObject(o, angle, delta);
             }
+            currentlyDrawed = true;
         }
 
         public void RemoveFromDrawer()
@@ -227,7 +235,8 @@ namespace ActionGame.World
             foreach (IDrawableObject o in GetAllDrawalbleObjects())
             {
                 game.Drawer.StopDrawingObject(o);
-            }        
+            }
+            currentlyDrawed = false;
         }
 
         public Texture2D Map
@@ -251,26 +260,42 @@ namespace ActionGame.World
             roadSignTexture.Dispose();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, bool gameLogicOnly)
         {
             updateProcessing = true;
             //Add guard if it's time
             if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && guards.Count < MaxGuardCount)
             {
+                int count = (int)((gameTime.TotalGameTime - lastTimeGuardAdded).TotalSeconds / GuardAddTimeout.TotalSeconds);
+                for (int i = 0; i < count; i++)
+                {
+                    Human newGuard = owner.CreateAllyGuard(this);
+                    guards.Add(newGuard);
+                    spaceGrid.AddObject(newGuard);
+                    if (currentlyDrawed)
+                    {
+                        game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                    }
+                }
                 lastTimeGuardAdded = gameTime.TotalGameTime;
-                Human newGuard = owner.CreateAllyGuard(this);
-                guards.Add(newGuard);
-                updatablePeople.Add(newGuard);
-                spaceGrid.AddObject(newGuard);
-                game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }
 
             //Update humans
-            foreach (Human updatableHuman in updatablePeople)
+            foreach (Human guard in guards)
             {
-                updatableHuman.Update(gameTime);
+                guard.Update(gameTime, gameLogicOnly);
             }
+
+            if (!gameLogicOnly)
+            {
+                foreach (Human walker in walkers)
+                {
+                    walker.Update(gameTime, gameLogicOnly);
+                }
+            }
+
             spaceGrid.Update();
+
             flag.Update(gameTime);
 
             foreach (KeyValuePair<BulletVisualisation, TimeSpan> bulletAddedTime in bulletAddedTimes)
@@ -316,22 +341,33 @@ namespace ActionGame.World
             get { return roadSignTexture; }
         }
 
-        private LinkedList<IDrawableObject> GetAllDrawalbleObjects()
+        private List<IDrawableObject> GetAllDrawalbleObjects()
         {
-            LinkedList<IDrawableObject> result = new LinkedList<IDrawableObject>(groundObjects);
+            List<IDrawableObject> result = new List<IDrawableObject>();
+            result.AddRange(groundObjects);
             result.AddRange(magicPlates);
             result.AddRange(solidPlates);
             result.AddRange(solidObjects);
-            result.AddRange(updatablePeople);
+            result.AddRange(walkers);
+            result.AddRange(guards);
             result.AddRange(magicBullets);
+            if (game.Opponent.Position.Quarter == this)
+            {
+                result.Add(game.Opponent);
+            }
             return result;
         }
 
-        LinkedList<Quadrangle> GetAllSolidObjects()
+        List<Quadrangle> GetAllSolidObjects()
         {
-            LinkedList<Quadrangle> result = new LinkedList<Quadrangle>(solidPlates);
+            List<Quadrangle> result = new List<Quadrangle>(solidPlates);
             result.AddRange(solidObjects);
-            result.AddRange(updatablePeople);
+            result.AddRange(guards);
+            result.AddRange(walkers);
+            if (game.Opponent.Position.Quarter == this)
+            {
+                result.Add(game.Opponent);
+            }
             return result;
         }
 
@@ -345,8 +381,7 @@ namespace ActionGame.World
             if (!updateProcessing)
             {
                 if (obj is Human)
-                {
-                    updatablePeople.Remove(obj as Human);
+                {        
                     guards.Remove(obj as Human);
                     walkers.Remove(obj as Human);
                 }
@@ -375,7 +410,6 @@ namespace ActionGame.World
             if (!updateProcessing)
             {
                 spaceGrid.RemoveObject(human);
-                updatablePeople.Remove(human);
             }
             else
             {
@@ -388,7 +422,6 @@ namespace ActionGame.World
             if (!updateProcessing)
             {
                 spaceGrid.AddObject(human);
-                updatablePeople.Add(human);
             }
             else
             {

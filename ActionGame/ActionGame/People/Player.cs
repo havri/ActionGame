@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionGame.Objects;
+using ActionGame.Space;
 using ActionGame.Tools;
 using ActionGame.World;
 using Microsoft.Xna.Framework;
@@ -61,7 +62,7 @@ namespace ActionGame.People
             };
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
@@ -146,7 +147,7 @@ namespace ActionGame.People
                 Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);
             }
 
-            CheckHits();
+            CheckHits(false, gameTime);
 
             Debug.Write("Player", PositionInQuarter.ToString());
             Debug.Write("Player azimuth", azimuth.ToString());
@@ -155,6 +156,18 @@ namespace ActionGame.People
             
             //Supress human instincts
             //base.Update(gameTime);
+        }
+
+        public override void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
+        {
+            if (something is ToolBox)
+            {
+                Hit(something as ToolBox);
+            }
+            else
+            {
+                MoveTo(LastPosition, Azimuth);
+            }
         }
     }
 }

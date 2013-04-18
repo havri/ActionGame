@@ -67,18 +67,18 @@ namespace ActionGame.Space
             
         }
 
-        public void CheckHits()
+        public void CheckHits(bool gameLogicOnly, GameTime gameTime)
         {
             foreach (GridField field in SpacePartitioningFields)
             {
                 foreach(Quadrangle q in field.GetCollisions(this))
                 {
-                    Hit(q);
+                    Hit(q, gameLogicOnly, gameTime);
                 }
             }
         }
 
-        public virtual void Hit(Quadrangle something)
+        public virtual void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
         { }
 
         public virtual void BecomeShot(int damage, Human by)

@@ -45,6 +45,13 @@ namespace ActionGame.People
         private readonly List<Tool> tools;
         private int selectedToolIndex;
         private Vector2 lastPosition;
+        protected Vector2 LastPosition
+        {
+            get
+            {
+                return lastPosition;
+            }
+        }
         protected ActionGame Game { get { return game; } }
         private readonly ActionGame game;
         public double LookAngle { get { return lookAngle; } set { lookAngle = value; } }
@@ -166,9 +173,17 @@ namespace ActionGame.People
                 direction = direction % MathHelper.TwoPi;
                 if (Math.Abs(azimuth - direction) > actualRotateAngle || ((azimuth + MathHelper.TwoPi - direction) > actualRotateAngle && direction > azimuth))
                 {
-                    Rotate(
-                        (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi),
-                        seconds);
+                    const int stepProbability = 9;
+                    bool toLeft = (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi);
+                    if (game.Random.Next(10) == stepProbability)
+                    {
+                        Step(toLeft, seconds);
+                    }
+                    else
+                    {
+                        Rotate(toLeft, seconds);
+                    }
+                                   
                     if(Math.Abs(azimuth - direction) < MathHelper.PiOver2 && Position.MinimalDistanceTo(destination) > TownQuarter.SquareWidth)
                     {
                         Go(seconds);
@@ -198,7 +213,10 @@ namespace ActionGame.People
                         //Changes home quarter
                         TownQuarter newQuarter = rightIface.OppositeInterface.Quarter;
                         Position.Quarter.BeLeftBy(this);
-                        bool currentlyDrawed = Game.Drawer.StopDrawingObject(this);
+                        if (Position.Quarter.CurrentlyDrawed)
+                        {
+                            Game.Drawer.StopDrawingObject(this);
+                        }
                         Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
                         float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
                         MoveTo(
@@ -207,7 +225,7 @@ namespace ActionGame.People
                             Azimuth - azDelta
                                 );
                         newQuarter.BeEnteredBy(this);
-                        if (currentlyDrawed)
+                        if (newQuarter.CurrentlyDrawed)
                         {
                             Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta);
                         }
@@ -224,13 +242,13 @@ namespace ActionGame.People
             }
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime, bool gameLogicOnly)
         {
             bool moved = false;
             //Order of reflexes is important.
             if (!moved)
                 moved = KillEnemyReflex(gameTime);
-            if (!moved)
+            if (!moved && !gameLogicOnly)
                 moved = BalkReflex(gameTime);
 
             //Solve tasks reflex
@@ -247,7 +265,7 @@ namespace ActionGame.People
                 }
             }
 
-            CheckHits();
+            CheckHits(gameLogicOnly, gameTime);
         }
 
         bool BalkReflex(GameTime gameTime)
@@ -355,7 +373,7 @@ namespace ActionGame.People
                 SelectedTool.DoAction(gameTime, Position, (float)azimuth);
             }
         }
-        public override void Hit(Quadrangle something)
+        public override void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
         {
             if (something is ToolBox)
             {
@@ -363,11 +381,15 @@ namespace ActionGame.People
             }
             else
             {
-                MoveTo(lastPosition, Azimuth);
+                if (!gameLogicOnly)
+                {
+                    MoveTo(lastPosition, Azimuth);
+                    GoBack((float)gameTime.ElapsedGameTime.TotalSeconds);
+                }
             }
         }
 
-        private void Hit(ToolBox box)
+        protected void Hit(ToolBox box)
         {
             Tool takenTool = box.Take();
             if(takenTool is Gun)

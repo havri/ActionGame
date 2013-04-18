@@ -116,6 +116,7 @@ namespace ActionGame
         }
 
         SoundEffectInstance backgroundSound;
+        public Opponent Opponent { get { return opponent; } }
 
         readonly bool doInitialize = true;
         public ActionGame()
@@ -294,10 +295,12 @@ namespace ActionGame
             if(doInitialize)
             {
                 base.Update(gameTime);
-                if (opponent.Position.Quarter != town.CurrentQuarter)
+                bool opponentInTheSameQuarter =opponent.Position.Quarter == town.CurrentQuarter;
+                if (!opponentInTheSameQuarter)
                 {
-                    opponent.Position.Quarter.Update(gameTime);
+                    opponent.Position.Quarter.Update(gameTime, true);
                 }
+                opponent.Update(gameTime, !opponentInTheSameQuarter);
                 player.Update(gameTime);
                 if (player.Health <= 0)
                     Exit();

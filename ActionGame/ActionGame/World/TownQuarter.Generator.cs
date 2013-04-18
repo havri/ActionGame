@@ -238,7 +238,6 @@ namespace ActionGame.World
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, waypoints);
                     walker.AddTask(task);
                     walkers.Add(walker);
-                    updatablePeople.Add(walker);
                 }
             }
         }

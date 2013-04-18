@@ -261,7 +261,7 @@ namespace ActionGame.World
             
             FillDrawer();
 
-            currentQuarter.Update(gameTime);
+            currentQuarter.Update(gameTime, false);
         }
 
         void FillDrawer()
@@ -287,7 +287,6 @@ namespace ActionGame.World
                 }
                 lastNearestInterfaceIndex = nearestInterfaceIndex;
 
-                float squareWidth = TownQuarter.SquareWidth;
                 TownQuarterInterface iface = currentQuarter.Interfaces[nearestInterfaceIndex];
                 Vector2 delta = ResolveQuarterPositionDelta(iface);
                 float angle = ResolveQuarterAzimuthDelta(iface.SidePosition, iface.OppositeInterface.SidePosition);

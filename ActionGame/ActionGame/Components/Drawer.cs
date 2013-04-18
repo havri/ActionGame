@@ -106,10 +106,9 @@ namespace ActionGame.Components
             }*/
         }
 
-        public bool StopDrawingObject(IDrawableObject obj)
+        public void StopDrawingObject(IDrawableObject obj)
         {
-            int count = objects.RemoveWhere(dObj => dObj.Object == obj);
-            return count != 0;
+            objects.RemoveWhere(dObj => dObj.Object == obj);
         }
 
         public void ShowMessage(GameTime gameTime, String text)

@@ -201,6 +201,20 @@ namespace ActionGame.World
                                 center.Y + (float)Math.Sin(i * angleJump) * radius - 7f,
                                 14, 14);
                         }
+                        if (quarters[i] == Game.Opponent.Position.Quarter)
+                        {
+                            graphics.DrawEllipse(new Pen(Game.Opponent.Content.DrawingColor, 2),
+                                center.X + (float)Math.Cos(i * angleJump) * radius - 9f,
+                                center.Y + (float)Math.Sin(i * angleJump) * radius - 9f,
+                                18, 18);
+                        }
+                        if (quarters[i] == Game.Player.Position.Quarter)
+                        {
+                            graphics.DrawEllipse(new Pen(Game.Player.Content.DrawingColor, 2),
+                                center.X + (float)Math.Cos(i * angleJump) * radius - 9f,
+                                center.Y + (float)Math.Sin(i * angleJump) * radius - 9f,
+                                18, 18);
+                        }
                     }
                 }
                 using (MemoryStream ms = new MemoryStream())

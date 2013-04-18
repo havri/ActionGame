@@ -35,7 +35,10 @@ namespace ActionGame.People
         /// </summary>
         public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
-
+        static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
+        TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
+        static readonly TimeSpan BalkReflexTimeout = new TimeSpan(0, 0, 0, 0, 200);
+        TimeSpan lastBalkReflexTime = TimeSpan.Zero;
         /// <summary>
         /// Gets current health of human. In percents.
         /// </summary>
@@ -270,23 +273,27 @@ namespace ActionGame.People
 
         bool BalkReflex(GameTime gameTime)
         {
-            const float balkDistance = 0.9f;
-            Quadrangle viewCone = GetViewCone(balkDistance);
-            IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
-            if(balks.Any(x => x != this && x is Human))
+            if (gameTime.TotalGameTime - lastBalkReflexTime > BalkReflexTimeout)
             {
-                float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Step(false, totalSeconds);
-                //Rotate(false, totalSeconds);
-                return true;
+                lastBalkReflexTime = gameTime.TotalGameTime;
+                const float balkDistance = 0.9f;
+                Quadrangle viewCone = GetViewCone(balkDistance);
+                IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
+                if (balks.Any(x => x != this && x is Human))
+                {
+                    float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    Step(false, totalSeconds);
+                    return true;
+                }
             }
             return false;
         }
 
         bool KillEnemyReflex(GameTime gameTime)
         {
-            if (tools.Any(x => (x is Gun && x.Usable)))
+            if (gameTime.TotalGameTime - lastKillEnemyReflexTime > KillEnemyReflexTimeout && tools.Any(x => (x is Gun && x.Usable)))
             {
+                lastKillEnemyReflexTime = gameTime.TotalGameTime;
                 Human seenEnemy = null;
                 float enemyShotDistance = tools.Max(x => (x is Gun && x.Usable ? ((Gun)x).Type.Range : 0f));
                 Quadrangle viewCone = GetViewCone(enemyShotDistance);

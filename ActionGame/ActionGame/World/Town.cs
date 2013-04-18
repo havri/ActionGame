@@ -27,8 +27,8 @@ namespace ActionGame.World
         ///TODO: This constant can be calculated!
         const float MinQuarterSideLength = 100;
 
-        
-        public IEnumerable<TownQuarter> Quarters { get { return quarters; } }
+
+        public TownQuarter[] Quarters { get { return quarters; } }
         readonly TownQuarter[] quarters;
         TownQuarter currentQuarter;
         public TownQuarter CurrentQuarter

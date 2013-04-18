@@ -40,12 +40,20 @@ namespace ActionGame.World
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
         });
         readonly static string emptyName = "Unnamed";
-        readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 0, 30);
-        const int MaxGuardCount = 20;
+        public readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 0, 30);
+        public const int MaxGuardCount = 20;
 
         TimeSpan lastTimeGuardAdded = TimeSpan.Zero;
         public ITownQuarterOwner Owner { get { return owner; } }
         ITownQuarterOwner owner;
+        TimeSpan ownershipBeginTime = TimeSpan.Zero;
+        public TimeSpan OwnershipBeginTime
+        {
+            get
+            {
+                return ownershipBeginTime;
+            }
+        }
         /// <summary>
         /// Object what makes ground textures.
         /// </summary>
@@ -188,7 +196,7 @@ namespace ActionGame.World
             solidObjects.AddLast(flag);
         }
 
-        public void SetOwner(ITownQuarterOwner newOwner)
+        public void SetOwner(ITownQuarterOwner newOwner, GameTime gameTime)
         {
             owner = newOwner;
             roadSignTexture.Dispose();
@@ -198,6 +206,7 @@ namespace ActionGame.World
                 roadSign.SetFront(roadSignTexture);
             }
             flag.SetModel(owner.Content.FlagModel, game.Drawer.WorldTransformMatrix);
+            ownershipBeginTime = gameTime.TotalGameTime;
         }
 
         public void RegisterNewRoadSign(Plate roadSign)

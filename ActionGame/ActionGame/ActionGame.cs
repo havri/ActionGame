@@ -219,6 +219,7 @@ namespace ActionGame
         {
             using (Loading loadingForm = new Loading())
             {
+                GameTime gameTime =new GameTime(TimeSpan.Zero, TimeSpan.Zero);
                 loadingForm.Show();
 
                 loadingForm.SetLabel("Loading graphics device...");
@@ -239,7 +240,7 @@ namespace ActionGame
                 defaultPositions.Add(player, playerPosition);
                 player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                 town.CurrentQuarter.SpaceGrid.AddObject(player);
-                town.CurrentQuarter.SetOwner(player);
+                town.CurrentQuarter.SetOwner(player, gameTime);
                 player.AddEnemy(opponent);
 
                 loadingForm.SetLabel("Loading opponent...");
@@ -252,7 +253,7 @@ namespace ActionGame
                 PositionInTown oppPosition = playerPosition;
                 opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
                 oppQuarter.BeEnteredBy(opponent);
-                oppQuarter.SetOwner(opponent);
+                oppQuarter.SetOwner(opponent, gameTime);
                 //opponent.AddEnemy(player);
                 foreach (var quarter in town.Quarters)
                 {

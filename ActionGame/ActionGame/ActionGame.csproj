@@ -135,7 +135,13 @@
     </Compile>
     <Compile Include="Objects\ActionObject.cs" />
     <Compile Include="Objects\Flag.cs" />
+    <Compile Include="Planner\GameState.cs" />
+    <Compile Include="Planner\Operation.cs" />
+    <Compile Include="Planner\QuarterOwnership.cs" />
+    <Compile Include="Planner\QuarterState.cs" />
+    <Compile Include="Planner\TakeBoxOperation.cs" />
     <Compile Include="Tasks\ActiveObjectTask.cs" />
+    <Compile Include="Tools\HealBox.cs" />
     <Compile Include="World\EmptyTownQuarterOwner.cs" />
     <Compile Include="World\ITownQuarterOwner.cs" />
     <Compile Include="People\Opponent.cs" />

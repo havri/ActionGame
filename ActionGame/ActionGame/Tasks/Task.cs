@@ -57,9 +57,7 @@ namespace ActionGame.Tasks
         protected void RecomputeWaypoints(PositionInTown from, PositionInTown to)
         {
             wayPoints.Clear();
-            PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
-            PathGraphVertex end = to.Quarter.FindNearestPathGraphVertex(to.PositionInQuarter);
-            foreach (PathGraphVertex v in PathGraph.FindShortestPath(start, end))
+            foreach (PathGraphVertex v in PathGraph.FindShortestPath(from, to))
             {
                 wayPoints.Enqueue(new WayPoint(v.Position));
             }

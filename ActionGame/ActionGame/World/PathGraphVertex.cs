@@ -29,7 +29,7 @@ namespace ActionGame.World
             neighbor.AddNeighbor(this, distance);
         }
 
-        public float DistanceToNeighbor(PathGraphVertex neighbor)
+        public float GetDistanceToNeighbor(PathGraphVertex neighbor)
         {
             return distances[neighbor];
         }

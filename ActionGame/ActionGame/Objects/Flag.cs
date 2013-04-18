@@ -66,7 +66,7 @@ namespace ActionGame.Objects
 
                 if (gameTime.TotalGameTime - takeBeginTime > TakeTheFlagTimeout)
                 {
-                    Position.Quarter.SetOwner(actor);
+                    Position.Quarter.SetOwner(actor, gameTime);
                     if (actor is Player)
                     {
                         Game.Drawer.ShowMessage(gameTime, String.Format("Congratulations! You've captured {0}.", Position.Quarter.Name));

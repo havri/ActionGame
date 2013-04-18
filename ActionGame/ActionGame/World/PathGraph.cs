@@ -40,6 +40,39 @@ namespace ActionGame.World
         }
 
         /// <summary>
+        /// Calculates length of specified path.
+        /// </summary>
+        /// <param name="path">Path vertices</param>
+        /// <returns>Absolute length in meters</returns>
+        public static float GetLengthOfPath(IEnumerable<PathGraphVertex> path)
+        {
+            float length = 0;
+            PathGraphVertex prev = null;
+            foreach (PathGraphVertex v in path)
+            {
+                if (prev != null)
+                {
+                    length += prev.GetDistanceToNeighbor(v);
+                }
+                prev = v;
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Searches for shortest path in the town using path graph. Uses Dijkstra 1-1 form (A*).
+        /// </summary>
+        /// <param name="from">Source position</param>
+        /// <param name="to">Target position</param>
+        /// <returns>Set of vertices forming result path</returns>
+        public static IEnumerable<PathGraphVertex> FindShortestPath(PositionInTown from, PositionInTown to)
+        {
+            PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
+            PathGraphVertex end = to.Quarter.FindNearestPathGraphVertex(to.PositionInQuarter);
+            return FindShortestPath(start, end);
+        }
+
+        /// <summary>
         /// Searches for shortest path in the graph. Uses Dijkstra 1-1 form (A*).
         /// </summary>
         /// <param name="from">Source vertex</param>
@@ -82,7 +115,7 @@ namespace ActionGame.World
                     }
                     else
                     {
-                        float tempGSore = gScore[current] + current.DistanceToNeighbor(n);
+                        float tempGSore = gScore[current] + current.GetDistanceToNeighbor(n);
                         if (!open.Contains(n) || tempGSore <= gScore[n])
                         {
                             cameFrom.SetValue(n, current);

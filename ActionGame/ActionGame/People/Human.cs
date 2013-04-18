@@ -18,11 +18,11 @@ namespace ActionGame.People
         /// <summary>
         /// Speed of human walk. In meters per second.
         /// </summary>
-        const float WalkSpeed = 1.25f;
+        public const float WalkSpeed = 1.25f;
         /// <summary>
         /// Speed of human run. In meters per second.
         /// </summary>
-        const float RunSpeed = 6f;
+        public const float RunSpeed = 6f;
         /// <summary>
         /// Speed of human rotation. In radians per second.
         /// </summary>
@@ -46,6 +46,10 @@ namespace ActionGame.People
         int health;
         private readonly Queue<Task> tasks;
         private readonly List<Tool> tools;
+        protected List<Tool> Tools
+        {
+            get { return tools; }
+        }
         private int selectedToolIndex;
         private Vector2 lastPosition;
         protected Vector2 LastPosition

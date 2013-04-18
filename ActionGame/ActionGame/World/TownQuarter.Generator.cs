@@ -102,14 +102,13 @@ namespace ActionGame.World
 
         private void GenerateBoxes()
         {
-            Random random = new Random();
             HashSet<Point> occupiedPositions = new HashSet<Point>();
             if (game.BoxDefaultGuns.Count != 0)
             {
                 for (int i = 0; i < game.Settings.AmmoBoxCount; i++)
                 {
                     Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
-                    GunType gunType = game.BoxDefaultGuns[random.Next(game.BoxDefaultGuns.Count)];
+                    GunType gunType = game.BoxDefaultGuns[game.Random.Next(game.BoxDefaultGuns.Count)];
                     ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount),
                         game.Content.Load<SoundEffect>("Sounds/gunLoading"),
                         game.Content.Load<Model>("Objects/Decorations/ammoBox"),

@@ -105,4 +105,11 @@ Content\Textures\yellow.xnb
 Content\Sounds\bulletInHouse.xnb
 Content\Sounds\gunLoading.xnb
 Content\Sounds\heal.xnb
+Content\Objects\Humans\alphaBotYellow.xnb
+Content\Objects\Humans\alphaBotYellow\Material1.xnb
+Content\Objects\Humans\alphaBotYellow\Material2.xnb
+Content\Objects\Humans\alphaBotYellow\Metal_Rough.xnb
+Content\Objects\Humans\alphaBotYellow\Material2_0.xnb
+Content\Objects\Humans\alphaBotYellow\Material1_0.xnb
+Content\Objects\Humans\alphaBotYellow\Metal_Rough_0.xnb
 Content\Config\DefaultGunSet.xml

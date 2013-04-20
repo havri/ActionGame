@@ -37,7 +37,7 @@ namespace ActionGame.People
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
         static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
-        static readonly TimeSpan BalkReflexTimeout = new TimeSpan(0, 0, 0, 0, 200);
+        static readonly TimeSpan BalkReflexTimeout = new TimeSpan(0, 0, 0, 0, 100);
         TimeSpan lastBalkReflexTime = TimeSpan.Zero;
         /// <summary>
         /// Gets current health of human. In percents.
@@ -277,18 +277,17 @@ namespace ActionGame.People
 
         bool BalkReflex(GameTime gameTime)
         {
-            if (gameTime.TotalGameTime - lastBalkReflexTime > BalkReflexTimeout)
+            lastBalkReflexTime = gameTime.TotalGameTime;
+            float balkDistance = this.Size.Z * 6f;
+            //const float balkDistance = 0.9f;
+
+            Quadrangle viewCone = GetViewCone(balkDistance);
+            IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
+            if (balks.Any(x => x != this && x is Human))
             {
-                lastBalkReflexTime = gameTime.TotalGameTime;
-                const float balkDistance = 0.9f;
-                Quadrangle viewCone = GetViewCone(balkDistance);
-                IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
-                if (balks.Any(x => x != this && x is Human))
-                {
-                    float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    Step(false, totalSeconds);
-                    return true;
-                }
+                float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Step(false, totalSeconds);
+                return true;
             }
             return false;
         }

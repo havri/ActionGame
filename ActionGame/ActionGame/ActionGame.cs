@@ -251,10 +251,10 @@ namespace ActionGame
                 TownQuarter oppQuarter = town.CurrentQuarter;
                 Point oppPoint = playerPoint;
                 PositionInTown oppPosition = playerPosition;
-                opponent.Load(Content.Load<Model>("Objects/Humans/human0"), oppPosition, 0, drawer.WorldTransformMatrix);
+                opponent.Load(Content.Load<Model>("Objects/Humans/alphaBotYellow"), oppPosition, 0, drawer.WorldTransformMatrix);
                 oppQuarter.BeEnteredBy(opponent);
                 oppQuarter.SetOwner(opponent, gameTime);
-                //opponent.AddEnemy(player);
+                opponent.AddEnemy(player);
                 foreach (var quarter in town.Quarters)
                 {
                     opponent.AddTask(new ActionObjectTask(quarter.Flag, opponent));

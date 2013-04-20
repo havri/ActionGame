@@ -12,6 +12,12 @@ namespace ActionGame.Planner
     {
         readonly Box box;
 
+        public TakeBoxOperation(ActionGame game, Box box)
+            : base(game)
+        {
+            this.box = box;
+        }
+
         public override GameState Operate(GameState currentState)
         {
             IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, box.Position);

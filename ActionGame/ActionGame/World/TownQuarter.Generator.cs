@@ -115,7 +115,7 @@ namespace ActionGame.World
                         new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                         game.Drawer.WorldTransformMatrix
                         );
-                    solidObjects.AddLast(tb);
+                    boxes.Add(tb);
                     occupiedPositions.Add(p);
                 }
             }
@@ -129,7 +129,7 @@ namespace ActionGame.World
                     new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                     game.Drawer.WorldTransformMatrix
                     );
-                solidObjects.AddLast(tb);
+                boxes.Add(tb);
                 occupiedPositions.Add(p);
             }
         }

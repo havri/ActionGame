@@ -37,8 +37,6 @@ namespace ActionGame.People
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
         static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
-        static readonly TimeSpan BalkReflexTimeout = new TimeSpan(0, 0, 0, 0, 100);
-        TimeSpan lastBalkReflexTime = TimeSpan.Zero;
         /// <summary>
         /// Gets current health of human. In percents.
         /// </summary>
@@ -261,7 +259,7 @@ namespace ActionGame.People
             //Solve tasks reflex
             if (!moved)
             {
-                if (tasks.Count > 0)
+                if (tasks.Count != 0)
                 {
                     Task currentTask = tasks.Peek();
                     currentTask.Update(gameTime);
@@ -277,7 +275,6 @@ namespace ActionGame.People
 
         bool BalkReflex(GameTime gameTime)
         {
-            lastBalkReflexTime = gameTime.TotalGameTime;
             float balkDistance = this.Size.Z * 6f;
             //const float balkDistance = 0.9f;
 

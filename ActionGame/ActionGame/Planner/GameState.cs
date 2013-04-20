@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionGame.Tools;
 using ActionGame.World;
 
 namespace ActionGame.Planner
@@ -75,6 +76,30 @@ namespace ActionGame.Planner
             {
                 QuarterStates[i].OwnershipDuration += timeSpan;
             }
+        }
+
+        public Operation[] GetAvailableOperations()
+        {
+            List<Operation> operations = new List<Operation>();
+            Box availableToolBox = Position.Quarter.GetNearestBox(Position, true);
+            Box availableHealBox = Position.Quarter.GetNearestBox(Position, false);
+            if (availableToolBox != null)
+            {
+                operations.Add(new TakeBoxOperation(game, availableToolBox));
+            }
+            if (availableHealBox != null)
+            {
+                operations.Add(new TakeBoxOperation(game, availableHealBox));
+            }
+            for (int i = 0; i < game.Town.Quarters.Length; i++)
+            {
+                if (QuarterStates[i].Ownership != QuarterOwnership.My)
+                {
+                    operations.Add(new CaptureFlagOperation(game, i));
+                }
+            }
+
+            return operations.ToArray();
         }
     }
 }

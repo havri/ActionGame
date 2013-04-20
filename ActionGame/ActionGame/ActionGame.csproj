@@ -135,6 +135,8 @@
     </Compile>
     <Compile Include="Objects\ActionObject.cs" />
     <Compile Include="Objects\Flag.cs" />
+    <Compile Include="Planner\ActionOperation.cs" />
+    <Compile Include="Planner\CaptureFlagOperation.cs" />
     <Compile Include="Planner\GameState.cs" />
     <Compile Include="Planner\Operation.cs" />
     <Compile Include="Planner\QuarterOwnership.cs" />

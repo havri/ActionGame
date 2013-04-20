@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.QSP;
 using ActionGame.Objects;
+using ActionGame.Tools;
 
 
 namespace ActionGame.World
@@ -69,6 +70,7 @@ namespace ActionGame.World
         /// </summary>
         readonly LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
         readonly LinkedList<Plate> solidPlates = new LinkedList<Plate>();
+        readonly List<Box> boxes = new List<Box>();
 
         readonly List<TownQuarterInterface> interfaces;
         public List<TownQuarterInterface> Interfaces { get { return interfaces; } }
@@ -307,16 +309,19 @@ namespace ActionGame.World
 
             flag.Update(gameTime);
 
-            foreach (KeyValuePair<BulletVisualisation, TimeSpan> bulletAddedTime in bulletAddedTimes)
+            if (bulletAddedTimes.Count != 0)
             {
-                if (bulletAddedTime.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime)
+                foreach (KeyValuePair<BulletVisualisation, TimeSpan> bulletAddedTime in bulletAddedTimes)
                 {
-                    magicBullets.Remove(bulletAddedTime.Key);
-                    game.Drawer.StopDrawingObject(bulletAddedTime.Key);
-                    bulletAddedTime.Key.Dispose();
+                    if (bulletAddedTime.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime)
+                    {
+                        magicBullets.Remove(bulletAddedTime.Key);
+                        game.Drawer.StopDrawingObject(bulletAddedTime.Key);
+                        bulletAddedTime.Key.Dispose();
+                    }
                 }
+                bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
             }
-            bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
             updateProcessing = false;
 
 
@@ -357,6 +362,7 @@ namespace ActionGame.World
             result.AddRange(magicPlates);
             result.AddRange(solidPlates);
             result.AddRange(solidObjects);
+            result.AddRange(boxes);
             result.AddRange(walkers);
             result.AddRange(guards);
             result.AddRange(magicBullets);
@@ -373,6 +379,7 @@ namespace ActionGame.World
             result.AddRange(solidObjects);
             result.AddRange(guards);
             result.AddRange(walkers);
+            result.AddRange(boxes);
             if (game.Opponent.Position.Quarter == this)
             {
                 result.Add(game.Opponent);
@@ -394,9 +401,10 @@ namespace ActionGame.World
                     guards.Remove(obj as Human);
                     walkers.Remove(obj as Human);
                 }
-                else
+                else if(obj is Box)
                 {
-                    solidObjects.Remove(obj);
+                    //solidObjects.Remove(obj);
+                    boxes.Remove(obj as Box);
                 }
                 game.Drawer.StopDrawingObject(obj);
                 spaceGrid.RemoveObject(obj);
@@ -436,6 +444,31 @@ namespace ActionGame.World
             {
                 awaitingEnter.Add(human);
             }
+        }
+
+        /// <summary>
+        /// Finds nearest box in this quarter. If the position parameter is situated in another quarter, the returned box will not be actually the nearest.
+        /// </summary>
+        /// <param name="position">You're position</param>
+        /// <param name="toolBox">What are you seeking for: True for tool box; False for heal box</param>
+        /// <returns>Box or null if there are no boxes in the quarter at all</returns>
+        public Box GetNearestBox(PositionInTown position, bool toolBox)
+        {
+            Box nearest = null;
+            float distance = float.MaxValue;
+            foreach (Box box in boxes)
+            {
+                float d = box.Position.MinimalDistanceTo(position);
+                if (d < distance)
+                {
+                    if ((toolBox && box is ToolBox) || (!toolBox && box is HealBox))
+                    {
+                        distance = d;
+                        nearest = box;
+                    }
+                }
+            }
+            return nearest;
         }
     }
 }

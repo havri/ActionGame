@@ -18,6 +18,11 @@ namespace ActionGame.Planner
             }
         }
 
+        public Operation(ActionGame game)
+        {
+            this.game = game;
+        }
+
         public abstract GameState Operate(GameState currentState);
         /*{
             float duration = distanceToGo / Human.RunSpeed;

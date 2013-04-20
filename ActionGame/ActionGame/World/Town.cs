@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using ActionGame.Extensions;
 using ActionGame.MenuForms;
+using ActionGame.Tools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -194,26 +195,25 @@ namespace ActionGame.World
                     PointF center = new PointF(MapImageWidth / 2f, MapImageHeight / 2f);
                     for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
                     {
+                        float xCoo = center.X + (float)Math.Cos(i * angleJump) * radius;
+                        float yCoo = center.Y + (float)Math.Sin(i * angleJump) * radius;
                         if (quarters[i].Owner != null)
                         {
-                            graphics.DrawEllipse(new Pen(quarters[i].Owner.Content.DrawingColor, 2),
-                                center.X + (float)Math.Cos(i * angleJump) * radius - 7f,
-                                center.Y + (float)Math.Sin(i * angleJump) * radius - 7f,
-                                14, 14);
+                            graphics.DrawEllipse(new Pen(quarters[i].Owner.Content.DrawingColor, 2), xCoo - 7f, yCoo - 7f, 14, 14);
+                        }
+                        System.Drawing.Point[] pointerPoints = new System.Drawing.Point[] { new System.Drawing.Point(0, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 0) };
+                        for (int j = 0; j < pointerPoints.Length; j++)
+                        {
+                            pointerPoints[j].X += (int)xCoo;
+                            pointerPoints[j].Y += (int)yCoo;
                         }
                         if (quarters[i] == Game.Opponent.Position.Quarter)
                         {
-                            graphics.DrawEllipse(new Pen(Game.Opponent.Content.DrawingColor, 2),
-                                center.X + (float)Math.Cos(i * angleJump) * radius - 9f,
-                                center.Y + (float)Math.Sin(i * angleJump) * radius - 9f,
-                                18, 18);
+                            graphics.DrawLines(new Pen(Game.Opponent.Content.DrawingColor, 3), pointerPoints);
                         }
                         if (quarters[i] == Game.Player.Position.Quarter)
                         {
-                            graphics.DrawEllipse(new Pen(Game.Player.Content.DrawingColor, 2),
-                                center.X + (float)Math.Cos(i * angleJump) * radius - 9f,
-                                center.Y + (float)Math.Sin(i * angleJump) * radius - 9f,
-                                18, 18);
+                            graphics.DrawLines(new Pen(Game.Player.Content.DrawingColor, 3), pointerPoints);
                         }
                     }
                 }
@@ -459,5 +459,6 @@ namespace ActionGame.World
             foreach (TownQuarter quarter in quarters)
                 quarter.Dispose();
         }
+
     }
 }

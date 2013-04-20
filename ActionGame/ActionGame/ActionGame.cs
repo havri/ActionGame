@@ -245,20 +245,16 @@ namespace ActionGame
 
                 loadingForm.SetLabel("Loading opponent...");
                 loadingForm.SetValue(0);
-                /*TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby rand.Next() select q).First();
+                TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby random.Next() select q).First();
                 Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
-                PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);*/
-                TownQuarter oppQuarter = town.CurrentQuarter;
-                Point oppPoint = playerPoint;
-                PositionInTown oppPosition = playerPosition;
+                PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
+                /*TownQuarter oppQuarter = town.;
+                Point oppPoint = playerPoint;CurrentQuarter
+                PositionInTown oppPosition = playerPosition;*/
                 opponent.Load(Content.Load<Model>("Objects/Humans/alphaBotYellow"), oppPosition, 0, drawer.WorldTransformMatrix);
                 oppQuarter.BeEnteredBy(opponent);
                 oppQuarter.SetOwner(opponent, gameTime);
                 opponent.AddEnemy(player);
-                foreach (var quarter in town.Quarters)
-                {
-                    opponent.AddTask(new ActionObjectTask(quarter.Flag, opponent));
-                }
                 Components.Add(town);
 
 

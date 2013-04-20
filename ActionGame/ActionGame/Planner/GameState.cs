@@ -23,8 +23,8 @@ namespace ActionGame.Planner
 
         public float Evaluate()
         {
-            float quarterIntex = EvalQuarters();
-            return Damage * Health * quarterIntex;
+            float quarterIntex = EvalQuarters() * 1000;
+            return Damage + Health + quarterIntex * quarterIntex * quarterIntex;
         }
 
         float EvalQuarters()
@@ -81,21 +81,28 @@ namespace ActionGame.Planner
         public Operation[] GetAvailableOperations()
         {
             List<Operation> operations = new List<Operation>();
-            Box availableToolBox = Position.Quarter.GetNearestBox(Position, true);
-            Box availableHealBox = Position.Quarter.GetNearestBox(Position, false);
-            if (availableToolBox != null)
+            if (Health > 0)
             {
-                operations.Add(new TakeBoxOperation(game, availableToolBox));
-            }
-            if (availableHealBox != null)
-            {
-                operations.Add(new TakeBoxOperation(game, availableHealBox));
-            }
-            for (int i = 0; i < game.Town.Quarters.Length; i++)
-            {
-                if (QuarterStates[i].Ownership != QuarterOwnership.My)
+                Box availableToolBox = Position.Quarter.GetNearestBox(Position, true);
+                Box availableHealBox = Position.Quarter.GetNearestBox(Position, false);
+                if (availableToolBox != null)
                 {
-                    operations.Add(new CaptureFlagOperation(game, i));
+                    operations.Add(new TakeBoxOperation(game, availableToolBox));
+                }
+                if (availableHealBox != null)
+                {
+                    operations.Add(new TakeBoxOperation(game, availableHealBox));
+                }
+                for (int i = 0; i < game.Town.Quarters.Length; i++)
+                {
+                    if (QuarterStates[i].Ownership != QuarterOwnership.My)
+                    {
+                        operations.Add(new CaptureFlagOperation(game, i));
+                    }
+                }
+                if (Damage > game.Player.Health)
+                {
+                    operations.Add(new KillPlayerOperation(game));
                 }
             }
 

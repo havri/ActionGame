@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using ActionGame.Tasks;
 using ActionGame.World;
 
 namespace ActionGame.Planner
@@ -22,6 +23,8 @@ namespace ActionGame.Planner
         {
             this.game = game;
         }
+
+        public abstract Task CreateTask(Human taskHolder);
 
         public abstract GameState Operate(GameState currentState);
         /*{

@@ -37,6 +37,7 @@ namespace ActionGame.People
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
         static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
+        static readonly TimeSpan CheckEnemiesInQuarterTimeout = new TimeSpan();
         /// <summary>
         /// Gets current health of human. In percents.
         /// </summary>
@@ -262,6 +263,10 @@ namespace ActionGame.People
                 if (tasks.Count != 0)
                 {
                     Task currentTask = tasks.Peek();
+                    if (this is Opponent)
+                    {
+                        Debug.Write("Opponents task", currentTask.ToString());
+                    }
                     currentTask.Update(gameTime);
                     if (currentTask.IsComplete())
                     {
@@ -538,6 +543,19 @@ namespace ActionGame.People
                 guard.AddTool(new Gun(gt, gt.DefaultBulletCount, guard));
             }
             return guard;
+        }
+
+        public void ClearTasks()
+        {
+            tasks.Clear();
+        }
+
+        public bool HasAnythingToDo
+        {
+            get
+            {
+                return tasks.Count != 0;
+            }
         }
     }
 }

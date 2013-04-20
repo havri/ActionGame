@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ActionGame.People;
+using ActionGame.Tasks;
 using ActionGame.Tools;
 using ActionGame.World;
 
@@ -16,6 +17,11 @@ namespace ActionGame.Planner
             : base(game)
         {
             this.box = box;
+        }
+
+        public override Task CreateTask(Human taskHolder)
+        {
+            return new MoveTask(taskHolder, box.Position);
         }
 
         public override GameState Operate(GameState currentState)
@@ -32,8 +38,9 @@ namespace ActionGame.Planner
             }
             else
             {
-                newState.Health = 1f;
+                newState.Health = 100;
             }
+            newState.Position = box.Position;
             return newState;
         }
     }

@@ -138,6 +138,7 @@
     <Compile Include="Planner\ActionOperation.cs" />
     <Compile Include="Planner\CaptureFlagOperation.cs" />
     <Compile Include="Planner\GameState.cs" />
+    <Compile Include="Planner\KillPlayerOperation.cs" />
     <Compile Include="Planner\Operation.cs" />
     <Compile Include="Planner\QuarterOwnership.cs" />
     <Compile Include="Planner\QuarterState.cs" />

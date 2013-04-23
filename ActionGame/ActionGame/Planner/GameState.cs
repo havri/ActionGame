@@ -23,8 +23,10 @@ namespace ActionGame.Planner
 
         public float Evaluate()
         {
-            float quarterIntex = EvalQuarters() * 1000;
-            return Damage + Health + quarterIntex * quarterIntex * quarterIntex;
+            const float healthQ = 0.01f; // health is in percents
+            const float damageQ = 0.02f * TownQuarter.MaxGuardCount; //percentage and it's useful to have enough to clean whole quarter
+            float quarterIntex = EvalQuarters();
+            return Damage * damageQ + Health * healthQ + quarterIntex * game.Settings.TownQuarterCount;
         }
 
         float EvalThisQuarter(QuarterState quarterState)

@@ -27,31 +27,35 @@ namespace ActionGame.Planner
             return Damage + Health + quarterIntex * quarterIntex * quarterIntex;
         }
 
+        float EvalThisQuarter(QuarterState quarterState)
+        {
+            int guardCount = (int)(quarterState.OwnershipDuration.TotalSeconds / TownQuarter.GuardAddTimeout.TotalSeconds);
+            if (guardCount > TownQuarter.MaxGuardCount)
+            {
+                guardCount = TownQuarter.MaxGuardCount;
+            }
+            int multiplier;
+            switch (quarterState.Ownership)
+            {
+                case QuarterOwnership.My:
+                    multiplier = 1;
+                    break;
+                case QuarterOwnership.His:
+                    multiplier = -1;
+                    break;
+                default:
+                    multiplier = 0;
+                    break;
+            }
+            return ((float)guardCount / TownQuarter.MaxGuardCount) * multiplier;
+        }
+
         float EvalQuarters()
         {
             float quarterIndex = 0;
             foreach (QuarterState qs in QuarterStates)
             {
-                int guardCount = (int)(qs.OwnershipDuration.TotalSeconds / TownQuarter.GuardAddTimeout.TotalSeconds);
-                if (guardCount > TownQuarter.MaxGuardCount)
-                {
-                    guardCount = TownQuarter.MaxGuardCount;
-                }
-                int multiplier;
-                switch (qs.Ownership)
-                {
-                    case QuarterOwnership.My:
-                        multiplier = 1;
-                        break;
-                    case QuarterOwnership.His:
-                        multiplier = -1;
-                        break;
-                    default:
-                        multiplier = 0;
-                        break;
-                }
-                float quarterValue = ((float)guardCount / TownQuarter.MaxGuardCount) * multiplier;
-                quarterIndex += quarterValue;
+                quarterIndex += EvalThisQuarter(qs);
             }
             return quarterIndex / QuarterStates.Length;
         }
@@ -93,9 +97,11 @@ namespace ActionGame.Planner
                 {
                     operations.Add(new TakeBoxOperation(game, availableHealBox));
                 }
+
                 for (int i = 0; i < game.Town.Quarters.Length; i++)
                 {
-                    if (QuarterStates[i].Ownership != QuarterOwnership.My)
+                    if (QuarterStates[i].Ownership != QuarterOwnership.My
+                        && game.Random.NextDouble() <= -(EvalThisQuarter(QuarterStates[i])) ) // branch factor downsizing
                     {
                         operations.Add(new CaptureFlagOperation(game, i));
                     }

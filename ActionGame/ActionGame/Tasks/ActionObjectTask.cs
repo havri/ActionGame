@@ -55,5 +55,10 @@ namespace ActionGame.Tasks
         {
             return complete;
         }
+
+        public override World.TownQuarter TargetQuarter
+        {
+            get { return actionObject.Position.Quarter; }
+        }
     }
 }

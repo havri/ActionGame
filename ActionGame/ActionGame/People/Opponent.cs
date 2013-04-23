@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Planner;
 using ActionGame.Tools;
-using System.Threading.Tasks;
+using ActionGame.Tasks;
 
 namespace ActionGame.People
 {
@@ -53,9 +53,18 @@ namespace ActionGame.People
             }
             if (!hasAnythingToDo || gameTime.TotalGameTime - lastTasksReplanTime > TasksReplanTimeout)
             {
-                Task.Factory.StartNew(() => { PlanTasks(gameTime); });
+                System.Threading.Tasks.Task.Factory.StartNew(() => { PlanTasks(gameTime); });
                 //PlanTasks(gameTime);
                 lastTasksReplanTime = gameTime.TotalGameTime;
+            }
+            CheckFlagInMyQuarter();
+        }
+
+        void CheckFlagInMyQuarter()
+        {
+            if (Position.Quarter.Owner != this && (!HasAnythingToDo || Tasks.First.Value.TargetQuarter != Position.Quarter))
+            {
+                Tasks.AddFirst(new ActionObjectTask(Position.Quarter.Flag, this));
             }
         }
 

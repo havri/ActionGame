@@ -63,5 +63,7 @@ namespace ActionGame.Tasks
             }
             wayPoints.Enqueue(new WayPoint(to));
         }
+
+        public abstract TownQuarter TargetQuarter { get; }
     }
 }

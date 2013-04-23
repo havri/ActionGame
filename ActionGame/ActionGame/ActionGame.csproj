@@ -144,7 +144,7 @@
     <Compile Include="Planner\QuarterOwnership.cs" />
     <Compile Include="Planner\QuarterState.cs" />
     <Compile Include="Planner\TakeBoxOperation.cs" />
-    <Compile Include="Tasks\ActiveObjectTask.cs" />
+    <Compile Include="Tasks\ActionObjectTask.cs" />
     <Compile Include="Tasks\TemporaryTask.cs" />
     <Compile Include="Tools\HealBox.cs" />
     <Compile Include="World\EmptyTownQuarterOwner.cs" />

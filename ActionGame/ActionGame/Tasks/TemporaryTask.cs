@@ -28,5 +28,10 @@ namespace ActionGame.Tasks
         {
             return innerTask.IsComplete() || !validPredicate(innerTask);
         }
+
+        public override World.TownQuarter TargetQuarter
+        {
+            get { return innerTask.TargetQuarter; }
+        }
     }
 }

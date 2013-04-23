@@ -75,5 +75,10 @@ namespace ActionGame.Tasks
         {
             return target.Health <= 0;
         }
+
+        public override World.TownQuarter TargetQuarter
+        {
+            get { return target.Position.Quarter; }
+        }
     }
 }

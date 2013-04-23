@@ -303,11 +303,13 @@ namespace ActionGame
                 {
                     TownQuarter newQuarter = FindAndRespawnQuartersFor(player, gameTime);
                     player.RespawnInto(newQuarter);
+                    drawer.ShowMessage(gameTime, String.Format("You were killed! You are now in {0}.", newQuarter.Name));
                 }
                 if(opponent.Health <= 0)
                 {
                     TownQuarter newQuarter = FindAndRespawnQuartersFor(opponent, gameTime);
                     opponent.RespawnInto(newQuarter);
+                    drawer.ShowMessage(gameTime, String.Format("Congratulations, you're opponent was killed. He respawned in {0}.", newQuarter.Name));
                 }
             }
         }
@@ -315,7 +317,7 @@ namespace ActionGame
         TownQuarter FindAndRespawnQuartersFor(ITownQuarterOwner quarterOwner, GameTime gameTime)
         {
             TownQuarter newPosQuarter = null;
-            IOrderedEnumerable<TownQuarter> randomizedQuarters = from q in town.Quarters where q.Owner != opponent orderby random.Next() select q;
+            IOrderedEnumerable<TownQuarter> randomizedQuarters = from q in town.Quarters where q.Owner == quarterOwner || q.Owner == EmptyTownQuarterOwner.Instance orderby random.Next() select q;
             foreach (TownQuarter quarter in town.Quarters)
             {
                 if (quarter.Owner == quarterOwner)

@@ -45,6 +45,13 @@ namespace ActionGame.People
         public int Health { get { return health; } }
         int health;
         readonly LinkedList<Task> tasks = new LinkedList<Task>();
+        protected LinkedList<Task> Tasks
+        {
+            get
+            {
+                return tasks;
+            }
+        }
         readonly List<Tool> tools = new List<Tool>();
         protected List<Tool> Tools
         {
@@ -269,15 +276,13 @@ namespace ActionGame.People
                     }
                 }
             }
-
             CheckEnemiesInMyQuarter(gameTime);
-
             CheckHits(gameLogicOnly, gameTime);
         }
 
         private void CheckEnemiesInMyQuarter(GameTime gameTime)
         {
-            if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout && HasAnythingToDo && !(tasks.First.Value is KillTask))
+            if (/*gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout &&*/ (!HasAnythingToDo || tasks.First.Value.TargetQuarter != Position.Quarter || (!(tasks.First.Value is KillTask) && !(tasks.First.Value is TemporaryTask<KillTask>))))
             {
                 foreach (Human enemy in enemies)
                 {

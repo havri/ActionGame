@@ -42,5 +42,12 @@ namespace ActionGame.Tasks
         {
             return false;
         }
+
+
+
+        public override TownQuarter TargetQuarter
+        {
+            get { return moveTasks.Peek().TargetQuarter; }
+        }
     }
 }

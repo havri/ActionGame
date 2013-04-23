@@ -44,5 +44,12 @@ namespace ActionGame.Tasks
         {
             return (Holder.Pivot.MinimalDistanceTo(destination) <= Human.EpsilonDistance);
         }
+
+
+
+        public override TownQuarter TargetQuarter
+        {
+            get { return destination.Quarter; }
+        }
     }
 }

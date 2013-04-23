@@ -300,7 +300,9 @@ namespace ActionGame
                 opponent.Update(gameTime, !opponentInTheSameQuarter);
                 player.Update(gameTime);
                 if (player.Health <= 0)
-                    Exit();
+                {
+                    //Exit();
+                }
             }
         }
         /// <summary>

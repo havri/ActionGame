@@ -18,7 +18,12 @@ namespace ActionGame.People
 
         public Opponent(ActionGame game)
             : base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
-        { }
+        {
+            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this))
+            {
+                AddTool(gun);
+            }
+        }
 
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {

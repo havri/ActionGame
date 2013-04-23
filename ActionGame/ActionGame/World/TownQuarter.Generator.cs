@@ -480,14 +480,14 @@ namespace ActionGame.World
         private void FillByBuildings(Model[] buildingModels, RectangleF target)
         {
             Matrix worldTransform = game.Drawer.WorldTransformMatrix;
-            Random rand = new Random();
+            Random rand = game.Random;
             float horizontalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
             float verticalSpace = (float)(rand.NextDouble() * 0.7 + 0.3) * BetweenBuildingSpace;
 
 
             IEnumerable<Model> modelCandidates = from model in buildingModels
                                                  where model.GetSize(worldTransform).X + horizontalSpace <= target.Width && model.GetSize(worldTransform).Z + verticalSpace <= target.Height
-                                                 orderby rand.Next()
+                                                 orderby -(rand.NextDouble(0.4,1.0) * model.GetSize(worldTransform).X * model.GetSize(worldTransform).Z)
                                                  select model;
             if (modelCandidates.Any())
             {

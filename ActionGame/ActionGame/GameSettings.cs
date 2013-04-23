@@ -20,6 +20,5 @@ namespace ActionGame
         public bool MouseXInvert { get; set; }
         public bool MouseYInvert { get; set; }
         public string GunSetFilename { get; set; }
-        public int OpponentCount { get; set; }
     }
 }

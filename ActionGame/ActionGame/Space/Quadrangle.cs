@@ -17,6 +17,14 @@ namespace ActionGame.Space
         readonly Vector2 lowerRightCorner;
         readonly ISet<GridField> spacePartitioningFields;
 
+        public static Quadrangle CreateBand(Vector2 start, float azimuth, float width, float length)
+        {
+            float halfWidth = width * 0.5f;
+            Vector2 left = start.Go(halfWidth, azimuth - MathHelper.PiOver2);
+            Vector2 right = start.Go(halfWidth, azimuth + MathHelper.PiOver2);
+            return new Quadrangle(right, left, right.Go(length, azimuth), left.Go(length, azimuth));
+        }
+
         public Quadrangle(Vector2 UpperLeftCorner, Vector2 UpperRightCorner, Vector2 LowerLeftCorner, Vector2 LowerRightCorner)
         {
             upperLeftCorner = UpperLeftCorner;

@@ -34,8 +34,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.opponentsCountNB = new System.Windows.Forms.NumericUpDown();
-            this.label11 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.gunSetFileTB = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -67,8 +65,6 @@
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).BeginInit();
@@ -133,8 +129,6 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.opponentsCountNB);
-            this.groupBox4.Controls.Add(this.label11);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Location = new System.Drawing.Point(3, 150);
             this.groupBox4.Name = "groupBox4";
@@ -142,37 +136,6 @@
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Opponents";
-            // 
-            // opponentsCountNB
-            // 
-            this.opponentsCountNB.Location = new System.Drawing.Point(121, 14);
-            this.opponentsCountNB.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.opponentsCountNB.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.opponentsCountNB.Name = "opponentsCountNB";
-            this.opponentsCountNB.Size = new System.Drawing.Size(40, 20);
-            this.opponentsCountNB.TabIndex = 1;
-            this.opponentsCountNB.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 16);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(109, 13);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Number of opponents";
             // 
             // groupBox3
             // 
@@ -534,9 +497,6 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.gameSettingsPage.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.opponentsCountNB)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -593,7 +553,5 @@
         private System.Windows.Forms.TextBox gunSetFileTB;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.NumericUpDown opponentsCountNB;
-        private System.Windows.Forms.Label label11;
     }
 }

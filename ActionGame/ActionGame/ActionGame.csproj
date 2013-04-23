@@ -120,6 +120,7 @@
     <Compile Include="Exceptions\PathNotFoundException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\MapFillTypeExtensions.cs" />
+    <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="MenuForms\Loading.cs">
       <SubType>Form</SubType>

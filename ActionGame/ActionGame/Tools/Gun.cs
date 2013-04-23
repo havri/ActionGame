@@ -42,12 +42,15 @@ namespace ActionGame.Tools
         public override void DoAction(GameTime gameTime, PositionInTown position, float azimuth)
         {
             if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout && Usable)
-            { 
-                const float bulletWidthHalf = 0.01f;
+            {
+                const float bulletWidth = 0.02f;
+
+                const float bulletWidthHalf = bulletWidth / 2;
                 Vector2 quarterPosition = position.PositionInQuarter;
                 Vector2 left = quarterPosition.Go(bulletWidthHalf, azimuth - MathHelper.PiOver2);
                 Vector2 right = quarterPosition.Go(bulletWidthHalf, azimuth + MathHelper.PiOver2);
                 Quadrangle bullet = new Quadrangle(right, left, right.Go(type.Range, azimuth), left.Go(type.Range, azimuth));
+                //Quadrangle bullet = Quadrangle.CreateBand(position.PositionInQuarter, azimuth, bulletWidth, type.Range);
                 TownQuarter quarter = position.Quarter;
 
                 List<Quadrangle> colliders = new List<Quadrangle>(quarter.SpaceGrid.GetAllCollisions(bullet));

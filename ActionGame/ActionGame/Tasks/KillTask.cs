@@ -12,6 +12,13 @@ namespace ActionGame.Tasks
         static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 30);
         TimeSpan lastUpdatedWaypoints = TimeSpan.Zero;
         readonly Human target;
+        public Human Target
+        {
+            get
+            {
+                return target;
+            }
+        }
         public KillTask(Human holder, Human target)
             : base(holder)
         {

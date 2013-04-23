@@ -10,15 +10,15 @@ namespace ActionGame.Tasks
 {
     public abstract class Task
     {
-        readonly private Human holder;
-        protected Human Holder
+        readonly Human holder;
+        public Human Holder
         {
             get
             {
                 return holder;
             }
         }
-        readonly private Queue<WayPoint> wayPoints;
+        readonly Queue<WayPoint> wayPoints;
         protected Queue<WayPoint> WayPoints
         {
             get

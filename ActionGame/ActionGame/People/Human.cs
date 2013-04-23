@@ -37,14 +37,15 @@ namespace ActionGame.People
         public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
         static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
-        static readonly TimeSpan CheckEnemiesInQuarterTimeout = new TimeSpan();
+        static readonly TimeSpan CheckEnemiesInQuarterTimeout = new TimeSpan(0,0,20);
+        TimeSpan lastCheckEnemiesInQuarterTime = TimeSpan.Zero;
         /// <summary>
         /// Gets current health of human. In percents.
         /// </summary>
         public int Health { get { return health; } }
         int health;
-        private readonly Queue<Task> tasks;
-        private readonly List<Tool> tools;
+        readonly LinkedList<Task> tasks = new LinkedList<Task>();
+        readonly List<Tool> tools = new List<Tool>();
         protected List<Tool> Tools
         {
             get { return tools; }
@@ -96,8 +97,6 @@ namespace ActionGame.People
         {
             this.game = game;
             health = 100;
-            tasks = new Queue<Task>();
-            tools = new List<Tool>();
             tools.AddRange(
                 from gunType in game.HumanDefaultGuns select new Gun (gunType, gunType.DefaultBulletCount, this)
                 );
@@ -262,7 +261,7 @@ namespace ActionGame.People
             {
                 if (tasks.Count != 0)
                 {
-                    Task currentTask = tasks.Peek();
+                    Task currentTask = tasks.First.Value;
                     if (this is Opponent)
                     {
                         Debug.Write("Opponents task", currentTask.ToString());
@@ -270,12 +269,31 @@ namespace ActionGame.People
                     currentTask.Update(gameTime);
                     if (currentTask.IsComplete())
                     {
-                        tasks.Dequeue();
+                        tasks.RemoveFirst();
                     }
                 }
             }
 
+            CheckEnemiesInMyQuarter(gameTime);
+
             CheckHits(gameLogicOnly, gameTime);
+        }
+
+        private void CheckEnemiesInMyQuarter(GameTime gameTime)
+        {
+            if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout)
+            {
+                foreach (Human enemy in enemies)
+                {
+                    if (enemy.Position.Quarter == this.Position.Quarter)
+                    {
+                        KillTask killTask = new KillTask(this, enemy);
+                        TemporaryTask<KillTask> tt = new TemporaryTask<KillTask>(this, killTask, task => task.Holder.Position.Quarter == task.Target.Position.Quarter);
+                        tasks.AddFirst(tt);
+                    }
+                }
+                lastCheckEnemiesInQuarterTime = gameTime.TotalGameTime;
+            }
         }
 
         bool BalkReflex(GameTime gameTime)
@@ -358,7 +376,7 @@ namespace ActionGame.People
 
         public void AddTask(Task task)
         {
-            tasks.Enqueue(task);
+            tasks.AddLast(task);
         }
 
         public Tool SelectedTool

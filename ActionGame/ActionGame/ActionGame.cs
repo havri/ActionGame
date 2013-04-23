@@ -301,10 +301,42 @@ namespace ActionGame
                 player.Update(gameTime);
                 if (player.Health <= 0)
                 {
-                    //Exit();
+                    TownQuarter newQuarter = FindAndRespawnQuartersFor(player, gameTime);
+                    player.RespawnInto(newQuarter);
+                }
+                if(opponent.Health <= 0)
+                {
+                    TownQuarter newQuarter = FindAndRespawnQuartersFor(opponent, gameTime);
+                    opponent.RespawnInto(newQuarter);
                 }
             }
         }
+
+        TownQuarter FindAndRespawnQuartersFor(ITownQuarterOwner quarterOwner, GameTime gameTime)
+        {
+            TownQuarter newPosQuarter = null;
+            IOrderedEnumerable<TownQuarter> randomizedQuarters = from q in town.Quarters where q.Owner != opponent orderby random.Next() select q;
+            foreach (TownQuarter quarter in town.Quarters)
+            {
+                if (quarter.Owner == quarterOwner)
+                {
+                    if (newPosQuarter == null)
+                    {
+                        newPosQuarter = quarter;
+                    }
+                    else
+                    {
+                        quarter.SetOwner(EmptyTownQuarterOwner.Instance, gameTime);
+                    }
+                }
+            }
+            if (newPosQuarter == null)
+            {
+                newPosQuarter = randomizedQuarters.First();
+            }
+            return newPosQuarter;
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>

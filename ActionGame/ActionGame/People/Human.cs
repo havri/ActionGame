@@ -240,10 +240,6 @@ namespace ActionGame.People
                         GoThisWay(rightIface.LeftPathGraphVertex.Position, seconds);
                     }
                 }
-                else
-                {
-                    throw new PathNotFoundException("Reached quarter isn't connected to this one.");
-                }
             }
         }
 
@@ -575,6 +571,15 @@ namespace ActionGame.People
             {
                 return tasks.Count != 0;
             }
+        }
+
+        public void RespawnInto(TownQuarter targetQuarter)
+        {
+            Position.Quarter.BeLeftBy(this);
+            Position = new PositionInTown(targetQuarter,
+                targetQuarter.GetRandomSquare(x => (x == MapFillType.StraightRoad)).ToVector2() * TownQuarter.SquareWidth + Vector2.One * 0.5f * TownQuarter.SquareWidth);
+            Position.Quarter.BeEnteredBy(this);
+            health = 100;
         }
     }
 }

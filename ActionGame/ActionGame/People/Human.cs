@@ -281,7 +281,7 @@ namespace ActionGame.People
 
         private void CheckEnemiesInMyQuarter(GameTime gameTime)
         {
-            if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout)
+            if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout && HasAnythingToDo && !(tasks.First.Value is KillTask))
             {
                 foreach (Human enemy in enemies)
                 {
@@ -290,6 +290,7 @@ namespace ActionGame.People
                         KillTask killTask = new KillTask(this, enemy);
                         TemporaryTask<KillTask> tt = new TemporaryTask<KillTask>(this, killTask, task => task.Holder.Position.Quarter == task.Target.Position.Quarter);
                         tasks.AddFirst(tt);
+                        break;
                     }
                 }
                 lastCheckEnemiesInQuarterTime = gameTime.TotalGameTime;

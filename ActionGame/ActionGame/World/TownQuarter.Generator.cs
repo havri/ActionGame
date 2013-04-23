@@ -615,6 +615,7 @@ namespace ActionGame.World
                     float wallHeight = 4.5f;
                     int count = (int)((BlockWidth - 1) * SquareWidth / wallWidth); //minus sidewalk
                     wallWidth = (BlockWidth - 1) * SquareWidth / count;
+                    const float ifaceWallEpsilon = 0.001f; // 1mm
                     for (int p = 0; p < count; p++)
                     {
                         Vector2 beginL, endL, beginR, endR;
@@ -622,23 +623,23 @@ namespace ActionGame.World
                         {
                             case AxisDirection.Horizontal:
                                 beginL.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
-                                beginL.Y = (position - 1) * SquareWidth;
+                                beginL.Y = (position - 1) * SquareWidth + ifaceWallEpsilon;
                                 endL = beginL;
                                 endL.X += wallWidth;
 
                                 beginR.X = p * wallWidth + (side == TownQuarterInterfacePosition.Left ? 0 : bitmapSize.Width - BlockWidth + 1) * SquareWidth;
-                                beginR.Y = (position + 2) * SquareWidth;
+                                beginR.Y = (position + 2) * SquareWidth - ifaceWallEpsilon;
                                 endR = beginR;
                                 endR.X += wallWidth;
                                 break;
                             case AxisDirection.Vertical:
                                 beginL.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
-                                beginL.X = (position - 1) * SquareWidth;
+                                beginL.X = (position - 1) * SquareWidth + ifaceWallEpsilon;
                                 endL = beginL;
                                 endL.Y += wallWidth;
 
                                 beginR.Y = p * wallWidth + (side == TownQuarterInterfacePosition.Top ? 0 : bitmapSize.Height - BlockWidth + 1) * SquareWidth;
-                                beginR.X = (position + 2) * SquareWidth;
+                                beginR.X = (position + 2) * SquareWidth - ifaceWallEpsilon;
                                 endR = beginR;
                                 endR.Y += wallWidth;
                                 break;
@@ -663,7 +664,7 @@ namespace ActionGame.World
         private void GenerateBorderBuildings(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges)
         {
             //expand corner ranges
-            foreach (var ranges in emptyRanges)
+            foreach (KeyValuePair<TownQuarterInterfacePosition, List<Range>> ranges in emptyRanges)
             {
                 for (int i = 0; i < ranges.Value.Count; i++)
                 {
@@ -704,68 +705,63 @@ namespace ActionGame.World
                 game.Content.Load<Model>("Objects/Buildings/borderBuilding1"),
                 game.Content.Load<Model>("Objects/Buildings/fence1")
             };
-            Random rand = new Random();
+            //sort by size X desc
+            Array.Sort(buildingModels, (x, y) => -(x.GetSize(game.Drawer.WorldTransformMatrix).X.CompareTo(y.GetSize(game.Drawer.WorldTransformMatrix).X)));
             foreach (var ranges in emptyRanges)
             {
                 foreach (var range in ranges.Value)
                 {
-                    FillEmptyBorderRange(buildingModels, rand, ranges.Key, range, 0f);
+                    FillEmptyBorderRange(buildingModels, ranges.Key, range, 0f);
                 }
             }
         }
 
         /// <summary>
-        /// Fills empty range of town quarter border by buildings. It takes it by dimension X.
+        /// Fills empty range of town quarter border by buildings. It takes it by dimension X - first fit.
         /// </summary>
-        /// <param name="roadModelWidth">Width of road (sidewalk) square</param>
-        /// <param name="worldTransform">World transform matrix</param>
         /// <param name="buildingModels">Availible models</param>
-        /// <param name="rand">Random generator</param>
         /// <param name="borderPosition">Position of border - specifies side of rectangle</param>
         /// <param name="range">Empty range for filling</param>
         /// <param name="offset">Already filled part of range</param>
-        /// <param name="bitmapSizeX">Town quarter width in road squares</param>
-        /// <param name="bitmapSizeY">Town quarter height in road squares</param>
-        private void FillEmptyBorderRange(Model[] buildingModels, Random rand, TownQuarterInterfacePosition borderPosition, Range range, float offset)
+        private void FillEmptyBorderRange(Model[] buildingModels, TownQuarterInterfacePosition borderPosition, Range range, float offset)
         {
             float emptySpace = (range.Length - 1) * SquareWidth - offset;
-            IEnumerable<Model> modelCandidates = from model in buildingModels
-                                                 where model.GetSize(game.Drawer.WorldTransformMatrix).X <= emptySpace
-                                                 orderby rand.Next()
-                                                 select model;
-            if (modelCandidates.Any())
+            foreach(Model model in buildingModels)
             {
-                Model usedModel = modelCandidates.First();
-                Vector3 usedModelSize = usedModel.GetSize(game.Drawer.WorldTransformMatrix);
-
-
-                float angle = 0;
-                Vector3 position = Vector3.Zero;
-                float newOffset = offset + usedModelSize.X;
-                switch (borderPosition)
+                if (model.GetSize(game.Drawer.WorldTransformMatrix).X <= emptySpace)
                 {
-                    case TownQuarterInterfacePosition.Top:
-                        position = new Vector3(range.Begin * SquareWidth + SquareWidth + offset, 0, BlockWidth * SquareWidth - SquareWidth - usedModelSize.Z);
-                        break;
-                    case TownQuarterInterfacePosition.Right:
-                        position = new Vector3(BlockWidth * SquareWidth - SquareWidth - usedModelSize.X / 2 + usedModelSize.Z / 2 + +(bitmapSize.Width - 2 * (BlockWidth - 1)) * SquareWidth, 0, range.Begin * SquareWidth + SquareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
-                        angle = MathHelper.PiOver2;
-                        break;
-                    case TownQuarterInterfacePosition.Bottom:
-                        position = new Vector3(range.Begin * SquareWidth + SquareWidth + offset, 0, BlockWidth * SquareWidth - SquareWidth + (bitmapSize.Height - 2 * (BlockWidth - 1)) * SquareWidth);
-                        break;
-                    case TownQuarterInterfacePosition.Left:
-                        position = new Vector3(BlockWidth * SquareWidth - SquareWidth - usedModelSize.X / 2 - usedModelSize.Z / 2, 0, range.Begin * SquareWidth + SquareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
-                        angle = MathHelper.PiOver2;
-                        break;
-                    default:
-                        break;
+                    Model usedModel = model;
+                    Vector3 usedModelSize = usedModel.GetSize(game.Drawer.WorldTransformMatrix);
+
+                    float angle = 0;
+                    Vector3 position = Vector3.Zero;
+                    float newOffset = offset + usedModelSize.X;
+                    switch (borderPosition)
+                    {
+                        case TownQuarterInterfacePosition.Top:
+                            position = new Vector3(range.Begin * SquareWidth + SquareWidth + offset, 0, BlockWidth * SquareWidth - SquareWidth - usedModelSize.Z);
+                            break;
+                        case TownQuarterInterfacePosition.Right:
+                            position = new Vector3(BlockWidth * SquareWidth - SquareWidth - usedModelSize.X / 2 + usedModelSize.Z / 2 + +(bitmapSize.Width - 2 * (BlockWidth - 1)) * SquareWidth, 0, range.Begin * SquareWidth + SquareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                            angle = MathHelper.PiOver2;
+                            break;
+                        case TownQuarterInterfacePosition.Bottom:
+                            position = new Vector3(range.Begin * SquareWidth + SquareWidth + offset, 0, BlockWidth * SquareWidth - SquareWidth + (bitmapSize.Height - 2 * (BlockWidth - 1)) * SquareWidth);
+                            break;
+                        case TownQuarterInterfacePosition.Left:
+                            position = new Vector3(BlockWidth * SquareWidth - SquareWidth - usedModelSize.X / 2 - usedModelSize.Z / 2, 0, range.Begin * SquareWidth + SquareWidth + offset + usedModelSize.X / 2 - usedModelSize.Z / 2);
+                            angle = MathHelper.PiOver2;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, game.Drawer.WorldTransformMatrix);
+                    solidObjects.AddLast(borderBuilding);
+
+                    FillEmptyBorderRange(buildingModels, borderPosition, range, newOffset);
+                    break;
                 }
-
-                SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, game.Drawer.WorldTransformMatrix);
-                solidObjects.AddLast(borderBuilding);
-
-                FillEmptyBorderRange(buildingModels, rand, borderPosition, range, newOffset);
             }
         }
 

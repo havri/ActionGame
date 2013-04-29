@@ -19,10 +19,18 @@ using ActionGame.Space;
 namespace ActionGame
 {
     /// <summary>
-    /// This is the main type for your game
+    /// This is the main type in the game.
     /// </summary>
     public class ActionGame : Microsoft.Xna.Framework.Game
     {
+        readonly ContentRepository contentRepository;
+        public ContentRepository ContentRepository
+        {
+            get
+            {
+                return contentRepository;
+            }
+        }
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -144,7 +152,7 @@ namespace ActionGame
                 if (settings.Fullscreen)
                     graphics.ToggleFullScreen();
                 Content.RootDirectory = "Content";
-
+                contentRepository = new ContentRepository(this);
                 camera = new Camera(this);
                 debug = new Debug(this);
                 drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
@@ -222,8 +230,11 @@ namespace ActionGame
                 GameTime gameTime =new GameTime(TimeSpan.Zero, TimeSpan.Zero);
                 loadingForm.Show();
 
-                loadingForm.SetLabel("Loading graphics device...");
+                loadingForm.SetLabel("Loading graphics device tools...");
                 spriteBatch = new SpriteBatch(GraphicsDevice);
+
+                loadingForm.SetLabel("Loading content...");
+                contentRepository.LoadContent();
 
                 loadingForm.SetLabel("Loading gun types...");
                 LoadGunTypes();

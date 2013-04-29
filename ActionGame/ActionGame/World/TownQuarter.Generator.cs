@@ -459,14 +459,7 @@ namespace ActionGame.World
 
         private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks)
         {
-            ///TODO: Build central model repository
-            Model[] buildingModels = new Model[]
-            {
-                game.Content.Load<Model>("Objects/Buildings/panelak"),
-                game.Content.Load<Model>("Objects/Buildings/panelak2"),
-                game.Content.Load<Model>("Objects/Buildings/house1"),
-                game.Content.Load<Model>("Objects/Buildings/transformer")
-            };
+            Model[] buildingModels = game.ContentRepository.InnerBuildings;
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
             {
                 float realWidth = emptyRect.Width * SquareWidth,
@@ -695,16 +688,7 @@ namespace ActionGame.World
                 }
             }
 
-            ///TODO: Build central model repository
-            Model[] buildingModels = new Model[]
-            {
-                game.Content.Load<Model>("Objects/Buildings/borderBuilding"),
-                game.Content.Load<Model>("Objects/Buildings/borderBuilding10"),
-                game.Content.Load<Model>("Objects/Buildings/borderBuilding8"),
-                game.Content.Load<Model>("Objects/Buildings/borderBuilding4"),
-                game.Content.Load<Model>("Objects/Buildings/borderBuilding1"),
-                game.Content.Load<Model>("Objects/Buildings/fence1")
-            };
+            Model[] buildingModels = game.ContentRepository.BorderBuildings;
             //sort by size X desc
             Array.Sort(buildingModels, (x, y) => -(x.GetSize(game.Drawer.WorldTransformMatrix).X.CompareTo(y.GetSize(game.Drawer.WorldTransformMatrix).X)));
             foreach (var ranges in emptyRanges)

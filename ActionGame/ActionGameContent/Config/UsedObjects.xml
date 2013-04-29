@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  <folder name="Buildings">
+    <object file="house1">
+      <use as="inner" />
+    </object>
+    <object file="panelak">
+      <use as="inner" />
+    </object>
+    <object file="panelak2">
+      <use as="inner" />
+    </object>
+    <object file="house2">
+      <use as="inner" />
+      <use as="border" />
+    </object>
+    <object file="house3">
+      <use as="inner" />
+      <use as="border" />
+    </object>
+    <object file="house4">
+      <use as="inner" />
+      <use as="border" />
+    </object>
+    <object file="brickedWall">
+      <use as="border" />
+    </object>
+    <object file="brickedWallLong">
+      <use as="border" />
+    </object>
+    <object file="woodenFence">
+      <use as="border" />
+    </object>
+    <object file="woodenFenceLong">
+      <use as="border" />
+    </object>
+    <object file="transformer">
+      <use as="inner" />
+    </object>
+  </folder>
+</objects>

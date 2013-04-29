@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Components\Camera.cs" />
     <Compile Include="Components\Camera\CameraMode.cs" />
+    <Compile Include="Components\ContentRepository.cs" />
     <Compile Include="Components\Debug.cs" />
     <Compile Include="Components\Drawer.cs" />
     <Compile Include="Components\Drawer\ProgressBar.cs" />

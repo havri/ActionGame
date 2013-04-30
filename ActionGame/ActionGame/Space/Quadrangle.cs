@@ -59,7 +59,7 @@ namespace ActionGame.Space
 
             return myUp.IsInCollisionWith(itsUp) || myUp.IsInCollisionWith(itsDown) || myDown.IsInCollisionWith(itsUp) || myDown.IsInCollisionWith(itsDown);
 
-            return ZapCollisionDetect(obj);
+            /*return ZapCollisionDetect(obj);
             
             Line leftAxis = Line.FromTwoPoints(UpperLeftCorner, LowerLeftCorner);
             Line rightAxis = Line.FromTwoPoints(UpperRightCorner, LowerRightCorner);
@@ -72,7 +72,7 @@ namespace ActionGame.Space
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj)) // vertical switched
                 || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // both switched
                 ;
-            
+            */
         }
 
         public void CheckHits(bool gameLogicOnly, GameTime gameTime)

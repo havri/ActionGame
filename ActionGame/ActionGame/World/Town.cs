@@ -67,7 +67,6 @@ namespace ActionGame.World
                 degrees[j]++;
                 edges[i, j] = true;
             }
-            Random rand = new Random();
             for (int i = 0; i < game.Settings.TownQuarterCount; i++)
             {
                 loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
@@ -75,7 +74,7 @@ namespace ActionGame.World
                 {
                     if (!edges[i, j] && degrees[i] < MaxQuarterDegree && degrees[j] < MaxQuarterDegree)
                     {
-                        if (rand.Next(0, 4) == 0)
+                        if (game.Random.Next(0, 4) == 0)
                         {
                             degrees[i]++;
                             degrees[j]++;
@@ -92,8 +91,8 @@ namespace ActionGame.World
             {
                 loadingFrom.SetValue(100 * i / game.Settings.TownQuarterCount);
                 float perimeterLength = MinSideLengthPerInterface * Math.Max(degrees[i], 4); // Even interface isn't needed the side must be there
-                perimeterLength *= (float)rand.NextDouble() + 1f; //Minimal length can be doubled
-                float width = (perimeterLength / 2f) * (float)(rand.NextDouble() * 0.3 + 0.35); //aspect ratio
+                perimeterLength *= (float)game.Random.NextDouble() + 1f; //Minimal length can be doubled
+                float width = (perimeterLength / 2f) * (float)(game.Random.NextDouble() * 0.3 + 0.35); //aspect ratio
                 float height = (perimeterLength / 2f) - width;
                 if (width < MinQuarterSideLength)
                     width = MinQuarterSideLength;
@@ -127,8 +126,8 @@ namespace ActionGame.World
                 {
                     if (edges[i, j])
                     {
-                        TownQuarterInterface ifaceI = (from iface in quarters[i].Interfaces where iface.OppositeInterface == null orderby rand.Next() select iface).First();
-                        TownQuarterInterface ifaceJ = (from iface in quarters[j].Interfaces where iface.OppositeInterface == null orderby rand.Next() select iface).First();
+                        TownQuarterInterface ifaceI = (from iface in quarters[i].Interfaces where iface.OppositeInterface == null orderby game.Random.Next() select iface).First();
+                        TownQuarterInterface ifaceJ = (from iface in quarters[j].Interfaces where iface.OppositeInterface == null orderby game.Random.Next() select iface).First();
                         ifaceI.OppositeInterface = ifaceJ;
                         ifaceJ.OppositeInterface = ifaceI;
                         ifaceI.LeftPathGraphVertex.AddNeighborBothDirection(ifaceJ.RightPathGraphVertex, TownQuarter.SquareWidth);

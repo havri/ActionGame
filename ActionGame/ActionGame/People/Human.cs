@@ -276,6 +276,8 @@ namespace ActionGame.People
                     }
                 }
             }
+
+            //post reflexes
             CheckEnemiesInMyQuarter(gameTime);
             CheckHits(gameLogicOnly, gameTime);
         }

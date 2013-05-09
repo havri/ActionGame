@@ -138,10 +138,10 @@ namespace ActionGame.People
                 {
                     azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * Game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseXInvert ? -1 : 1);
                     LookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
-                    if (LookAngle > MathHelper.PiOver2)
-                        LookAngle = MathHelper.PiOver2;
-                    if (LookAngle < -MathHelper.PiOver2)
-                        LookAngle = -MathHelper.PiOver2;
+                    if (LookAngle > MathHelper.PiOver4)
+                        LookAngle = MathHelper.PiOver4;
+                    if (LookAngle < -MathHelper.PiOver4)
+                        LookAngle = -MathHelper.PiOver4;
                     //lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
                 Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);

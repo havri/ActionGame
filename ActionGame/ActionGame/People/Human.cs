@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Tools;
 using ActionGame.Objects;
 using ActionGame.Exceptions;
+using ActionGame.Components;
 
 namespace ActionGame.People
 {
@@ -28,8 +29,7 @@ namespace ActionGame.People
         /// </summary>
         public const double RotateAngle = MathHelper.Pi;
         const float ThirdHeadHorizontalDistance = 1.5f;
-        const float ThirdHeadVerticalDistance = 0.1f;
-        public const float LookingAtDistance = 10;
+        const float ThirdHeadVerticalDistance = 0.22f;
         /// <summary>
         /// Distance from target where human decides he's there.
         /// </summary>
@@ -68,7 +68,14 @@ namespace ActionGame.People
         }
         protected ActionGame Game { get { return game; } }
         private readonly ActionGame game;
-        public double LookAngle { get { return lookAngle; } set { lookAngle = value; } }
+        public double LookAngle
+        { 
+            get { return lookAngle; } 
+            set
+            {
+                lookAngle = value; 
+            }
+        }
         double lookAngle = 0f;
         readonly HashSet<Human> friends = new HashSet<Human>();
         readonly HashSet<Human> enemies = new HashSet<Human>();
@@ -155,18 +162,24 @@ namespace ActionGame.People
         {
             get
             {
-                Vector2 ret = Pivot.PositionInQuarter.Go(-(Size.Z + ThirdHeadHorizontalDistance), azimuth);
-                return ret.ToVector3(Size.Y + ThirdHeadVerticalDistance);
+                return GetLookingAtCoordinates(Pivot.PositionInQuarter.ToVector3(Size.Y + ThirdHeadVerticalDistance), -ThirdHeadHorizontalDistance);
+                /*Vector2 ret = Pivot.PositionInQuarter.Go(-zDist, azimuth);
+                return ret.ToVector3(Size.Y + yDist);*/
             }
+        }
+
+        Vector3 GetLookingAtCoordinates(Vector3 from, float distance)
+        {
+            float distance2D = (float)Math.Cos(lookAngle) * distance;
+            Vector2 ret = from.XZToVector2().Go(distance2D, azimuth);
+            return ret.ToVector3((float)Math.Sin(lookAngle) * distance + from.Y);
         }
 
         public Vector3 LookingAt
         {
             get
             {
-                float distance2D = (float)Math.Cos(lookAngle) * LookingAtDistance;
-                Vector2 ret = Pivot.PositionInQuarter.Go((Size.Z + distance2D), azimuth);
-                return ret.ToVector3((float)Math.Sin(lookAngle) * LookingAtDistance + Size.Y);
+                return GetLookingAtCoordinates(FirstHeadPosition, Drawer.ViewDistance);
             }
         }
 

@@ -11,6 +11,7 @@ namespace ActionGame.Space
 {
     public class Plate : Quadrangle, IDrawableObject, IDisposable
     {
+        readonly TownQuarter quarter;
         readonly VertexPositionNormalTexture[] frontVertices, backVertices;
         readonly short[] indexes;
         BasicEffect frontQuadEffect, backQuadEffect;
@@ -18,9 +19,10 @@ namespace ActionGame.Space
         Vector3 ul, ur, ll, lr;
         Texture2D front, back;
 
-        public Plate(TownQuarter homeQuarter, Vector3 upperLeft, Vector3 upperRight, Vector3 lowerLeft, Vector3 lowerRight, Texture2D front, Texture2D back)
+        public Plate(TownQuarter homeQuarter, Vector3 upperLeft, Vector3 upperRight, Vector3 lowerLeft, Vector3 lowerRight, Texture2D front, Texture2D back, bool enableDefaultLightning)
             :base(upperLeft.XZToVector2(), upperRight.XZToVector2(), lowerLeft.XZToVector2(), lowerRight.XZToVector2())
         {
+            quarter = homeQuarter;
             ul = upperLeft;
             ur = upperRight;
             ll = lowerLeft;
@@ -31,18 +33,18 @@ namespace ActionGame.Space
             frontVertices = new VertexPositionNormalTexture[4];
             backVertices = new VertexPositionNormalTexture[4];
             indexes = new short[6];
-            BuildEffects();
+            BuildEffects(enableDefaultLightning);
         }
 
-        public void SetFront(Texture2D front)
+        public void SetFront(Texture2D front, bool enableDefaultLightning)
         {
             frontQuadEffect.Dispose();
             backQuadEffect.Dispose();
             this.front = front;
-            BuildEffects();
+            BuildEffects(enableDefaultLightning);
         }
 
-        private void BuildEffects()
+        private void BuildEffects(bool enableDefaultLightning)
         {
             Vector2 textureUpperLeft = new Vector2(0.0f, 0.0f);
             Vector2 textureUpperRight = new Vector2(1.0f, 0.0f);
@@ -83,12 +85,18 @@ namespace ActionGame.Space
             indexes[5] = 3;
 
             frontQuadEffect = new BasicEffect(graphicsDevice);
-            frontQuadEffect.EnableDefaultLighting();
+            if (enableDefaultLightning)
+            {
+                frontQuadEffect.EnableDefaultLighting();
+            }
             frontQuadEffect.TextureEnabled = true;
             frontQuadEffect.Texture = front;
 
             backQuadEffect = new BasicEffect(graphicsDevice);
-            backQuadEffect.EnableDefaultLighting();
+            if(enableDefaultLightning)
+            {
+                backQuadEffect.EnableDefaultLighting();
+            }
             backQuadEffect.TextureEnabled = true;
             backQuadEffect.Texture = back;
         }

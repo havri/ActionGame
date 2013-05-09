@@ -52,7 +52,6 @@ namespace ActionGame.Space
             Matrix[] transforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(transforms);
             
-
             foreach(ModelMesh mesh in model.Meshes)
             {
                 foreach(BasicEffect effect in mesh.Effects)
@@ -79,7 +78,7 @@ namespace ActionGame.Space
             get { return base.Position.PositionInQuarter.ToVector3(verticalPosition); }
         }
 
-        protected Vector3 Size
+        public Vector3 Size
         {
             get { return base.Size.ToVector3(verticalSize); }
         }

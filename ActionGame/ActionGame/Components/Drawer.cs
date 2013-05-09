@@ -16,6 +16,7 @@ namespace ActionGame.Components
     /// </summary>
     public class Drawer : DrawableGameComponent
     {
+        public const float ViewDistance = 600f;
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
         readonly HashSet<DrawedObject> objects = new HashSet<DrawedObject>();
@@ -43,7 +44,7 @@ namespace ActionGame.Components
         public Drawer(ActionGame game, float resolutionWidth, float resolutionHeight)
             : base(game)
         {
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, 600);
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, resolutionWidth / resolutionHeight, 0.1f, ViewDistance);
         }
 
         protected new ActionGame Game
@@ -73,37 +74,6 @@ namespace ActionGame.Components
         {
             DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
             objects.Add(dObj);
-
-            /*if (obj is SpatialObject && !(obj is Human))
-            {
-                GameObject q = obj as GameObject;
-                Tuple<Vector2, Texture2D>[] corners = new Tuple<Vector2, Texture2D>[]
-                {
-                    new Tuple<Vector2, Texture2D>(q.UpperLeftCorner,Drawer.Blue__),
-                    new Tuple<Vector2, Texture2D>(q.UpperRightCorner,Drawer.Blue__),
-                    new Tuple<Vector2, Texture2D>(q.LowerLeftCorner,Drawer.Blue__),
-                    new Tuple<Vector2, Texture2D>(q.LowerRightCorner,Drawer.Blue__),
-
-                    //new Tuple<Vector2, Texture2D>(q.Pivot.PositionInQuarter,Drawer.Green__),
-
-                    //new Tuple<Vector2, Texture2D>(q.Position.PositionInQuarter,Drawer.Red__)
-                };
-
-                foreach (Tuple<Vector2, Texture2D> corner in corners)
-                {
-                    const float pointHeight = 0.02f;
-                    const float radius = 0.15f;
-                    Plate vplate = new Plate(
-                        q.Position.Quarter,
-                        corner.Item1.Go(radius, 0).ToVector3(pointHeight),
-                        corner.Item1.Go(radius, MathHelper.PiOver2).ToVector3(pointHeight),
-                        corner.Item1.Go(radius, -MathHelper.PiOver2).ToVector3(pointHeight),
-                        corner.Item1.Go(radius, MathHelper.Pi).ToVector3(pointHeight),
-                        corner.Item2,
-                        corner.Item2);
-                    objects.Add(new DrawedObject(vplate, azimuthDelta, positionDelta));
-                }
-            }*/
         }
 
         public void StopDrawingObject(IDrawableObject obj)
@@ -191,6 +161,8 @@ namespace ActionGame.Components
                 Game.SpriteBatch.Draw(messageBackground, destRect, Color.White);
                 Game.SpriteBatch.DrawString(font, message, destRect.Location.ToVector2() + new Vector2(2, 1), Color.Black);
             }
+            Vector2 crossSize = new Vector2(Game.ContentRepository.Cross.Bounds.Width, Game.ContentRepository.Cross.Bounds.Height);
+            Game.SpriteBatch.Draw(Game.ContentRepository.Cross, new Vector2(0.5f * Game.Settings.ScreenSize.Width, 0.5f * Game.Settings.ScreenSize.Height) - 0.5f*crossSize, Color.White);
             Game.SpriteBatch.End();
 
             DrawMaps();

@@ -205,7 +205,7 @@ namespace ActionGame.World
             GenerateRoadSignPicture();
             foreach (Plate roadSign in roadSignsPointingToMe)
             { 
-                roadSign.SetFront(roadSignTexture);
+                roadSign.SetFront(roadSignTexture, true);
             }
             flag.SetModel(owner.Content.FlagModel, game.Drawer.WorldTransformMatrix);
             ownershipBeginTime = gameTime.TotalGameTime;

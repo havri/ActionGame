@@ -13,6 +13,7 @@ namespace ActionGame.Components
         readonly ActionGame game;
         readonly List<Model> innerBuildings = new List<Model>();
         readonly List<Model> borderBuildings = new List<Model>();
+        Texture2D cross;
 
         public ContentRepository(ActionGame game)
         {
@@ -50,6 +51,8 @@ namespace ActionGame.Components
                     }
                 }
             }
+
+            cross = contentManager.Load<Texture2D>("Textures/cross");
         }
         public Model[] BorderBuildings
         {
@@ -63,6 +66,14 @@ namespace ActionGame.Components
             get
             {
                 return innerBuildings.ToArray();
+            }
+        }
+
+        public Texture2D Cross
+        {
+            get
+            {
+                return cross;
             }
         }
     }

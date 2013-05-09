@@ -34,7 +34,6 @@ Content\Textures\ToolIcons\ak47.xnb
 Content\Sounds\background.xnb
 Content\Sounds\ToolActions\ak47.xnb
 Content\Sounds\ToolActions\pistol.xnb
-Content\Textures\halfWhite.xnb
 Content\Objects\panorama.xnb
 Content\Objects\panorama\panorama.xnb
 Content\Objects\panorama\panorama_0.xnb
@@ -124,5 +123,10 @@ Content\Objects\Buildings\house3\Material2_0.xnb
 Content\Objects\Buildings\house4\Material2_0.xnb
 Content\Objects\Buildings\woodenFence\Material2_0.xnb
 Content\Objects\Buildings\woodenFenceLong\Material2_0.xnb
+Content\Textures\cross.xnb
+Content\Objects\roadSignHandle.xnb
+Content\Textures\white.xnb
+Content\Objects\roadSignHandle\Metal_Steel_Textured.xnb
+Content\Objects\roadSignHandle\Metal_Steel_Textured_0.xnb
 Content\Config\DefaultGunSet.xml
 Content\Config\UsedObjects.xml

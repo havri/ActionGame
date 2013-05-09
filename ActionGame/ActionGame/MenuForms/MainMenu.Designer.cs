@@ -251,7 +251,7 @@
             this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
             this.quartersCountNB.TabIndex = 3;
             this.quartersCountNB.Value = new decimal(new int[] {
-            8,
+            4,
             0,
             0,
             0});

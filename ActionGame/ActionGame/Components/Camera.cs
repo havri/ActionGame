@@ -84,6 +84,7 @@ namespace ActionGame.Components
             Debug.Write("Camera subject", cameraSubjectPosition.ToString());
 
             ViewMatrix = Matrix.CreateLookAt(cameraPosition, cameraSubjectPosition, Vector3.Up);
+            
 
             base.Update(gameTime);
         }

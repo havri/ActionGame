@@ -527,7 +527,6 @@ namespace ActionGame.World
             emptyRanges.Add(TownQuarterInterfacePosition.Left, new List<Range>(new Range[] { new Range(BlockWidth + 1, bitmapSize.Height - BlockWidth - 1) }));
             emptyRanges.Add(TownQuarterInterfacePosition.Right, new List<Range>(new Range[] { new Range(BlockWidth + 1, bitmapSize.Height - BlockWidth - 1) }));
 
-            Random rand = new Random();
             for (int i = 0; i < degree; i++)
             {
                 TownQuarterInterfacePosition side;
@@ -540,16 +539,16 @@ namespace ActionGame.World
                     throw new NoSpaceForInterfaceException("This quarter has already full all sides of interfaces. Degree argument is too big.");
                 }
 
-                side = possibleSides[rand.Next(0, possibleSides.Count - 1)];
+                side = possibleSides[game.Random.Next(0, possibleSides.Count - 1)];
 
                 List<Range> possibleRanges = emptyRanges[side].FindAll(rangeItem => rangeItem.Length > 2 * BlockWidth + 1);
 
-                int rangeIndex = rand.Next(0, possibleRanges.Count - 1);
+                int rangeIndex = game.Random.Next(0, possibleRanges.Count - 1);
                 Range range = possibleRanges[rangeIndex];
                 emptyRanges[side].Remove(range);
 
                 int position = range.Begin
-                    + (int)((0.35 + rand.NextDouble() * 0.3) // percentage position in range
+                    + (int)((0.35 + game.Random.NextDouble() * 0.3) // percentage position in range
                     * range.Length);
 
                 emptyRanges[side].Add(new Range(range.Begin, position - 1));
@@ -605,10 +604,10 @@ namespace ActionGame.World
                     ///TODO: load textures from central repository
                     Texture2D wallTexture = game.Content.Load<Texture2D>("Textures/Spatial/wall0");
                     float wallWidth = 6f; //m
-                    float wallHeight = 4.5f;
+                    const float wallHeight = 4.5f;
                     int count = (int)((BlockWidth - 1) * SquareWidth / wallWidth); //minus sidewalk
                     wallWidth = (BlockWidth - 1) * SquareWidth / count;
-                    const float ifaceWallEpsilon = 0.001f; // 1mm
+                    const float ifaceWallEpsilon = 0.006f; // 3mm
                     for (int p = 0; p < count; p++)
                     {
                         Vector2 beginL, endL, beginR, endR;
@@ -639,9 +638,9 @@ namespace ActionGame.World
                             default:
                                 throw new InvalidOperationException("Unknown AxisDirection value.");
                         }
-                        Plate wallL = new Plate(this, beginL.ToVector3(wallHeight), endL.ToVector3(wallHeight), beginL.ToVector3(0), endL.ToVector3(0), wallTexture, wallTexture);
+                        Plate wallL = new Plate(this, beginL.ToVector3(wallHeight), endL.ToVector3(wallHeight), beginL.ToVector3(0), endL.ToVector3(0), wallTexture, wallTexture, true);
                         solidPlates.AddLast(wallL);
-                        Plate wallr = new Plate(this, beginR.ToVector3(wallHeight), endR.ToVector3(wallHeight), beginR.ToVector3(0), endR.ToVector3(0), wallTexture, wallTexture);
+                        Plate wallr = new Plate(this, beginR.ToVector3(wallHeight), endR.ToVector3(wallHeight), beginR.ToVector3(0), endR.ToVector3(0), wallTexture, wallTexture, true);
                         solidPlates.AddLast(wallr);
                     }
                 }
@@ -650,7 +649,6 @@ namespace ActionGame.World
             }
 
             GenerateRestOfBorderSidewalks(emptyRanges, sidewalkTexture);
-
             GenerateBorderBuildings(emptyRanges);
         }
 
@@ -677,11 +675,11 @@ namespace ActionGame.World
                         ranges.Value.RemoveAt(i);
                         if (ranges.Key == TownQuarterInterfacePosition.Top || ranges.Key == TownQuarterInterfacePosition.Bottom)
                         {
-                            r.End= bitmapSize.Width - BlockWidth + 1;
+                            r.End = bitmapSize.Width - BlockWidth + 1;
                         }
                         else
                         {
-                            r.End= bitmapSize.Height - BlockWidth + 1;
+                            r.End = bitmapSize.Height - BlockWidth + 1;
                         }
                         ranges.Value.Insert(i, r);
                     }
@@ -691,11 +689,11 @@ namespace ActionGame.World
             Model[] buildingModels = game.ContentRepository.BorderBuildings;
             //sort by size X desc
             Array.Sort(buildingModels, (x, y) => -(x.GetSize(game.Drawer.WorldTransformMatrix).X.CompareTo(y.GetSize(game.Drawer.WorldTransformMatrix).X)));
-            foreach (var ranges in emptyRanges)
+            foreach (KeyValuePair<TownQuarterInterfacePosition, List<Range>> ranges in emptyRanges)
             {
-                foreach (var range in ranges.Value)
+                foreach (Range range in ranges.Value)
                 {
-                    FillEmptyBorderRange(buildingModels, ranges.Key, range, 0f);
+                    FillEmptyBorderRange(buildingModels, ranges.Key, range, 0f, false);
                 }
             }
         }
@@ -707,7 +705,7 @@ namespace ActionGame.World
         /// <param name="borderPosition">Position of border - specifies side of rectangle</param>
         /// <param name="range">Empty range for filling</param>
         /// <param name="offset">Already filled part of range</param>
-        private void FillEmptyBorderRange(Model[] buildingModels, TownQuarterInterfacePosition borderPosition, Range range, float offset)
+        private int FillEmptyBorderRange(Model[] buildingModels, TownQuarterInterfacePosition borderPosition, Range range, float offset, bool lastOne)
         {
             float emptySpace = (range.Length - 1) * SquareWidth - offset;
             foreach(Model model in buildingModels)
@@ -742,11 +740,22 @@ namespace ActionGame.World
 
                     SpatialObject borderBuilding = new SpatialObject(usedModel, this, position, angle, game.Drawer.WorldTransformMatrix);
                     solidObjects.AddLast(borderBuilding);
-
-                    FillEmptyBorderRange(buildingModels, borderPosition, range, newOffset);
-                    break;
+                    int recRes = 0;
+                    if (!lastOne)
+                    {
+                        recRes = FillEmptyBorderRange(buildingModels, borderPosition, range, newOffset, false);
+                    }
+                    if (recRes == 0 && !lastOne)
+                    { 
+                        Range overflowedRange = range;
+                        overflowedRange.End++;
+                        recRes = FillEmptyBorderRange(new Model[] {buildingModels.Last()}, borderPosition, overflowedRange, newOffset, true);
+                    }
+                    return recRes + 1;
+                    //break;
                 }
             }
+            return 0;
         }
 
         /// <summary>
@@ -1059,46 +1068,78 @@ namespace ActionGame.World
         {
             const float vPosition = 8;
             float height = 2f;
-            float width = 6f;
+            const float width = 6f;
+            const float halfWidth = width / 2;
+            Model handleModel = game.Content.Load<Model>("Objects/roadSignHandle");
+            Vector3 handleModelSize = handleModel.GetSize(game.Drawer.WorldTransformMatrix);
             foreach (TownQuarterInterface iface in interfaces)
-            { 
+            {
+                Vector2 handlePos = Vector2.Zero;
+                float handleAzimuth = 0f;
                 Vector3 upperLeft = iface.Position().ToVector3(vPosition);
                 Vector3 upperRight = upperLeft;
+                const float handleEpsilon = 0.02f; //2cm
                 switch (iface.SidePosition)
-	            {
-		            case TownQuarterInterfacePosition.Top:
-                        upperLeft.X -= width / 2;
-                        upperRight.X += width / 2;
+                {
+                    case TownQuarterInterfacePosition.Top:
+                        upperLeft.X -= halfWidth;
+                        upperRight.X += halfWidth;
                         upperLeft.Z += (BlockWidth - 2) * SquareWidth;
                         upperRight.Z += (BlockWidth - 2) * SquareWidth;
-                         break;
-                                case TownQuarterInterfacePosition.Right:
-                         upperLeft.Z -= width / 2;
-                         upperRight.Z += width / 2;
+
+                        handlePos = upperLeft.XZToVector2();
+                        handlePos.X += halfWidth;
+                        handlePos.X -= handleModelSize.X * 0.5f;
+                        handlePos.Y -= handleModelSize.Z + handleEpsilon;
+                        handleAzimuth = 0f;
+                        break;
+                    case TownQuarterInterfacePosition.Right:
+                        upperLeft.Z -= halfWidth;
+                        upperRight.Z += halfWidth;
                         upperLeft.X -= (BlockWidth - 2) * SquareWidth;
                         upperRight.X -= (BlockWidth - 2) * SquareWidth;
-                         break;
-                                case TownQuarterInterfacePosition.Bottom:
-                         upperLeft.X += width / 2;
-                         upperRight.X -= width / 2;
+
+                        handlePos = upperLeft.XZToVector2();
+                        handlePos.Y += halfWidth;
+                        //handlePos.Y -= handleModelSize.X * 0.5f;
+                        handlePos.X += handleModelSize.Z + handleEpsilon - handleModelSize.X * 0.5f - handleModelSize.Z * 0.5f;
+                        handleAzimuth = MathHelper.PiOver2;
+                        break;
+                    case TownQuarterInterfacePosition.Bottom:
+                        upperLeft.X += halfWidth;
+                        upperRight.X -= halfWidth;
                         upperLeft.Z -= (BlockWidth - 2) * SquareWidth;
                         upperRight.Z -= (BlockWidth - 2) * SquareWidth;
-                         break;
-                        case TownQuarterInterfacePosition.Left:
-                                    upperLeft.Z += width / 2;
-                                    upperRight.Z -= width / 2;
+
+                        handlePos = upperLeft.XZToVector2();
+                        handlePos.X -= halfWidth;
+                        handlePos.X -= handleModelSize.X * 0.5f;
+                        handlePos.Y += handleEpsilon;
+                        handleAzimuth = 0f;
+                        break;
+                    case TownQuarterInterfacePosition.Left:
+                        upperLeft.Z += halfWidth;
+                        upperRight.Z -= halfWidth;
                         upperLeft.X += (BlockWidth - 2) * SquareWidth;
                         upperRight.X += (BlockWidth - 2) * SquareWidth;
-                         break;
-                        default:
-                         break;
-	            }
+
+                        handlePos = upperLeft.XZToVector2();
+                        handlePos.Y -= halfWidth;
+                        //handlePos.Y -= handleModelSize.X * 0.5f;
+                        handlePos.X -= handleModelSize.Z + handleEpsilon + handleModelSize.X * 0.5f - handleModelSize.Z * 0.5f;
+                        handleAzimuth = MathHelper.PiOver2;
+                        break;
+                    default:
+                        break;
+                }
                 Vector3 lowerLeft = upperLeft, lowerRight = upperRight;
                 lowerLeft.Y -= height;
                 lowerRight.Y -= height;
-                Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, game.Content.Load<Texture2D>("Textures/metal"));
+                Plate signPlate = new Plate(this, upperLeft, upperRight, lowerLeft, lowerRight, iface.OppositeInterface.Quarter.RoadSignTexture, game.Content.Load<Texture2D>("Textures/metal"), true);
                 magicPlates.AddLast(signPlate);
                 iface.OppositeInterface.Quarter.RegisterNewRoadSign(signPlate);
+                SpatialObject handle = new SpatialObject(handleModel, new PositionInTown(this, handlePos), handleAzimuth, game.Drawer.WorldTransformMatrix);
+                solidObjects.AddLast(handle);
             }
 
         }

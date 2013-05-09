@@ -269,7 +269,7 @@ namespace ActionGame
                 Components.Add(town);
 
 
-                BulletVisualisation.Texture = Content.Load<Texture2D>("Textures/halfWhite");
+                BulletVisualisation.Texture = Content.Load<Texture2D>("Textures/white");
                 backgroundSound = Content.Load<SoundEffect>("Sounds/background").CreateInstance();
 
                 loadingForm.SetLabel("Content loaded. Get ready to play!");

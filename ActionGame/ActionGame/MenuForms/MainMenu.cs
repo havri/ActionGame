@@ -49,10 +49,10 @@ namespace ActionGame.MenuForms
                         AmmoBoxCount = (int)ammoBoxesNB.Value,
                         MouseXSensitivity = mouseXSensTB.Value,
                         MouseYSensitivity = mouseYSensTB.Value,
-                        MouseIgnoresWindow = mouseIgnoreWindowCB.Checked,
+                        MouseIgnoresWindow = true,
                         MouseXInvert = mouseInvertXCB.Checked,
                         MouseYInvert = mouseInvertYCB.Checked,
-                        GunSetFilename = gunSetFileTB.Text,
+                        GunSetFilename = "DefaultGunSet",
                     };
             }
         }

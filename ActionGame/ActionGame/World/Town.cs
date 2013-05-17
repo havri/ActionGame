@@ -208,10 +208,12 @@ namespace ActionGame.World
                         }
                         if (quarters[i] == Game.Opponent.Position.Quarter)
                         {
+                            graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
                             graphics.DrawLines(new Pen(Game.Opponent.Content.DrawingColor, 3), pointerPoints);
                         }
                         if (quarters[i] == Game.Player.Position.Quarter)
                         {
+                            graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
                             graphics.DrawLines(new Pen(Game.Player.Content.DrawingColor, 3), pointerPoints);
                         }
                     }

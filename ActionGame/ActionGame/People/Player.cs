@@ -19,9 +19,6 @@ namespace ActionGame.People
         static readonly Keys Right = Keys.D;
         static readonly Keys Forward = Keys.W;
         static readonly Keys Backward = Keys.S;
-        static readonly Keys GunUp = Keys.LeftAlt;
-        static readonly Keys GunDown = Keys.LeftControl;
-        static readonly Keys GunDrop = Keys.Back;
         static readonly Keys TurnLeft = Keys.Left;
         static readonly Keys TurnRight = Keys.Right;
         static readonly Keys TurnUp = Keys.Up;
@@ -42,10 +39,7 @@ namespace ActionGame.People
             {
                 AddTool(gun);
             }
-            lastKeyPressedGameTime.Add(GunUp, TimeSpan.Zero);
-            lastKeyPressedGameTime.Add(GunDown, TimeSpan.Zero);
             lastKeyPressedGameTime.Add(RunSwitch, TimeSpan.Zero);
-            lastKeyPressedGameTime.Add(GunDrop, TimeSpan.Zero);
         }
 
         public new void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -91,21 +85,6 @@ namespace ActionGame.People
                 {
                     Running = !Running;
                     lastKeyPressedGameTime[RunSwitch] = gameTime.TotalGameTime;
-                }
-                if (keyboardState.IsKeyDown(GunUp) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunUp] > KeyPressedTimeout)
-                {
-                    SelectNextGun(1);
-                    lastKeyPressedGameTime[GunUp] = gameTime.TotalGameTime;
-                }
-                if (keyboardState.IsKeyDown(GunDown) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunDown] > KeyPressedTimeout)
-                {
-                    SelectNextGun(-1);
-                    lastKeyPressedGameTime[GunDown] = gameTime.TotalGameTime;
-                }
-                if (keyboardState.IsKeyDown(GunDrop) && gameTime.TotalGameTime - lastKeyPressedGameTime[GunDrop] > KeyPressedTimeout)
-                {
-                    DropSelectedTool();
-                    lastKeyPressedGameTime[GunDrop] = gameTime.TotalGameTime;
                 }
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {

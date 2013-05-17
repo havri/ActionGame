@@ -33,10 +33,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.gameSettingsPage = new System.Windows.Forms.TabPage();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.gunSetFileTB = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.healingBoxesNB = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
@@ -54,18 +50,41 @@
             this.mouseInvertXCB = new System.Windows.Forms.CheckBox();
             this.mouseInvertYCB = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.mouseYSensTB = new System.Windows.Forms.TrackBar();
-            this.mouseIgnoreWindowCB = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ammoBoxesNB)).BeginInit();
@@ -76,6 +95,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).BeginInit();
             this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -99,7 +119,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // tabControl1
@@ -111,60 +131,19 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(584, 437);
+            this.tabControl1.Size = new System.Drawing.Size(584, 592);
             this.tabControl1.TabIndex = 1;
             // 
             // gameSettingsPage
             // 
-            this.gameSettingsPage.Controls.Add(this.groupBox4);
-            this.gameSettingsPage.Controls.Add(this.groupBox3);
             this.gameSettingsPage.Controls.Add(this.groupBox1);
             this.gameSettingsPage.Location = new System.Drawing.Point(4, 22);
             this.gameSettingsPage.Name = "gameSettingsPage";
             this.gameSettingsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.gameSettingsPage.Size = new System.Drawing.Size(576, 411);
+            this.gameSettingsPage.Size = new System.Drawing.Size(576, 571);
             this.gameSettingsPage.TabIndex = 0;
             this.gameSettingsPage.Text = "Game";
             this.gameSettingsPage.UseVisualStyleBackColor = true;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox4.Location = new System.Drawing.Point(3, 150);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(570, 100);
-            this.groupBox4.TabIndex = 6;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Opponents";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.gunSetFileTB);
-            this.groupBox3.Controls.Add(this.label10);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox3.Location = new System.Drawing.Point(3, 99);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(570, 51);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Guns & tools";
-            // 
-            // gunSetFileTB
-            // 
-            this.gunSetFileTB.Location = new System.Drawing.Point(97, 17);
-            this.gunSetFileTB.Name = "gunSetFileTB";
-            this.gunSetFileTB.Size = new System.Drawing.Size(158, 20);
-            this.gunSetFileTB.TabIndex = 1;
-            this.gunSetFileTB.Text = "DefaultGunSet";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 20);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(85, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Configuration file";
             // 
             // groupBox1
             // 
@@ -274,7 +253,7 @@
             this.videoSettingsPage.Location = new System.Drawing.Point(4, 22);
             this.videoSettingsPage.Name = "videoSettingsPage";
             this.videoSettingsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.videoSettingsPage.Size = new System.Drawing.Size(576, 411);
+            this.videoSettingsPage.Size = new System.Drawing.Size(576, 571);
             this.videoSettingsPage.TabIndex = 1;
             this.videoSettingsPage.Text = "Video";
             this.videoSettingsPage.UseVisualStyleBackColor = true;
@@ -342,13 +321,14 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.groupBox3);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(576, 411);
+            this.tabPage1.Size = new System.Drawing.Size(576, 566);
             this.tabPage1.TabIndex = 2;
-            this.tabPage1.Text = "Controlls";
+            this.tabPage1.Text = "Controls";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox2
@@ -356,16 +336,14 @@
             this.groupBox2.Controls.Add(this.mouseInvertXCB);
             this.groupBox2.Controls.Add(this.mouseInvertYCB);
             this.groupBox2.Controls.Add(this.label9);
-            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.mouseYSensTB);
-            this.groupBox2.Controls.Add(this.mouseIgnoreWindowCB);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.mouseXSensTB);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(570, 229);
+            this.groupBox2.Size = new System.Drawing.Size(570, 196);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mouse";
@@ -373,7 +351,7 @@
             // mouseInvertXCB
             // 
             this.mouseInvertXCB.AutoSize = true;
-            this.mouseInvertXCB.Location = new System.Drawing.Point(114, 144);
+            this.mouseInvertXCB.Location = new System.Drawing.Point(114, 121);
             this.mouseInvertXCB.Name = "mouseInvertXCB";
             this.mouseInvertXCB.Size = new System.Drawing.Size(94, 17);
             this.mouseInvertXCB.TabIndex = 9;
@@ -383,7 +361,7 @@
             // mouseInvertYCB
             // 
             this.mouseInvertYCB.AutoSize = true;
-            this.mouseInvertYCB.Location = new System.Drawing.Point(114, 167);
+            this.mouseInvertYCB.Location = new System.Drawing.Point(114, 144);
             this.mouseInvertYCB.Name = "mouseInvertYCB";
             this.mouseInvertYCB.Size = new System.Drawing.Size(82, 17);
             this.mouseInvertYCB.TabIndex = 8;
@@ -393,25 +371,16 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(74, 145);
+            this.label9.Location = new System.Drawing.Point(74, 122);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(34, 13);
             this.label9.TabIndex = 7;
             this.label9.Text = "Invert";
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(33, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Window mode";
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(18, 96);
+            this.label8.Location = new System.Drawing.Point(18, 73);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(90, 13);
             this.label8.TabIndex = 4;
@@ -420,7 +389,7 @@
             // mouseYSensTB
             // 
             this.mouseYSensTB.LargeChange = 20;
-            this.mouseYSensTB.Location = new System.Drawing.Point(114, 93);
+            this.mouseYSensTB.Location = new System.Drawing.Point(114, 70);
             this.mouseYSensTB.Maximum = 110;
             this.mouseYSensTB.Minimum = 10;
             this.mouseYSensTB.Name = "mouseYSensTB";
@@ -429,22 +398,10 @@
             this.mouseYSensTB.TabIndex = 5;
             this.mouseYSensTB.Value = 60;
             // 
-            // mouseIgnoreWindowCB
-            // 
-            this.mouseIgnoreWindowCB.AutoSize = true;
-            this.mouseIgnoreWindowCB.Checked = true;
-            this.mouseIgnoreWindowCB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mouseIgnoreWindowCB.Location = new System.Drawing.Point(114, 19);
-            this.mouseIgnoreWindowCB.Name = "mouseIgnoreWindowCB";
-            this.mouseIgnoreWindowCB.Size = new System.Drawing.Size(128, 17);
-            this.mouseIgnoreWindowCB.TabIndex = 3;
-            this.mouseIgnoreWindowCB.Text = "Ignore window border";
-            this.mouseIgnoreWindowCB.UseVisualStyleBackColor = true;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 45);
+            this.label6.Location = new System.Drawing.Point(6, 22);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 13);
             this.label6.TabIndex = 0;
@@ -453,7 +410,7 @@
             // mouseXSensTB
             // 
             this.mouseXSensTB.LargeChange = 20;
-            this.mouseXSensTB.Location = new System.Drawing.Point(114, 42);
+            this.mouseXSensTB.Location = new System.Drawing.Point(114, 19);
             this.mouseXSensTB.Maximum = 110;
             this.mouseXSensTB.Minimum = 10;
             this.mouseXSensTB.Name = "mouseXSensTB";
@@ -466,7 +423,7 @@
             // 
             this.panel1.Controls.Add(this.playBtn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 371);
+            this.panel1.Location = new System.Drawing.Point(0, 526);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(584, 90);
             this.panel1.TabIndex = 2;
@@ -482,23 +439,270 @@
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.textBox10);
+            this.groupBox3.Controls.Add(this.textBox11);
+            this.groupBox3.Controls.Add(this.textBox12);
+            this.groupBox3.Controls.Add(this.label19);
+            this.groupBox3.Controls.Add(this.label20);
+            this.groupBox3.Controls.Add(this.label21);
+            this.groupBox3.Controls.Add(this.label18);
+            this.groupBox3.Controls.Add(this.textBox9);
+            this.groupBox3.Controls.Add(this.textBox8);
+            this.groupBox3.Controls.Add(this.textBox7);
+            this.groupBox3.Controls.Add(this.textBox6);
+            this.groupBox3.Controls.Add(this.textBox5);
+            this.groupBox3.Controls.Add(this.textBox4);
+            this.groupBox3.Controls.Add(this.textBox3);
+            this.groupBox3.Controls.Add(this.textBox2);
+            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.label14);
+            this.groupBox3.Controls.Add(this.label15);
+            this.groupBox3.Controls.Add(this.label16);
+            this.groupBox3.Controls.Add(this.label17);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Controls.Add(this.label13);
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.Location = new System.Drawing.Point(3, 199);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(570, 364);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Keyboard";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(18, 39);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Move forward";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 66);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(84, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Move backward";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(35, 120);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(55, 13);
+            this.label12.TabIndex = 6;
+            this.label12.Text = "Right step";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(42, 93);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(48, 13);
+            this.label13.TabIndex = 4;
+            this.label13.Text = "Left step";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(32, 228);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(58, 13);
+            this.label14.TabIndex = 14;
+            this.label14.Text = "Turn down";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(46, 201);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(44, 13);
+            this.label15.TabIndex = 12;
+            this.label15.Text = "Turn up";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(38, 174);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(52, 13);
+            this.label16.TabIndex = 10;
+            this.label16.Text = "Turn right";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(44, 147);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(46, 13);
+            this.label17.TabIndex = 8;
+            this.label17.Text = "Turn left";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(27, 255);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(63, 13);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Run / Walk";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(96, 37);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 17;
+            this.textBox1.Text = "W";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(96, 64);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.TabIndex = 18;
+            this.textBox2.Text = "S";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(96, 91);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(100, 20);
+            this.textBox3.TabIndex = 19;
+            this.textBox3.Text = "A";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(96, 118);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 20;
+            this.textBox4.Text = "D";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(96, 145);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(100, 20);
+            this.textBox5.TabIndex = 21;
+            this.textBox5.Text = "Left";
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(96, 172);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(100, 20);
+            this.textBox6.TabIndex = 22;
+            this.textBox6.Text = "Right";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(96, 199);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(100, 20);
+            this.textBox7.TabIndex = 23;
+            this.textBox7.Text = "Up";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(96, 226);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(100, 20);
+            this.textBox8.TabIndex = 24;
+            this.textBox8.Text = "Down";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(96, 253);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(100, 20);
+            this.textBox9.TabIndex = 25;
+            this.textBox9.Text = "CapsLock";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Enabled = false;
+            this.label18.Location = new System.Drawing.Point(6, 16);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(175, 13);
+            this.label18.TabIndex = 26;
+            this.label18.Text = "Click inside the textbox to change...";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(348, 88);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(100, 20);
+            this.textBox10.TabIndex = 32;
+            this.textBox10.Text = "C";
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(348, 62);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(100, 20);
+            this.textBox11.TabIndex = 31;
+            this.textBox11.Text = "N";
+            // 
+            // textBox12
+            // 
+            this.textBox12.Location = new System.Drawing.Point(348, 36);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.Size = new System.Drawing.Size(100, 20);
+            this.textBox12.TabIndex = 30;
+            this.textBox12.Text = "M";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(231, 91);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(111, 13);
+            this.label19.TabIndex = 29;
+            this.label19.Text = "Cahnge camera mode";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(259, 65);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(83, 13);
+            this.label20.TabIndex = 28;
+            this.label20.Text = "Show town map";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(249, 41);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(93, 13);
+            this.label21.TabIndex = 27;
+            this.label21.Text = "Show quarter map";
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 461);
+            this.ClientSize = new System.Drawing.Size(584, 616);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainMenu";
-            this.Text = "MainMenu";
+            this.Text = "Action game";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.gameSettingsPage.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.healingBoxesNB)).EndInit();
@@ -512,6 +716,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.mouseYSensTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mouseXSensTB)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -542,16 +748,36 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TrackBar mouseXSensTB;
-        private System.Windows.Forms.CheckBox mouseIgnoreWindowCB;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TrackBar mouseYSensTB;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox mouseInvertXCB;
         private System.Windows.Forms.CheckBox mouseInvertYCB;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox gunSetFileTB;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.TextBox textBox12;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
     }
 }

@@ -6,7 +6,7 @@
     <range>0.5</range>
     <shotTimeout>800</shotTimeout>
     <infinity>true</infinity>
-    <sound>pistol</sound>
+    <sound>fist</sound>
   </gun>
   <gun name="Pistol" available="guard">
     <icon>pistol</icon>
@@ -25,6 +25,15 @@
     <infinity>false</infinity>
     <defaultBulletCount>70</defaultBulletCount>
     <sound>ak47</sound>
+  </gun>
+  <gun name="Snipe" available="box">
+    <icon>snipe</icon>
+    <damage>100</damage>
+    <range>300</range>
+    <shotTimeout>1400</shotTimeout>
+    <infinity>false</infinity>
+    <defaultBulletCount>8</defaultBulletCount>
+    <sound>snipe</sound>
   </gun>
 </guns>
 <!--

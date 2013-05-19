@@ -128,5 +128,10 @@ Content\Textures\white.xnb
 Content\Objects\roadSignHandle.xnb
 Content\Objects\roadSignHandle\Metal_Steel_Textured.xnb
 Content\Objects\roadSignHandle\Metal_Steel_Textured_0.xnb
+Content\Textures\ToolIcons\snipe.xnb
+Content\Sounds\ToolActions\fist.xnb
+Content\Sounds\ToolActions\snipe.xnb
+Content\Textures\FullscreenEffects\hurtEffect.xnb
+Content\Textures\FullscreenEffects\respawnEffect.xnb
 Content\Config\DefaultGunSet.xml
 Content\Config\UsedObjects.xml

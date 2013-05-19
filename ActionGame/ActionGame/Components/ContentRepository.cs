@@ -14,6 +14,8 @@ namespace ActionGame.Components
         readonly List<Model> innerBuildings = new List<Model>();
         readonly List<Model> borderBuildings = new List<Model>();
         Texture2D cross;
+        Texture2D hurtFullscreenEffect;
+        Texture2D respawnFullscreenEffect;
 
         public ContentRepository(ActionGame game)
         {
@@ -53,6 +55,8 @@ namespace ActionGame.Components
             }
 
             cross = contentManager.Load<Texture2D>("Textures/cross");
+            hurtFullscreenEffect = contentManager.Load<Texture2D>("Textures/FullscreenEffects/hurtEffect");
+            respawnFullscreenEffect = contentManager.Load<Texture2D>("Textures/FullscreenEffects/respawnEffect");
         }
         public Model[] BorderBuildings
         {
@@ -74,6 +78,20 @@ namespace ActionGame.Components
             get
             {
                 return cross;
+            }
+        }
+        public Texture2D HurtFullscreenEffect
+        {
+            get
+            {
+                return hurtFullscreenEffect;
+            }
+        }
+        public Texture2D RespawnFullscreenEffect
+        {
+            get
+            {
+                return respawnFullscreenEffect;
             }
         }
     }

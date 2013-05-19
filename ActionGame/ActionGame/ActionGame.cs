@@ -315,6 +315,8 @@ namespace ActionGame
                     TownQuarter newQuarter = FindAndRespawnQuartersFor(player, gameTime);
                     player.RespawnInto(newQuarter);
                     drawer.ShowMessage(gameTime, String.Format("You were killed! You are now in {0}.", newQuarter.Name));
+                    town.CurrentQuarter = newQuarter;
+                    drawer.ShowFullscreenEffect(gameTime, contentRepository.RespawnFullscreenEffect, Player.RespawnFullscreenEffectDuration);
                 }
                 if(opponent.Health <= 0)
                 {

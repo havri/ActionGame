@@ -25,6 +25,8 @@ namespace ActionGame.People
         static readonly Keys TurnDown = Keys.Down;  
         static readonly Keys RunSwitch = Keys.CapsLock;
         static readonly TimeSpan KeyPressedTimeout = new TimeSpan(0, 0, 0, 0, 250);
+        static readonly TimeSpan HurtFullscreenEffectDuration = new TimeSpan(0, 0, 0, 0, 500);
+        static public readonly TimeSpan RespawnFullscreenEffectDuration = new TimeSpan(0, 0, 0, 1);
 
         readonly Point defaultMousePosition;
         private int lastMouseWheelState = 0;
@@ -142,6 +144,12 @@ namespace ActionGame.People
             {
                 MoveTo(LastPosition, Azimuth);
             }
+        }
+
+        public override void BecomeShot(GameTime gameTime, int damage, Human by)
+        {
+            base.BecomeShot(gameTime, damage, by);
+            Game.Drawer.ShowFullscreenEffect(gameTime, Game.ContentRepository.HurtFullscreenEffect, HurtFullscreenEffectDuration);
         }
     }
 }

@@ -38,6 +38,13 @@ namespace ActionGame.World
             {
         	    return currentQuarter;
             }
+            set
+            {
+                ClearDrawer();
+                currentQuarter = value;
+                currentQuarterDrawed = false;
+                lastNearestInterfaceIndex = -1;
+            }
         }
         bool currentQuarterDrawed = false;
         int lastNearestInterfaceIndex = -1;
@@ -241,16 +248,14 @@ namespace ActionGame.World
                 && ((playerPosition.X > quarterSize.X || playerPosition.Y > quarterSize.Y) || (playerPosition.X < 0 || playerPosition.Y < 0))
                 && lastNearestInterfaceIndex >= 0)
             {
-                TownQuarterInterface usedInterface = currentQuarter.Interfaces[lastNearestInterfaceIndex];
-
                 //Remove drawed quaeters from drawer
-                usedInterface.OppositeInterface.Quarter.RemoveFromDrawer();
-                currentQuarter.RemoveFromDrawer();
+                ClearDrawer();
 
                 //Remove player from old quarter space grid
                 currentQuarter.SpaceGrid.RemoveObject(Game.Player);
 
                 //Changes current quarter
+                TownQuarterInterface usedInterface = currentQuarter.Interfaces[lastNearestInterfaceIndex];
                 currentQuarter = usedInterface.OppositeInterface.Quarter;
 
                 //Moves player into new current quarter
@@ -277,6 +282,16 @@ namespace ActionGame.World
             FillDrawer();
 
             currentQuarter.Update(gameTime, false);
+        }
+
+        public void ClearDrawer()
+        {
+            if (lastNearestInterfaceIndex >= 0)
+            {
+                TownQuarterInterface usedInterface = currentQuarter.Interfaces[lastNearestInterfaceIndex];
+                usedInterface.OppositeInterface.Quarter.RemoveFromDrawer();
+            }
+            currentQuarter.RemoveFromDrawer();
         }
 
         void FillDrawer()

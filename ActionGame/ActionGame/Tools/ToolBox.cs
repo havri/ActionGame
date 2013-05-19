@@ -14,19 +14,17 @@ namespace ActionGame.Tools
         /// <summary>
         /// Tool in the box.
         /// </summary>
-        private readonly Tool tool;
-        SoundEffect takeSound;
+        readonly Tool tool;
 
         public ToolBox(Tool toolInside, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
-            : base(model, position, world)
+            : base(takeSound, model, position, world)
         {
             tool = toolInside;
-            this.takeSound = takeSound;
         }
 
         public Tool Take()
         {
-            takeSound.Play();
+            base.Take();
             Destroy();
             return tool;
         }

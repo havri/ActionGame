@@ -100,8 +100,10 @@ namespace ActionGame.World
             GenerateWalkers();
         }
 
-        private void GenerateBoxes()
+        private Box[] GenerateBoxes()
         {
+            Box[] addedBoxes = new Box[game.Settings.AmmoBoxCount + game.Settings.HealBoxCount];
+            int ai = 0;
             HashSet<Point> occupiedPositions = new HashSet<Point>();
             if (game.BoxDefaultGuns.Count != 0)
             {
@@ -117,21 +119,24 @@ namespace ActionGame.World
                         );
                     boxes.Add(tb);
                     occupiedPositions.Add(p);
+                    addedBoxes[ai++] = tb;
                 }
             }
 
             for (int i = 0; i < game.Settings.HealBoxCount; i++)
             {
                 Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
-                ToolBox tb = new ToolBox(null,
+                HealBox hb = new HealBox(game.Random.Next(50,100),
                     game.Content.Load<SoundEffect>("Sounds/heal"),
                     game.Content.Load<Model>("Objects/Decorations/healthBox"),
                     new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                     game.Drawer.WorldTransformMatrix
                     );
-                boxes.Add(tb);
+                boxes.Add(hb);
                 occupiedPositions.Add(p);
+                addedBoxes[ai++] = hb;
             }
+            return addedBoxes;
         }
 
         public Point GetRandomSquare(Predicate<MapFillType> where)

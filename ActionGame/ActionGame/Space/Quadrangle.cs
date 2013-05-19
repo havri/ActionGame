@@ -89,7 +89,7 @@ namespace ActionGame.Space
         public virtual void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
         { }
 
-        public virtual void BecomeShot(int damage, Human by)
+        public virtual void BecomeShot(GameTime gameTime, int damage, Human by)
         { }
 
         public virtual Vector2 UpperLeftCorner

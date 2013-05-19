@@ -81,7 +81,7 @@ namespace ActionGame.World
         /// Picture map of this quarter.
         /// </summary>
         Texture2D map;
-        Size bitmapSize;
+        readonly Size bitmapSize;
         public Size BitmapSize
         {
             get
@@ -209,6 +209,15 @@ namespace ActionGame.World
             }
             flag.SetModel(owner.Content.FlagModel, game.Drawer.WorldTransformMatrix);
             ownershipBeginTime = gameTime.TotalGameTime;
+            Box[] addedBoxes = GenerateBoxes();
+            foreach (Box box in addedBoxes)
+            {
+                spaceGrid.AddObject(box);
+                if (currentlyDrawed)
+                {
+                    game.Drawer.StartDrawingObject(box, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                }
+            }
         }
 
         public void RegisterNewRoadSign(Plate roadSign)
@@ -419,7 +428,10 @@ namespace ActionGame.World
         {
             magicBullets.Add(bullet);
             bulletAddedTimes.Add(new KeyValuePair<BulletVisualisation, TimeSpan>(bullet, gameTime.TotalGameTime));
-            game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+            if (currentlyDrawed)
+            {
+                game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+            }
         }
 
         public void BeLeftBy(Human human)

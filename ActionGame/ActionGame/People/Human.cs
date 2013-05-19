@@ -426,6 +426,10 @@ namespace ActionGame.People
             {
                 Hit(something as ToolBox);
             }
+            else if (something is HealBox)
+            {
+                Hit(something as HealBox);
+            }
             else
             {
                 if (!gameLogicOnly)
@@ -433,6 +437,15 @@ namespace ActionGame.People
                     MoveTo(lastPosition, Azimuth);
                     GoBack((float)gameTime.ElapsedGameTime.TotalSeconds);
                 }
+            }
+        }
+
+        protected void Hit(HealBox box)
+        {
+            health += box.Take();
+            if (health > 100)
+            {
+                health = 100;
             }
         }
 
@@ -462,7 +475,7 @@ namespace ActionGame.People
             selectedToolIndex = tools.Count - 1;
         }
 
-        public override void BecomeShot(int damage, Human by)
+        public override void BecomeShot(GameTime gameTime, int damage, Human by)
         {
             health -= damage;
             if (health <= 0)

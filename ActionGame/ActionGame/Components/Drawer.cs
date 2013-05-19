@@ -33,6 +33,10 @@ namespace ActionGame.Components
         string message = string.Empty;
         Texture2D messageBackground;
         readonly HashSet<ProgressBar> progressBars = new HashSet<ProgressBar>();
+        Texture2D fullscreenEffect;
+        bool showFullscreenEffect = false;
+        TimeSpan fullscreenEffectBegin = TimeSpan.Zero;
+        TimeSpan fullscreenEffectDuration = TimeSpan.Zero;
 
 
         /// <summary>
@@ -87,14 +91,25 @@ namespace ActionGame.Components
             messageShowBegin = gameTime.TotalGameTime;
             message = text;
         }
+        public void ShowFullscreenEffect(GameTime gameTime, Texture2D effect, TimeSpan duration)
+        {
+            fullscreenEffect = effect;
+            fullscreenEffectDuration = duration;
+            fullscreenEffectBegin = gameTime.TotalGameTime;
+            showFullscreenEffect = true;
+        }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            if (gameTime.TotalGameTime - messageShowBegin > MessageTimeout)
+            if (showMessage && gameTime.TotalGameTime - messageShowBegin > MessageTimeout)
             {
                 showMessage = false;
+            }
+            if (showFullscreenEffect && gameTime.TotalGameTime - fullscreenEffectBegin > fullscreenEffectDuration)
+            {
+                showFullscreenEffect = false;
             }
 
             ///TODO: Maybe this should be called from other Update. For ex. Player's.
@@ -133,6 +148,10 @@ namespace ActionGame.Components
             Game.Player.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
             Game.SpriteBatch.Begin();
+            if (showFullscreenEffect)
+            {
+                Game.SpriteBatch.Draw(fullscreenEffect, new Rectangle(0, 0, Game.Settings.ScreenSize.Width, Game.Settings.ScreenSize.Height), Color.White);
+            }
             Game.SpriteBatch.Draw(toolPanelBackground, new Vector2(0, 0), Color.AliceBlue);
             Game.SpriteBatch.DrawString(font, Game.Player.Health.ToString(), new Vector2(20, 80), Color.Maroon);
             if (Game.Player.SelectedTool != null)

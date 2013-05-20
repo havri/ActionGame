@@ -72,6 +72,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(429, 107);
+            this.ControlBox = false;
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.statusStrip1);
             this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
@@ -81,6 +82,7 @@
             this.Name = "Loading";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Loading...";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

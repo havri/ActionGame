@@ -81,7 +81,7 @@ namespace ActionGame.World
                 {
                     if (!edges[i, j] && degrees[i] < MaxQuarterDegree && degrees[j] < MaxQuarterDegree)
                     {
-                        if (game.Random.Next(0, 4) == 0)
+                        if (game.Random.NextDouble() < 0.65)
                         {
                             degrees[i]++;
                             degrees[j]++;
@@ -189,42 +189,48 @@ namespace ActionGame.World
             currentQuarter = quarters[0];
         }
 
+        public Bitmap CreateTownMapImage()
+        {
+            Bitmap bmp = new Bitmap(mapImage);
+            using (Graphics graphics = Graphics.FromImage(bmp))
+            {
+                float angleJump = MathHelper.TwoPi / Game.Settings.TownQuarterCount;
+                float radius = Math.Min(MapImageWidth, MapImageHeight) / 2f - 20f;
+                PointF center = new PointF(MapImageWidth / 2f, MapImageHeight / 2f);
+                for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
+                {
+                    float xCoo = center.X + (float)Math.Cos(i * angleJump) * radius;
+                    float yCoo = center.Y + (float)Math.Sin(i * angleJump) * radius;
+                    if (quarters[i].Owner != null)
+                    {
+                        graphics.DrawEllipse(new Pen(quarters[i].Owner.Content.DrawingColor, 2), xCoo - 7f, yCoo - 7f, 14, 14);
+                    }
+                    System.Drawing.Point[] pointerPoints = new System.Drawing.Point[] { new System.Drawing.Point(0, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 0) };
+                    for (int j = 0; j < pointerPoints.Length; j++)
+                    {
+                        pointerPoints[j].X += (int)xCoo;
+                        pointerPoints[j].Y += (int)yCoo;
+                    }
+                    if (quarters[i] == Game.Opponent.Position.Quarter)
+                    {
+                        graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
+                        graphics.DrawLines(new Pen(Game.Opponent.Content.DrawingColor, 3), pointerPoints);
+                    }
+                    if (quarters[i] == Game.Player.Position.Quarter)
+                    {
+                        graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
+                        graphics.DrawLines(new Pen(Game.Player.Content.DrawingColor, 3), pointerPoints);
+                    }
+                }
+            }
+            return bmp;
+        }
+
         public Texture2D CreateTownMap()
         {
             Texture2D map;
-            using (Bitmap bmp = new Bitmap(mapImage))
+            using (Bitmap bmp = CreateTownMapImage())
             {
-                using (Graphics graphics = Graphics.FromImage(bmp))
-                {
-                    float angleJump = MathHelper.TwoPi / Game.Settings.TownQuarterCount;
-                    float radius = Math.Min(MapImageWidth, MapImageHeight) / 2f - 20f;
-                    PointF center = new PointF(MapImageWidth / 2f, MapImageHeight / 2f);
-                    for (int i = 0; i < Game.Settings.TownQuarterCount; i++)
-                    {
-                        float xCoo = center.X + (float)Math.Cos(i * angleJump) * radius;
-                        float yCoo = center.Y + (float)Math.Sin(i * angleJump) * radius;
-                        if (quarters[i].Owner != null)
-                        {
-                            graphics.DrawEllipse(new Pen(quarters[i].Owner.Content.DrawingColor, 2), xCoo - 7f, yCoo - 7f, 14, 14);
-                        }
-                        System.Drawing.Point[] pointerPoints = new System.Drawing.Point[] { new System.Drawing.Point(0, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 16), new System.Drawing.Point(0, 0), new System.Drawing.Point(16, 0) };
-                        for (int j = 0; j < pointerPoints.Length; j++)
-                        {
-                            pointerPoints[j].X += (int)xCoo;
-                            pointerPoints[j].Y += (int)yCoo;
-                        }
-                        if (quarters[i] == Game.Opponent.Position.Quarter)
-                        {
-                            graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
-                            graphics.DrawLines(new Pen(Game.Opponent.Content.DrawingColor, 3), pointerPoints);
-                        }
-                        if (quarters[i] == Game.Player.Position.Quarter)
-                        {
-                            graphics.DrawLines(new Pen(System.Drawing.Color.Black, 5), pointerPoints);
-                            graphics.DrawLines(new Pen(Game.Player.Content.DrawingColor, 3), pointerPoints);
-                        }
-                    }
-                }
                 using (MemoryStream ms = new MemoryStream())
                 {
                     bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);

@@ -140,6 +140,10 @@ namespace ActionGame.People
             {
                 Hit(something as ToolBox);
             }
+            else if (something is HealBox)
+            {
+                Hit(something as HealBox);
+            }
             else
             {
                 MoveTo(LastPosition, Azimuth);
@@ -150,6 +154,12 @@ namespace ActionGame.People
         {
             base.BecomeShot(gameTime, damage, by);
             Game.Drawer.ShowFullscreenEffect(gameTime, Game.ContentRepository.HurtFullscreenEffect, HurtFullscreenEffectDuration);
+        }
+
+
+        public override void Destroy()
+        {
+            Position.Quarter.DestroyObject(this);
         }
     }
 }

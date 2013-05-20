@@ -38,11 +38,11 @@ namespace ActionGame.World
 
         const float BetweenBuildingSpace = 4f;
         readonly static List<string> nameRepository = new List<string>(new string[] {
-            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York"
+            "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York", "Hoboken", "Quadbeca", "Hell's Bathroom", "Upper South Side", "Bronxy", "Slovaktown", "Womanhattan", "Kilogramercy", "Chelocean", "Creeklyn", "Dragem", "Kings"
         });
         readonly static string emptyName = "Unnamed";
         public readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 0, 30);
-        public const int MaxGuardCount = 20;
+        public const int MaxGuardCount = 15;
 
         TimeSpan lastTimeGuardAdded = TimeSpan.Zero;
         public ITownQuarterOwner Owner { get { return owner; } }
@@ -209,13 +209,16 @@ namespace ActionGame.World
             }
             flag.SetModel(owner.Content.FlagModel, game.Drawer.WorldTransformMatrix);
             ownershipBeginTime = gameTime.TotalGameTime;
-            Box[] addedBoxes = GenerateBoxes();
-            foreach (Box box in addedBoxes)
+            if (boxes.Count == 0)
             {
-                spaceGrid.AddObject(box);
-                if (currentlyDrawed)
+                Box[] addedBoxes = GenerateBoxes();
+                foreach (Box box in addedBoxes)
                 {
-                    game.Drawer.StartDrawingObject(box, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                    spaceGrid.AddObject(box);
+                    if (currentlyDrawed)
+                    {
+                        game.Drawer.StartDrawingObject(box, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                    }
                 }
             }
         }
@@ -290,6 +293,7 @@ namespace ActionGame.World
                 for (int i = 0; i < count; i++)
                 {
                     Human newGuard = owner.CreateAllyGuard(this);
+                    newGuard.BecomeShot(gameTime, 41, null);
                     guards.Add(newGuard);
                     spaceGrid.AddObject(newGuard);
                     if (currentlyDrawed)
@@ -334,10 +338,10 @@ namespace ActionGame.World
             updateProcessing = false;
 
 
-            SolveAwaings();
+            SolveAwaitings();
         }
 
-        private void SolveAwaings()
+        private void SolveAwaitings()
         {
             if (awaitingDestroy.Count + awaitingEnter.Count + awaitingLeave.Count != 0)
             {

@@ -8,13 +8,15 @@ using Microsoft.Xna.Framework.Graphics;
 using ActionGame.Planner;
 using ActionGame.Tools;
 using ActionGame.Tasks;
+using ActionGame.Space;
 
 namespace ActionGame.People
 {
     public class Opponent : Human
     {
-        static readonly TimeSpan TasksReplanTimeout = new TimeSpan(0, 5, 0);
+        static readonly TimeSpan TasksReplanTimeout = new TimeSpan(0, 2, 0);
         TimeSpan lastTasksReplanTime = TimeSpan.Zero;
+        bool planning = false;
 
         public Opponent(ActionGame game)
             : base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
@@ -44,18 +46,24 @@ namespace ActionGame.People
 
         public override void Update(GameTime gameTime, bool gameLogicOnly)
         {
-            bool hasAnythingToDo;
+            bool willPlan = false;
             lock(this)
             {
                 base.Update(gameTime, gameLogicOnly);
-                hasAnythingToDo = HasAnythingToDo;
+                bool hasAnythingToDo = HasAnythingToDo;
                 Debug.Write("Opponent has plan", hasAnythingToDo.ToString());
+                willPlan = (!hasAnythingToDo || gameTime.TotalGameTime - lastTasksReplanTime > TasksReplanTimeout) && !planning;
+                if(willPlan)
+                {
+                    planning = true;
+                }
             }
-            if (!hasAnythingToDo || gameTime.TotalGameTime - lastTasksReplanTime > TasksReplanTimeout)
+            if (willPlan)
             {
+                planning = true;
+                lastTasksReplanTime = gameTime.TotalGameTime;
                 System.Threading.Tasks.Task.Factory.StartNew(() => { PlanTasks(gameTime); });
                 //PlanTasks(gameTime);
-                lastTasksReplanTime = gameTime.TotalGameTime;
             }
             CheckFlagInMyQuarter();
         }
@@ -85,6 +93,7 @@ namespace ActionGame.People
                 {
                     AddTask(operation.CreateTask(this));
                 }
+                planning = false;
             }
         }
 
@@ -165,6 +174,11 @@ namespace ActionGame.People
                 }
             }
             return new GameState(Game) { QuarterStates = qStates, Damage = damage, Position = Position, Health = Health };
+        }
+
+        public override void Destroy()
+        {
+            Position.Quarter.DestroyObject(this);
         }
     }
 }

@@ -310,6 +310,17 @@ namespace ActionGame
                 }
                 opponent.Update(gameTime, !opponentInTheSameQuarter);
                 player.Update(gameTime);
+
+                ITownQuarterOwner owner = town.Quarters[0].Owner;
+
+                if ((owner == player || owner == opponent) && town.Quarters.All(q => q.Owner == owner))
+                {
+                    Program.ExitType = (owner == player ? ExitType.PlayerWin : ExitType.OpponentWin);
+                    Program.TownMap = town.CreateTownMapImage();
+                    this.Exit();
+                    return;
+                }
+
                 if (player.Health <= 0)
                 {
                     TownQuarter newQuarter = FindAndRespawnQuartersFor(player, gameTime);

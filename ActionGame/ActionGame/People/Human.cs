@@ -23,7 +23,7 @@ namespace ActionGame.People
         /// <summary>
         /// Speed of human run. In meters per second.
         /// </summary>
-        public const float RunSpeed = 6f;
+        public const float RunSpeed = 6.1f;
         /// <summary>
         /// Speed of human rotation. In radians per second.
         /// </summary>
@@ -34,7 +34,7 @@ namespace ActionGame.People
         /// Distance from target where human decides he's there.
         /// </summary>
         public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
-        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 1, 500);
+        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 0, 900);
         static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
         static readonly TimeSpan CheckEnemiesInQuarterTimeout = new TimeSpan(0,0,20);
@@ -183,7 +183,10 @@ namespace ActionGame.People
             }
         }
 
-
+        private bool IsAzimuthTooFarFrom(double direction, double maxDeltaAngle)
+        {
+            return (Azimuth + MathHelper.TwoPi + MathHelper.TwoPi - direction) % MathHelper.TwoPi > maxDeltaAngle;
+        }
         /// <summary>
         /// Performs move to the spcifed target.
         /// </summary>
@@ -196,19 +199,11 @@ namespace ActionGame.People
                 double actualRotateAngle = RotateAngle * seconds;
                 float direction = (destination.PositionInQuarter - Position.PositionInQuarter).GetAngle() + 1*MathHelper.PiOver2;
                 direction = direction % MathHelper.TwoPi;
-                if (Math.Abs(azimuth - direction) > actualRotateAngle || ((azimuth + MathHelper.TwoPi - direction) > actualRotateAngle && direction > azimuth))
+                if (IsAzimuthTooFarFrom(direction, actualRotateAngle))
                 {
-                    const int stepProbability = 9;
                     bool toLeft = (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi);
-                    if (game.Random.Next(10) == stepProbability)
-                    {
-                        Step(toLeft, seconds);
-                    }
-                    else
-                    {
-                        Rotate(toLeft, seconds);
-                    }
-                                   
+                    Rotate(toLeft, seconds);
+
                     if(Math.Abs(azimuth - direction) < MathHelper.PiOver2 && Position.MinimalDistanceTo(destination) > TownQuarter.SquareWidth)
                     {
                         Go(seconds);
@@ -297,7 +292,7 @@ namespace ActionGame.People
 
         private void CheckEnemiesInMyQuarter(GameTime gameTime)
         {
-            if (/*gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout &&*/ (!HasAnythingToDo || tasks.First.Value.TargetQuarter != Position.Quarter || (!(tasks.First.Value is KillTask) && !(tasks.First.Value is TemporaryTask<KillTask>))))
+            if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout && (!HasAnythingToDo || tasks.First.Value.TargetQuarter != Position.Quarter || (!(tasks.First.Value is KillTask) && !(tasks.First.Value is TemporaryTask<KillTask>))))
             {
                 foreach (Human enemy in enemies)
                 {
@@ -320,7 +315,7 @@ namespace ActionGame.People
 
             Quadrangle viewCone = GetViewCone(balkDistance);
             IEnumerable<Quadrangle> balks = Position.Quarter.SpaceGrid.GetAllCollisions(viewCone);
-            if (balks.Any(x => x != this && x is Human))
+            if (balks.Any(x => x != this && (x is Human || x is ActionObject)))
             {
                 float totalSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 Step(false, totalSeconds);
@@ -339,16 +334,16 @@ namespace ActionGame.People
                 Quadrangle viewCone = GetViewCone(enemyShotDistance);
                 if (lastSeenEnemy != null && viewCone.IsInCollisionWith(lastSeenEnemy))
                 {
-                    Quadrangle clearViewQuad = new Quadrangle(lastSeenEnemy.PositionInQuarter.XZToVector2(), lastSeenEnemy.PositionInQuarter.XZToVector2(), UpperLeftCorner, UpperRightCorner);
-                    IEnumerable<Quadrangle> inView = from obj in Position.Quarter.SpaceGrid.GetAllCollisions(clearViewQuad) where obj != this && obj != lastSeenEnemy select obj;
-                    if (inView.Any())
-                    {
-                        lastSeenEnemy = null;
-                    }
-                    else
-                    {
+                    //Quadrangle clearViewQuad = new Quadrangle(lastSeenEnemy.PositionInQuarter.XZToVector2(), lastSeenEnemy.PositionInQuarter.XZToVector2(), Pivot.PositionInQuarter, Pivot.PositionInQuarter);
+                    //IEnumerable<Quadrangle> inView = from obj in Position.Quarter.SpaceGrid.GetAllCollisions(clearViewQuad) where obj != this && obj != lastSeenEnemy select obj;
+                    //if (inView.Any())
+                    //{
+                        //lastSeenEnemy = null;
+                    //}
+                    //else
+                    //{
                         seenEnemy = lastSeenEnemy;
-                    }
+                    //}
                 }
                 else
                 {
@@ -369,11 +364,14 @@ namespace ActionGame.People
                 {
                     lastSeenEnemy = seenEnemy;
                     selectedToolIndex = tools.FindIndex(x => (x is Gun && ((Gun)x).Type.Range == enemyShotDistance));
-                    GoThisWay(seenEnemy.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
                     float direction = (seenEnemy.PositionInQuarter.XZToVector2() - Position.PositionInQuarter).GetAngle() + 1 * MathHelper.PiOver2;
-                    if (direction == azimuth)
+                    if (!IsAzimuthTooFarFrom(direction, gameTime.ElapsedGameTime.TotalSeconds * RotateAngle))
                     {
                         DoToolAction(gameTime);
+                    }
+                    else
+                    {
+                        GoThisWay(seenEnemy.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
                     }
                     return true;
                 }
@@ -485,6 +483,14 @@ namespace ActionGame.People
             else if(by != null)
             {
                 AddEnemy(by);
+                if (tasks.Count != 0)
+                {
+                    Task current = tasks.First.Value;
+                    if (!(current is KillTask || current is TemporaryTask<KillTask>))
+                    { 
+                        tasks.AddFirst(new TemporaryTask<KillTask>(this, new KillTask(this, by), kt => kt.Holder.Position.Quarter == kt.Target.Position.Quarter));
+                    }
+                }
             }
         }
 
@@ -577,7 +583,7 @@ namespace ActionGame.People
 
         public Human CreateAllyGuard(TownQuarter targetQuarter)
         {
-            PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.Empty).ToVector2() * TownQuarter.SquareWidth);
+            PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.StraightRoad).ToVector2() * TownQuarter.SquareWidth);
             Human guard = new Human(game, Content.AllyHumanModel, pos, 0, game.Drawer.WorldTransformMatrix);
             foreach (Human enemy in enemies)
                 guard.AddEnemy(enemy);
@@ -613,6 +619,7 @@ namespace ActionGame.People
                 targetQuarter.GetRandomSquare(x => (x == MapFillType.StraightRoad)).ToVector2() * TownQuarter.SquareWidth + Vector2.One * 0.5f * TownQuarter.SquareWidth);
             Position.Quarter.BeEnteredBy(this);
             health = 100;
+            tasks.Clear();
         }
     }
 }

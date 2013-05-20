@@ -119,10 +119,17 @@
     <Compile Include="Components\SoundPlayer.cs" />
     <Compile Include="Exceptions\PathGraphNotConnectedException.cs" />
     <Compile Include="Exceptions\PathNotFoundException.cs" />
+    <Compile Include="ExitType.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\MapFillTypeExtensions.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="MenuForms\GameOver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuForms\GameOver.Designer.cs">
+      <DependentUpon>GameOver.cs</DependentUpon>
+    </Compile>
     <Compile Include="MenuForms\Loading.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,6 +237,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MenuForms\GameOver.resx">
+      <DependentUpon>GameOver.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MenuForms\Loading.resx">
       <DependentUpon>Loading.cs</DependentUpon>
     </EmbeddedResource>

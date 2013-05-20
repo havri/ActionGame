@@ -39,11 +39,7 @@ namespace ActionGame.Space
             get { return azimuth_; }
             set
             {
-                azimuth_ = value;
-                while (azimuth_ > MathHelper.TwoPi)
-                    azimuth_ -= MathHelper.TwoPi;
-                while (azimuth_ < 0.00)
-                    azimuth_ += MathHelper.TwoPi;
+                azimuth_ = ( value + MathHelper.TwoPi ) % MathHelper.TwoPi;
             }
         }
 

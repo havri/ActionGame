@@ -25,6 +25,7 @@ namespace ActionGame.Components
         Texture2D toolPanelBackground;
         Texture2D playerIcon;
         Texture2D actionAvailableIcon;
+        Texture2D tmpTownMap;
         TownQuarter currentQuarter;
         SpriteFont font;
         SpatialObject panorama;
@@ -205,8 +206,16 @@ namespace ActionGame.Components
             }
             if (ShowTownGraph)
             {
-                Texture2D townGraphPicture = Game.Town.CreateTownMap();
-                Game.SpriteBatch.Draw(townGraphPicture, new Vector2((Game.Settings.ScreenSize.Width - townGraphPicture.Width) / 2, (Game.Settings.ScreenSize.Height - townGraphPicture.Height) / 2), Color.White);
+                if (tmpTownMap == null)
+                {
+                    tmpTownMap = Game.Town.CreateTownMap();
+                }
+                Game.SpriteBatch.Draw(tmpTownMap, new Vector2((Game.Settings.ScreenSize.Width - tmpTownMap.Width) / 2, (Game.Settings.ScreenSize.Height - tmpTownMap.Height) / 2), Color.White);
+            }
+            else if (tmpTownMap != null)
+            {
+                tmpTownMap.Dispose();
+                tmpTownMap = null;
             }
             Game.SpriteBatch.End();
         }

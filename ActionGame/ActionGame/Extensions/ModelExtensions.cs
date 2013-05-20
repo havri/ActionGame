@@ -80,7 +80,7 @@ namespace ActionGame.Extensions
                 if (corner.Z < min.Z)
                     min.Z = corner.Z;
             }*/
-            Vector3 size = (box.Max -box.Min);
+            Vector3 size = (box.Max - box.Min);
             sizeCache.Add(model, size);
             return size;
         }

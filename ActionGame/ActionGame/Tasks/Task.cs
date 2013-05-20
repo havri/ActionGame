@@ -37,7 +37,7 @@ namespace ActionGame.Tasks
 
         public virtual void Update(GameTime gameTime)
         {
-            if (wayPoints.Count > 0)
+            if (wayPoints.Count != 0)
             {
                 WayPoint nextWayPoint = wayPoints.Peek();
                 if (holder.Pivot.MinimalDistanceTo(nextWayPoint.Point) <= Human.EpsilonDistance)
@@ -46,7 +46,7 @@ namespace ActionGame.Tasks
                 }
             }
 
-            if (wayPoints.Count > 0)
+            if (wayPoints.Count != 0)
             {
                 WayPoint nextWayPoint = wayPoints.Peek();
                 float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;

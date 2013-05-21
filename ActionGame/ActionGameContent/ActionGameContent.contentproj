@@ -262,21 +262,6 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="Objects\Decorations\flagBlue.fbx">
-      <Name>flagBlue</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagEmpty.fbx">
-      <Name>flagEmpty</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagYellow.fbx">
-      <Name>flagYellow</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="Objects\Humans\alphaBotYellow.fbx">
       <Name>alphaBotYellow</Name>
       <Importer>FbxImporter</Importer>
@@ -322,6 +307,21 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="Objects\Decorations\flagBlue2.fbx">
+      <Name>flagBlue2</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty2.fbx">
+      <Name>flagEmpty2</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow2.fbx">
+      <Name>flagYellow2</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\ToolIcons\pistol.png">
@@ -354,13 +354,6 @@
       <Name>pistol</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Objects\panorama\panorama.jpg">
-      <Name>panorama</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -439,53 +432,6 @@
     </Compile>
     <Compile Include="Textures\roadSignYellow.jpg">
       <Name>roadSignYellow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Objects\Decorations\flagBlue\Brick_Antique.jpg">
-      <Name>Brick_Antique</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagBlue\Cladding_Stucco_White.jpg">
-      <Name>Cladding_Stucco_White</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagBlue\Metal_Rusted.jpg">
-      <Name>Metal_Rusted</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagEmpty\Brick_Antique.jpg">
-      <Name>Brick_Antique</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagEmpty\Cladding_Stucco_White.jpg">
-      <Name>Cladding_Stucco_White</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagEmpty\Metal_Rusted.jpg">
-      <Name>Metal_Rusted</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagYellow\Brick_Antique.jpg">
-      <Name>Brick_Antique</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagYellow\Cladding_Stucco_White.jpg">
-      <Name>Cladding_Stucco_White</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Objects\Decorations\flagYellow\Metal_Rusted.jpg">
-      <Name>Metal_Rusted</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -647,6 +593,67 @@
   <ItemGroup>
     <Compile Include="Textures\FullscreenEffects\respawnEffect.png">
       <Name>respawnEffect</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\FullscreenEffects\godmode.png">
+      <Name>godmode</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\Decorations\flagBlue2\Brick_Rough_Tan.jpg">
+      <Name>Brick_Rough_Tan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagBlue2\Metal_Embossed.jpg">
+      <Name>Metal_Embossed</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagBlue2\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty2\Brick_Rough_Tan.jpg">
+      <Name>Brick_Rough_Tan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty2\Metal_Embossed.jpg">
+      <Name>Metal_Embossed</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagEmpty2\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow2\Brick_Rough_Tan.jpg">
+      <Name>Brick_Rough_Tan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow2\Metal_Embossed.jpg">
+      <Name>Metal_Embossed</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Objects\Decorations\flagYellow2\Metal_Rusted.jpg">
+      <Name>Metal_Rusted</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\panorama\Material1.jpg">
+      <Name>Material1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

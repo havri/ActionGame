@@ -59,6 +59,9 @@
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
@@ -129,6 +132,18 @@
     </Compile>
     <Compile Include="MenuForms\GameOver.Designer.cs">
       <DependentUpon>GameOver.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuForms\KeySelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuForms\KeySelector.Designer.cs">
+      <DependentUpon>KeySelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuForms\KeyReader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuForms\KeyReader.Designer.cs">
+      <DependentUpon>KeyReader.cs</DependentUpon>
     </Compile>
     <Compile Include="MenuForms\Loading.cs">
       <SubType>Form</SubType>
@@ -239,6 +254,12 @@
   <ItemGroup>
     <EmbeddedResource Include="MenuForms\GameOver.resx">
       <DependentUpon>GameOver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuForms\KeySelector.resx">
+      <DependentUpon>KeySelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuForms\KeyReader.resx">
+      <DependentUpon>KeyReader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MenuForms\Loading.resx">
       <DependentUpon>Loading.cs</DependentUpon>

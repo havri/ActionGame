@@ -4,7 +4,8 @@ using System.Linq;
 using ActionGame.Space;
 using Microsoft.Xna.Framework;
 using ActionGame.World;
-using ActionGame.Exceptions;
+using ActionGame.Extensions;
+using ActionGame.People;
 
 namespace ActionGame.QSP
 {
@@ -132,6 +133,18 @@ namespace ActionGame.QSP
             return result;
         }
 
+        public static bool IsInCollision(Quadrangle obj, Func<Quadrangle, bool> predicate)
+        {
+            foreach (GridField field in obj.SpacePartitioningFields)
+            {
+                if (field.GetCollisions(obj).Any(predicate))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool IsInCollision(Quadrangle obj)
         {
             foreach (GridField field in obj.SpacePartitioningFields)
@@ -162,13 +175,18 @@ namespace ActionGame.QSP
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
         {
             PathGraphVertex res = null;
+            PathGraphVertex fallDownResult = null;
             float minDistance = float.MaxValue;
             foreach (GridField field in fields)
             {
                 foreach (PathGraphVertex vertex in field.PathGraphVertices)
                 {
-                    Quadrangle pathObj = new Quadrangle(vertex.Position.PositionInQuarter, vertex.Position.PositionInQuarter, from, from);
-                    if ((vertex.Position.PositionInQuarter - from).Length() < minDistance && !IsInCollision(pathObj))
+                    fallDownResult = vertex;
+                    Vector2 way = (from - vertex.Position.PositionInQuarter);
+                    float direction = (way.GetAngle() + 1 * MathHelper.PiOver2) % MathHelper.TwoPi;
+                    Quadrangle pathObj = Quadrangle.CreateBand(vertex.Position.PositionInQuarter, direction, 0.5f, way.Length());
+                    //Quadrangle pathObj = new Quadrangle(vertex.Position.PositionInQuarter, vertex.Position.PositionInQuarter, from, from);
+                    if ((vertex.Position.PositionInQuarter - from).Length() < minDistance && !IsInCollision(pathObj, x => !(x is Human)))
                     {
                         res = vertex;
                         minDistance = (vertex.Position.PositionInQuarter - from).Length();
@@ -179,7 +197,7 @@ namespace ActionGame.QSP
             {
                 return res;
             }
-            throw new PathNotFoundException("Couldn't find path graph vertex witch has clear way to specified position.");
+            return fallDownResult;
         }
 
         IEnumerable<GridField> GetFieldsByRounds(Vector2 from)

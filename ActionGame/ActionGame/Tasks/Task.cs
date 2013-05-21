@@ -64,6 +64,16 @@ namespace ActionGame.Tasks
             wayPoints.Enqueue(new WayPoint(to));
         }
 
+        public void ClearWaypoints()
+        {
+            wayPoints.Clear();
+        }
+
         public abstract TownQuarter TargetQuarter { get; }
+
+        public override string ToString()
+        {
+            return String.Format("{0}WP[{1}]", base.ToString(), wayPoints.Count);
+        }
     }
 }

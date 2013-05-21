@@ -190,7 +190,7 @@ namespace ActionGame.World
 
         private void BuildFlag()
         {
-            Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.Sidewalk);
+            Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.StraightRoad);
             Model flagModel = owner.Content.FlagModel;
             Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
             PositionInTown pos = new PositionInTown(this, ((square.ToVector2() + new Vector2(0.5f, 0.5f)) * SquareWidth) - (flagSize.XZToVector2() * 0.5f));
@@ -200,6 +200,7 @@ namespace ActionGame.World
 
         public void SetOwner(ITownQuarterOwner newOwner, GameTime gameTime)
         {
+            lastTimeGuardAdded = gameTime.TotalGameTime;
             owner = newOwner;
             roadSignTexture.Dispose();
             GenerateRoadSignPicture();

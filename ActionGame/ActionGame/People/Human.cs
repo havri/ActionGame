@@ -34,10 +34,12 @@ namespace ActionGame.People
         /// Distance from target where human decides he's there.
         /// </summary>
         public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
-        public static readonly TimeSpan CheckEnemiesInViewConeTimeout = new TimeSpan(0, 0, 0, 0, 900);
-        static readonly TimeSpan KillEnemyReflexTimeout = new TimeSpan(0, 0, 0, 0, 500);
+
+        public virtual TimeSpan CheckEnemiesInViewConeTimeout { get { return new TimeSpan(0, 0, 0, 0, 900); } }
+        protected virtual TimeSpan KillEnemyReflexTimeout { get { return new TimeSpan(0, 0, 0, 0, 650); } }
+        protected virtual TimeSpan CheckEnemiesInQuarterTimeout { get { return new TimeSpan(0, 0, 10); } }
+
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
-        static readonly TimeSpan CheckEnemiesInQuarterTimeout = new TimeSpan(0,0,20);
         TimeSpan lastCheckEnemiesInQuarterTime = TimeSpan.Zero;
         /// <summary>
         /// Gets current health of human. In percents.
@@ -105,6 +107,18 @@ namespace ActionGame.People
                 }
             }
         }
+
+        bool inGodMode = false;
+        public bool InGodMode
+        {
+            get { return inGodMode; }
+            set { inGodMode = value; }
+        }
+
+        Quadrangle lastHitObject;
+        TimeSpan firstTimeHitObject;
+        static readonly TimeSpan StuckTimeout = new TimeSpan(0, 0, 0, 3);
+
 
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
@@ -186,6 +200,25 @@ namespace ActionGame.People
         private bool IsAzimuthTooFarFrom(double direction, double maxDeltaAngle)
         {
             return (Azimuth + MathHelper.TwoPi + MathHelper.TwoPi - direction) % MathHelper.TwoPi > maxDeltaAngle;
+        }
+
+        public void TurnThisWay(PositionInTown destination, float seconds)
+        {
+            if (destination.Quarter == Position.Quarter)
+            {
+                double actualRotateAngle = RotateAngle * seconds;
+                float direction = (destination.PositionInQuarter - Position.PositionInQuarter).GetAngle() + 1 * MathHelper.PiOver2;
+                direction = direction % MathHelper.TwoPi;
+                if (IsAzimuthTooFarFrom(direction, actualRotateAngle))
+                {
+                    bool toLeft = (azimuth > direction && direction >= 0 && azimuth - direction < MathHelper.Pi) || (direction > azimuth && direction - azimuth > MathHelper.Pi);
+                    Rotate(toLeft, seconds);
+                }
+                else
+                {
+                    azimuth = direction;
+                }
+            }
         }
         /// <summary>
         /// Performs move to the spcifed target.
@@ -432,8 +465,26 @@ namespace ActionGame.People
             {
                 if (!gameLogicOnly)
                 {
-                    MoveTo(lastPosition, Azimuth);
-                    GoBack((float)gameTime.ElapsedGameTime.TotalSeconds);
+                    if (something == lastHitObject && gameTime.TotalGameTime - firstTimeHitObject > StuckTimeout)
+                    {
+                        Point newPoint = Position.Quarter.GetRandomSquare(mft => mft == MapFillType.StraightRoad);
+                        MoveTo(newPoint.ToVector2() * TownQuarter.SquareWidth + Vector2.One * TownQuarter.SquareWidth * 0.5f, azimuth);
+                        lastHitObject  = null;
+                        if(tasks.Count != 0)
+                        {
+                            tasks.First.Value.ClearWaypoints();
+                        }
+                    }
+                    else
+                    {
+                        if(something != lastHitObject)
+                        {
+                            firstTimeHitObject = gameTime.TotalGameTime;
+                        }
+                        lastHitObject = something;
+                        MoveTo(lastPosition, Azimuth);
+                        GoBack((float)gameTime.ElapsedGameTime.TotalSeconds);
+                    }
                 }
             }
         }
@@ -475,6 +526,10 @@ namespace ActionGame.People
 
         public override void BecomeShot(GameTime gameTime, int damage, Human by)
         {
+            if (inGodMode)
+            {
+                damage = 0;
+            }
             health -= damage;
             if (health <= 0)
             {

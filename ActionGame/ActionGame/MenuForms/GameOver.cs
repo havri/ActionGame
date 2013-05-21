@@ -31,6 +31,13 @@ namespace ActionGame.MenuForms
             Close();
         }
 
+        private void disableTime_Tick(object sender, EventArgs e)
+        {
+            restartBTN.Enabled = true;
+            exitBtn.Enabled = true;
+            disableTime.Enabled = false;
+        }
+
         
     }
 }

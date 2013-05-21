@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using ActionGame.Tools;
+using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame
 {
@@ -20,5 +21,18 @@ namespace ActionGame
         public bool MouseXInvert { get; set; }
         public bool MouseYInvert { get; set; }
         public string GunSetFilename { get; set; }
+
+        public Keys Forward { get; set; }
+        public Keys Backward { get; set; }
+        public Keys StepLeft { get; set; }
+        public Keys StepRight { get; set; }
+        public Keys TurnLeft { get; set; }
+        public Keys TurnRight { get; set; }
+        public Keys TurnUp { get; set; }
+        public Keys TurnDown { get; set; }
+        public Keys RunWalkSwitch { get; set; }
+        public Keys ShowQuarterMap { get; set; }
+        public Keys ShowTownMap { get; set; }
+        public Keys CameraSwitch { get; set; }
     }
 }

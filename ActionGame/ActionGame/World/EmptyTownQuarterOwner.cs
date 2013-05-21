@@ -31,7 +31,7 @@ namespace ActionGame.World
             instance = new EmptyTownQuarterOwner(new TownQuarterOwnerContent
                 {
                     RoadSignTexture = contentManager.Load<Texture2D>("Textures/roadSignGreen"),
-                    FlagModel = contentManager.Load<Model>("Objects/Decorations/flagEmpty"),
+                    FlagModel = contentManager.Load<Model>("Objects/Decorations/flagEmpty2"),
                     AllyHumanModel = contentManager.Load<Model>("Objects/Humans/human0")
                 });
         }

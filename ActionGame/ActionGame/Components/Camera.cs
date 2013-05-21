@@ -17,7 +17,6 @@ namespace ActionGame.Components
 
         
         CameraMode mode = CameraMode.ThirdPersonLook;
-        static readonly Keys changeKey = Keys.C;
         TimeSpan lastChange = new TimeSpan(0);
         Vector3 cameraPosition;
         Vector3 cameraSubjectPosition;
@@ -30,7 +29,15 @@ namespace ActionGame.Components
             }
         }
 
-        public Camera(Game game)
+        protected new ActionGame Game
+        {
+            get
+            {
+                return (ActionGame)base.Game;
+            }
+        }
+
+        public Camera(ActionGame game)
             :base(game)
         { }
 
@@ -45,7 +52,7 @@ namespace ActionGame.Components
         public override void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(changeKey) && (gameTime.TotalGameTime - lastChange) > changeTimeOut)
+            if (keyboardState.IsKeyDown(Game.Settings.CameraSwitch) && (gameTime.TotalGameTime - lastChange) > changeTimeOut)
             {
                 switch (mode)
                 {

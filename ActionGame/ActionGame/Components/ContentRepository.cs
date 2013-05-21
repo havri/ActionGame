@@ -16,6 +16,7 @@ namespace ActionGame.Components
         Texture2D cross;
         Texture2D hurtFullscreenEffect;
         Texture2D respawnFullscreenEffect;
+        Texture2D godModeFullscreenEffect;
 
         public ContentRepository(ActionGame game)
         {
@@ -57,6 +58,7 @@ namespace ActionGame.Components
             cross = contentManager.Load<Texture2D>("Textures/cross");
             hurtFullscreenEffect = contentManager.Load<Texture2D>("Textures/FullscreenEffects/hurtEffect");
             respawnFullscreenEffect = contentManager.Load<Texture2D>("Textures/FullscreenEffects/respawnEffect");
+            godModeFullscreenEffect = contentManager.Load<Texture2D>("Textures/FullscreenEffects/godmode");
         }
         public Model[] BorderBuildings
         {
@@ -92,6 +94,13 @@ namespace ActionGame.Components
             get
             {
                 return respawnFullscreenEffect;
+            }
+        }
+        public Texture2D GodModeFullscreenEffect
+        {
+            get
+            {
+                return godModeFullscreenEffect;
             }
         }
     }

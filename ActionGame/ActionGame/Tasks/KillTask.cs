@@ -7,14 +7,18 @@ using ActionGame.Space;
 using ActionGame.Tools;
 using ActionGame.Extensions;
 using Microsoft.Xna.Framework;
+using ActionGame.World;
+using ActionGame.QSP;
 
 namespace ActionGame.Tasks
 {
     public class KillTask : Task
     {
-        static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 4);
+        static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 3);
         TimeSpan lastUpdatedWaypoints = TimeSpan.Zero;
+        TownQuarter lastTargetQuarter = null;
         readonly Human target;
+        
         public Human Target
         {
             get
@@ -32,45 +36,35 @@ namespace ActionGame.Tasks
 
         public override void Update(GameTime gameTime)
         {
-            if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout)
+            if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout && ( lastTargetQuarter != target.Position.Quarter || target.Position.Quarter == Holder.Position.Quarter ))
             {
+                lastTargetQuarter = target.Position.Quarter;
                 goStraightToTarget = false;
                 if (Holder.Position.Quarter == target.Position.Quarter)
                 {
                     Vector2 wayVect = (target.Position.PositionInQuarter - Holder.Position.PositionInQuarter);
                     float direction = (wayVect.GetAngle() + 1 * MathHelper.PiOver2) % MathHelper.TwoPi;
                     Quadrangle viewLine = Quadrangle.CreateBand(Holder.Pivot.PositionInQuarter, direction, Holder.Size.X, wayVect.Length());
-                    IEnumerable<Quadrangle> colliders = from c in Holder.Position.Quarter.SpaceGrid.GetAllCollisions(viewLine) where c != Holder && c != target select c;
-                    goStraightToTarget = !colliders.Any();
+                    goStraightToTarget = !Grid.IsInCollision(viewLine, c => !(c is Human));
                 }
                 if (!goStraightToTarget)
                 {
                     RecomputeWaypoints(Holder.Position, target.Position);
-                    lastUpdatedWaypoints = gameTime.TotalGameTime;
                 }
-                /*if (!colliders.Any())
-                {
-                    WayPoints.Clear();
-                    if (!(Holder.SelectedTool is Gun && ((Gun)Holder.SelectedTool).Type.Range < Holder.Position.MinimalDistanceTo(target.Position)))
-                    {
-                        WayPoints.Enqueue(new WayPoint(target.Position));
-                    }
-                    else
-                    {
-                        Holder.GoThisWay(target.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
-                        moved = true;
-                    }
-                }
-                else
-                {
-                    RecomputeWaypoints(Holder.Position, target.Position);
-                    lastUpdatedWaypoints = gameTime.TotalGameTime;
-                }*/
+                lastUpdatedWaypoints = gameTime.TotalGameTime;
             }
 
             if (goStraightToTarget)
             {
-                Holder.GoThisWay(target.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                if (Holder.Position.MinimalDistanceTo(target.Position) > TownQuarter.SquareWidth)
+                {
+
+                    Holder.GoThisWay(target.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                }
+                else
+                {
+                    Holder.TurnThisWay(target.Position, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                }
             }
             else
             {
@@ -83,7 +77,7 @@ namespace ActionGame.Tasks
             return target.Health <= 0;
         }
 
-        public override World.TownQuarter TargetQuarter
+        public override TownQuarter TargetQuarter
         {
             get { return target.Position.Quarter; }
         }

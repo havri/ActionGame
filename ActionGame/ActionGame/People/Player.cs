@@ -15,15 +15,7 @@ namespace ActionGame.People
     {
         const float MouseXSensitivityCoef = 0.5f;
         const float MouseYSensitivityCoef = 0.4f;
-        static readonly Keys Left = Keys.A;
-        static readonly Keys Right = Keys.D;
-        static readonly Keys Forward = Keys.W;
-        static readonly Keys Backward = Keys.S;
-        static readonly Keys TurnLeft = Keys.Left;
-        static readonly Keys TurnRight = Keys.Right;
-        static readonly Keys TurnUp = Keys.Up;
-        static readonly Keys TurnDown = Keys.Down;  
-        static readonly Keys RunSwitch = Keys.CapsLock;
+        static readonly Keys GodModeSwitch = Keys.LeftAlt;
         static readonly TimeSpan KeyPressedTimeout = new TimeSpan(0, 0, 0, 0, 250);
         static readonly TimeSpan HurtFullscreenEffectDuration = new TimeSpan(0, 0, 0, 0, 500);
         static public readonly TimeSpan RespawnFullscreenEffectDuration = new TimeSpan(0, 0, 0, 1);
@@ -41,7 +33,9 @@ namespace ActionGame.People
             {
                 AddTool(gun);
             }
-            lastKeyPressedGameTime.Add(RunSwitch, TimeSpan.Zero);
+            lastKeyPressedGameTime.Add(Game.Settings.RunWalkSwitch, TimeSpan.Zero);
+            lastKeyPressedGameTime.Add(GodModeSwitch, TimeSpan.Zero);
+            Running = true;
         }
 
         public new void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
@@ -51,7 +45,7 @@ namespace ActionGame.People
             Content = new TownQuarterOwnerContent
             {
                 AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botBlue"),
-                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagBlue"),
+                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagBlue2"),
                 RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignBlue"),
                 ColorTexture = Game.Content.Load<Texture2D>("Textures/blue"),
                 DrawingColor = System.Drawing.Color.Blue
@@ -65,28 +59,34 @@ namespace ActionGame.People
             float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (Math.Abs(Health) + 1 > 0 && System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Game.Window.Handle) as System.Windows.Forms.Form))
             {
-                if (keyboardState.IsKeyDown(Left))
+                if (keyboardState.IsKeyDown(Keys.LeftControl) && keyboardState.IsKeyDown(GodModeSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[GodModeSwitch] > KeyPressedTimeout)
+                {
+                    InGodMode = !InGodMode;
+                    lastKeyPressedGameTime[GodModeSwitch] = gameTime.TotalGameTime;
+                }
+
+                if (keyboardState.IsKeyDown(Game.Settings.StepLeft))
                     Step(true, seconds);
-                if (keyboardState.IsKeyDown(Right))
+                if (keyboardState.IsKeyDown(Game.Settings.StepRight))
                     Step(false, seconds);
-                if (keyboardState.IsKeyDown(Forward))
+                if (keyboardState.IsKeyDown(Game.Settings.Forward))
                 {
                     Go(seconds);
                 }
-                if (keyboardState.IsKeyDown(Backward))
+                if (keyboardState.IsKeyDown(Game.Settings.Backward))
                     GoBack(seconds);
-                if (keyboardState.IsKeyDown(TurnLeft))
+                if (keyboardState.IsKeyDown(Game.Settings.TurnLeft))
                     Rotate(true, seconds);
-                if (keyboardState.IsKeyDown(TurnRight))
+                if (keyboardState.IsKeyDown(Game.Settings.TurnRight))
                     Rotate(false, seconds);
-                if (keyboardState.IsKeyDown(TurnUp))
+                if (keyboardState.IsKeyDown(Game.Settings.TurnUp))
                     LookAngle += Human.RotateAngle * seconds;
-                if (keyboardState.IsKeyDown(TurnDown))
+                if (keyboardState.IsKeyDown(Game.Settings.TurnDown))
                     LookAngle -= Human.RotateAngle * seconds;
-                if (keyboardState.IsKeyDown(RunSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[RunSwitch] > KeyPressedTimeout)
+                if (keyboardState.IsKeyDown(Game.Settings.RunWalkSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[Game.Settings.RunWalkSwitch] > KeyPressedTimeout)
                 {
                     Running = !Running;
-                    lastKeyPressedGameTime[RunSwitch] = gameTime.TotalGameTime;
+                    lastKeyPressedGameTime[Game.Settings.RunWalkSwitch] = gameTime.TotalGameTime;
                 }
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
@@ -117,12 +117,13 @@ namespace ActionGame.People
                 int windowHeight = Game.Settings.ScreenSize.Height;
                 if (Game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
                 {
+                    const float maxLookAngle = 0.55f;
                     azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * Game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseXInvert ? -1 : 1);
                     LookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
-                    if (LookAngle > MathHelper.PiOver4)
-                        LookAngle = MathHelper.PiOver4;
-                    if (LookAngle < -MathHelper.PiOver4)
-                        LookAngle = -MathHelper.PiOver4;
+                    if (LookAngle > maxLookAngle)
+                        LookAngle = maxLookAngle;
+                    if (LookAngle < -maxLookAngle)
+                        LookAngle = -maxLookAngle;
                     //lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
                 Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);

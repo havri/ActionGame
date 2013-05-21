@@ -18,6 +18,10 @@ namespace ActionGame.People
         TimeSpan lastTasksReplanTime = TimeSpan.Zero;
         bool planning = false;
 
+        public override TimeSpan CheckEnemiesInViewConeTimeout { get { return new TimeSpan(0, 0, 0, 0, 200); } }
+        protected override TimeSpan KillEnemyReflexTimeout { get { return new TimeSpan(0, 0, 0, 0, 70); } }
+        protected override TimeSpan CheckEnemiesInQuarterTimeout { get { return new TimeSpan(0, 0, 1); } }
+
         public Opponent(ActionGame game)
             : base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
@@ -34,7 +38,7 @@ namespace ActionGame.People
             Content = new TownQuarterOwnerContent
             {
                 AllyHumanModel = Game.Content.Load<Model>("Objects/Humans/botYellow"),
-                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagYellow"),
+                FlagModel = Game.Content.Load<Model>("Objects/Decorations/flagYellow2"),
                 RoadSignTexture = Game.Content.Load<Texture2D>("Textures/roadSignYellow"),
                 ColorTexture = Game.Content.Load<Texture2D>("Textures/yellow"),
                 DrawingColor = System.Drawing.Color.Yellow
@@ -66,6 +70,7 @@ namespace ActionGame.People
                 //PlanTasks(gameTime);
             }
             CheckFlagInMyQuarter();
+            Debug.Write("Opponent position", Position.ToString());
         }
 
         void CheckFlagInMyQuarter()

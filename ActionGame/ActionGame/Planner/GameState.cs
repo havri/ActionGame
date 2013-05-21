@@ -23,6 +23,10 @@ namespace ActionGame.Planner
 
         public float Evaluate()
         {
+            if (QuarterStates.All(qs => qs.Ownership == QuarterOwnership.My))
+            {
+                return float.MaxValue;
+            }
             const float healthQ = 0.01f; // health is in percents
             const float damageQ = 0.02f * TownQuarter.MaxGuardCount; //percentage and it's useful to have enough to clean whole quarter
             float quarterIntex = EvalQuarters();

@@ -276,7 +276,7 @@ namespace ActionGame.World
 
                 //Assings player to new space grid
                 currentQuarter.SpaceGrid.AddObject(Game.Player);
-                Game.Drawer.ShowMessage(gameTime, "You've entered " + currentQuarter.Name + ".");
+                Game.Drawer.ShowMessage(gameTime, String.Format("You've entered {0}.", currentQuarter.Name));
 
                 //Restart for drawing
                 lastNearestInterfaceIndex = -1;

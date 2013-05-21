@@ -16,7 +16,7 @@ namespace ActionGame.Components
     /// </summary>
     public class Drawer : DrawableGameComponent
     {
-        public const float ViewDistance = 600f;
+        public const float ViewDistance = 960f;
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
         readonly HashSet<DrawedObject> objects = new HashSet<DrawedObject>();
@@ -60,14 +60,9 @@ namespace ActionGame.Components
             }
         }
 
-        /// TODO: remove this
-        public static Texture2D Blue__, Green__, Red__;
         public override void Initialize()
         {
             base.Initialize();
-            Blue__ = Game.Content.Load<Texture2D>("Textures/blue");
-            Red__ = Game.Content.Load<Texture2D>("Textures/red");
-            Green__ = Game.Content.Load<Texture2D>("Textures/green");
         }
 
         public Matrix WorldTransformMatrix
@@ -113,9 +108,8 @@ namespace ActionGame.Components
                 showFullscreenEffect = false;
             }
 
-            ///TODO: Maybe this should be called from other Update. For ex. Player's.
-            ShowQuatterMap = Keyboard.GetState().IsKeyDown(Keys.M);
-            ShowTownGraph = Keyboard.GetState().IsKeyDown(Keys.N);
+            ShowQuatterMap = Keyboard.GetState().IsKeyDown(Game.Settings.ShowQuarterMap);
+            ShowTownGraph = Keyboard.GetState().IsKeyDown(Game.Settings.ShowTownMap);
 
             Debug.Write("Drawed objects", objects.Count.ToString());
         }
@@ -149,9 +143,15 @@ namespace ActionGame.Components
             Game.Player.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
             Game.SpriteBatch.Begin();
+            if (Game.Player.InGodMode)
+            {
+                Game.SpriteBatch.Draw(Game.ContentRepository.GodModeFullscreenEffect, new Rectangle(0, 0, Game.Settings.ScreenSize.Width, Game.Settings.ScreenSize.Height), Color.White);
+            }
             if (showFullscreenEffect)
             {
-                Game.SpriteBatch.Draw(fullscreenEffect, new Rectangle(0, 0, Game.Settings.ScreenSize.Width, Game.Settings.ScreenSize.Height), Color.White);
+                float timeRatio = (float)((gameTime.TotalGameTime - fullscreenEffectBegin).TotalSeconds / fullscreenEffectDuration.TotalSeconds);
+                float alpha = 1f - timeRatio * timeRatio;
+                Game.SpriteBatch.Draw(fullscreenEffect, new Rectangle(0, 0, Game.Settings.ScreenSize.Width, Game.Settings.ScreenSize.Height), Color.White * alpha);
             }
             Game.SpriteBatch.Draw(toolPanelBackground, new Vector2(0, 0), Color.AliceBlue);
             Game.SpriteBatch.DrawString(font, Game.Player.Health.ToString(), new Vector2(20, 80), Color.Maroon);

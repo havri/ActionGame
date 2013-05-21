@@ -59,7 +59,7 @@ namespace ActionGame.World
 
         public override string ToString()
         {
-            return Quarter.Name + " " + positionInQuarter.ToString();
+            return String.Format("{0} {1}", Quarter.Name, positionInQuarter);
         }
     }
 }

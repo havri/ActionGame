@@ -38,6 +38,11 @@ namespace ActionGame.Objects
             {
                 float progress = (float)(gameTime.TotalGameTime - takeBeginTime).TotalMilliseconds / (float)TakeTheFlagTimeout.TotalMilliseconds;
                 drawedProgressBar.Value = progress;
+
+                if (taker != null && !IsAvailableFor(taker))
+                {
+                    EndAction(taker, gameTime);
+                }
             }
         }
 

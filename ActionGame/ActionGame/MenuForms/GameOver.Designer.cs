@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.townMapPB = new System.Windows.Forms.PictureBox();
@@ -37,6 +38,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.restartBTN = new System.Windows.Forms.Button();
             this.exitBtn = new System.Windows.Forms.Button();
+            this.disableTime = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.townMapPB)).BeginInit();
@@ -73,7 +75,7 @@
             this.townMapPB.Location = new System.Drawing.Point(0, 0);
             this.townMapPB.Name = "townMapPB";
             this.townMapPB.Size = new System.Drawing.Size(796, 596);
-            this.townMapPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.townMapPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.townMapPB.TabIndex = 0;
             this.townMapPB.TabStop = false;
             // 
@@ -130,6 +132,7 @@
             // restartBTN
             // 
             this.restartBTN.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.restartBTN.Enabled = false;
             this.restartBTN.Location = new System.Drawing.Point(0, 0);
             this.restartBTN.Name = "restartBTN";
             this.restartBTN.Size = new System.Drawing.Size(398, 80);
@@ -142,6 +145,7 @@
             // 
             this.exitBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.exitBtn.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.exitBtn.Enabled = false;
             this.exitBtn.Location = new System.Drawing.Point(0, 0);
             this.exitBtn.Name = "exitBtn";
             this.exitBtn.Size = new System.Drawing.Size(397, 80);
@@ -149,6 +153,12 @@
             this.exitBtn.Text = "Exit the game";
             this.exitBtn.UseVisualStyleBackColor = true;
             this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
+            // 
+            // disableTime
+            // 
+            this.disableTime.Enabled = true;
+            this.disableTime.Interval = 2000;
+            this.disableTime.Tick += new System.EventHandler(this.disableTime_Tick);
             // 
             // GameOver
             // 
@@ -190,5 +200,6 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.PictureBox townMapPB;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Timer disableTime;
     }
 }

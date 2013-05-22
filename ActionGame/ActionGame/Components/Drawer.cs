@@ -16,10 +16,10 @@ namespace ActionGame.Components
     /// </summary>
     public class Drawer : DrawableGameComponent
     {
-        public const float ViewDistance = 960f;
+        public const float ViewDistance = 1000f;
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
-        readonly HashSet<DrawedObject> objects = new HashSet<DrawedObject>();
+        readonly Dictionary<TownQuarter, DrawnObjectsCollection> objectGroups = new Dictionary<TownQuarter, DrawnObjectsCollection>();
         readonly Matrix projectionMatrix;
         readonly Matrix worldMatrix = Matrix.Identity;
         Texture2D toolPanelBackground;
@@ -70,15 +70,43 @@ namespace ActionGame.Components
             get { return worldMatrix; }
         }
 
-        public void StartDrawingObject(IDrawableObject obj, float azimuthDelta, Vector2 positionDelta)
+        public void StartDrawingObjects(IEnumerable<ITransformedDrawable> objs, float azimuthDelta, Vector2 positionDelta, TownQuarter quarter)
         {
-            DrawedObject dObj = new DrawedObject(obj, azimuthDelta, positionDelta);
-            objects.Add(dObj);
+            if (objectGroups.ContainsKey(quarter))
+            {
+                objectGroups[quarter].Add(objs);
+            }
+            else
+            {
+                DrawnObjectsCollection dObj = new DrawnObjectsCollection(objs, azimuthDelta, positionDelta);
+                objectGroups.Add(quarter, dObj);
+            }
         }
 
-        public void StopDrawingObject(IDrawableObject obj)
+        public void StartDrawingObject(ITransformedDrawable obj, float azimuthDelta, Vector2 positionDelta, TownQuarter quarter)
         {
-            objects.RemoveWhere(dObj => dObj.Object == obj);
+            if (objectGroups.ContainsKey(quarter))
+            {
+                objectGroups[quarter].Add(obj);
+            }
+            else
+            {
+                DrawnObjectsCollection dObj = new DrawnObjectsCollection(new ITransformedDrawable[] { obj }, azimuthDelta, positionDelta);
+                objectGroups.Add(quarter, dObj);
+            }
+        }
+
+        public void StopDrawingObject(ITransformedDrawable obj, TownQuarter quarter)
+        {
+            if (objectGroups.ContainsKey(quarter))
+            {
+                objectGroups[quarter].Remove(obj);
+            }
+        }
+
+        public void StopDrawingQuarter(TownQuarter quarter)
+        {
+            objectGroups.Remove(quarter);
         }
 
         public void ShowMessage(GameTime gameTime, String text)
@@ -108,10 +136,12 @@ namespace ActionGame.Components
                 showFullscreenEffect = false;
             }
 
+            panorama.MoveTo(Game.Player.Position.PositionInQuarter - panorama.Size.XZToVector2() * 0.5f, panorama.Azimuth);
+
             ShowQuatterMap = Keyboard.GetState().IsKeyDown(Game.Settings.ShowQuarterMap);
             ShowTownGraph = Keyboard.GetState().IsKeyDown(Game.Settings.ShowTownMap);
 
-            Debug.Write("Drawed objects", objects.Count.ToString());
+            Debug.Write("Drawed objects", objectGroups.Count.ToString());
         }
 
         public ProgressBar CreateProgressBar(Texture2D texture)
@@ -136,9 +166,10 @@ namespace ActionGame.Components
 
             panorama.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
-            foreach (DrawedObject dObj in objects)
+            foreach (DrawnObjectsCollection dObj in objectGroups.Values)
             {
-                dObj.Object.Draw(Game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
+                //dObj.Object.Draw(Game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
+                dObj.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
             }
             Game.Player.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
@@ -241,8 +272,17 @@ namespace ActionGame.Components
             toolPanelBackground = Game.Content.Load<Texture2D>("Textures/toolPanel");
             actionAvailableIcon = Game.Content.Load<Texture2D>("Textures/actionIcon");
             font = Game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
-            panorama = new SpatialObject(Game.Content.Load<Model>("Objects/panorama"), null, new Vector3(0, -1,0), 0, worldMatrix);
+            Model panoramaModel = Game.Content.Load<Model>("Objects/panorama");
+            Vector3 pDiff = panoramaModel.GetSize(worldMatrix) * 0.5f;
+            pDiff.Y = 0;
+            panorama = new SpatialObject(panoramaModel, null, new Vector3(0, -5,0) - pDiff, 0, worldMatrix);
+            
             messageBackground = Game.Content.Load<Texture2D>("Textures/green");
+        }
+
+        public void MovePanorama(Vector2 positionDelta, float azimuthDelta)
+        {
+            panorama.MoveTo(Game.Player.Position.PositionInQuarter - panorama.Size.XZToVector2() * 0.5f, panorama.Azimuth + azimuthDelta);
         }
 
         protected override void Dispose(bool disposing)

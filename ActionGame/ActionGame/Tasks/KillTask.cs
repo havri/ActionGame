@@ -36,6 +36,24 @@ namespace ActionGame.Tasks
 
         public override void Update(GameTime gameTime)
         {
+            if (Holder.SelectedTool is Gun && ((Gun)Holder.SelectedTool).Type.Range < TownQuarter.SquareWidth)
+            { 
+                Box nearestToolBox = Holder.Position.Quarter.GetNearestBox(Holder.Position, true);
+                if (nearestToolBox != null)
+                {
+                    Holder.AddUrgentTask(new MoveTask(Holder, nearestToolBox.Position));
+                }
+            }
+            int neededHealth = target.Health - (Holder.SelectedTool is Gun ? ((Gun)Holder.SelectedTool).Type.Damage : 0);
+            if (Holder.Health < neededHealth)
+            {
+                Box nearestHealBox = Holder.Position.Quarter.GetNearestBox(Holder.Position, false);
+                if (nearestHealBox != null)
+                {
+                    Holder.AddUrgentTask(new MoveTask(Holder, nearestHealBox.Position));
+                }
+            }
+
             if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout && ( lastTargetQuarter != target.Position.Quarter || target.Position.Quarter == Holder.Position.Quarter ))
             {
                 lastTargetQuarter = target.Position.Quarter;

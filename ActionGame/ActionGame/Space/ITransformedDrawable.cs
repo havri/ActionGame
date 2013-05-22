@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame.Space
 {
-    public interface IDrawableObject
+    public interface ITransformedDrawable
     {
         void Draw(Matrix view, Matrix projection, Matrix world);
     }

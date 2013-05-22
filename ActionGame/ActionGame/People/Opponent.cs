@@ -25,7 +25,7 @@ namespace ActionGame.People
         public Opponent(ActionGame game)
             : base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
-            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this))
+            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this, game))
             {
                 AddTool(gun);
             }

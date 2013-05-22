@@ -19,6 +19,15 @@ namespace ActionGame
                 writings.Add(key, text);
         }
 
+        public static void Write(string key, object obj)
+        {
+            Write(key, obj.ToString());
+        }
+
+        int frameRate = 0;
+        int frameCounter = 0;
+        TimeSpan elapsedTime = TimeSpan.Zero;
+
         ActionGame game;
         SpriteFont font;
 
@@ -37,6 +46,8 @@ namespace ActionGame
 
         public override void Draw(GameTime gameTime)
         {
+            frameCounter++;
+
             base.Draw(gameTime);
 
             game.SpriteBatch.Begin();
@@ -46,7 +57,22 @@ namespace ActionGame
                 game.SpriteBatch.DrawString(font, String.Format("{0}: {1}", writing.Key, writing.Value), new Vector2(10,100 + i * 16), Color.White);
                 i++;
             }
+            game.SpriteBatch.DrawString(font, String.Format("{0}: {1}", "FPS", frameRate), new Vector2(10, 100 + i * 16), Color.White);
             game.SpriteBatch.End();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            elapsedTime += gameTime.ElapsedGameTime;
+
+            if (elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                elapsedTime -= TimeSpan.FromSeconds(1);
+                frameRate = frameCounter;
+                frameCounter = 0;
+            }
+
+            base.Update(gameTime);
         }
     }
 }

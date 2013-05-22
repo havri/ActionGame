@@ -12,6 +12,13 @@ namespace ActionGame.Tools
     public abstract class Tool
     {
         Human holder;
+        readonly ActionGame game;
+
+        protected ActionGame Game
+        {
+            get { return game; }
+        } 
+
 
         public Human Holder
         {
@@ -31,10 +38,11 @@ namespace ActionGame.Tools
             this.icon = icon;
         }
 
-        public Tool(Texture2D icon, Human handler)
+        public Tool(Texture2D icon, Human handler, ActionGame game)
             : this(icon)
         {
             this.holder = handler;
+            this.game = game;
         }
 
         public abstract void DoAction(GameTime gameTime, PositionInTown position, float azimuth);

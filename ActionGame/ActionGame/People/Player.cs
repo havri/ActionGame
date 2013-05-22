@@ -29,7 +29,7 @@ namespace ActionGame.People
             :base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
             defaultMousePosition = new Point(game.Settings.ScreenSize.Width / 2, game.Settings.ScreenSize.Height / 2);
-            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this))
+            foreach (Tool gun in from gunType in game.PlayerDefaultGuns select new Gun(gunType, gunType.DefaultBulletCount, this, game))
             {
                 AddTool(gun);
             }
@@ -117,7 +117,7 @@ namespace ActionGame.People
                 int windowHeight = Game.Settings.ScreenSize.Height;
                 if (Game.Settings.MouseIgnoresWindow || (mouseState.X >= 0 && mouseState.X < windowWidth && mouseState.Y >= 0 && mouseState.Y < windowHeight))
                 {
-                    const float maxLookAngle = 0.55f;
+                    const float maxLookAngle = 0.52f;
                     azimuth += ( (mouseState.X - defaultMousePosition.X) / (float)windowWidth) * Game.Settings.MouseXSensitivity * MouseXSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseXInvert ? -1 : 1);
                     LookAngle += ((mouseState.Y - defaultMousePosition.Y) / (float)windowWidth) * Game.Settings.MouseYSensitivity * MouseYSensitivityCoef * seconds * Human.RotateAngle * (Game.Settings.MouseYInvert ? 1 : -1);
                     if (LookAngle > maxLookAngle)
@@ -161,6 +161,22 @@ namespace ActionGame.People
         public override void Destroy()
         {
             Position.Quarter.DestroyObject(this);
+        }
+
+        public override TimeSpan GuardAddTimeout
+        {
+            get
+            {
+                return TimeSpan.FromSeconds(base.GuardAddTimeout.TotalSeconds * 4);
+            }
+        }
+
+        public override int GuardFullHealth
+        {
+            get
+            {
+                return 20;
+            }
         }
     }
 }

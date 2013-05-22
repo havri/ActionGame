@@ -40,5 +40,15 @@ namespace ActionGame.World
         {
             return null;
         }
+
+        public TimeSpan GuardAddTimeout
+        {
+            get { return TimeSpan.Zero; }
+        }
+
+        public int GuardFullHealth
+        {
+            get { return 0; }
+        }
     }
 }

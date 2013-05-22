@@ -12,7 +12,7 @@ namespace ActionGame.Space
     /// <summary>
     /// Class describing flat objects lying on the ground. Adds texture and drawing capabilites for GameObject class.
     /// </summary>
-    class FlatObject : GameObject, IDisposable, IDrawableObject
+    class FlatObject : GameObject, IDisposable, ITransformedDrawable
     {
         readonly Texture2D texture;
         readonly VertexPositionNormalTexture[] vertices;

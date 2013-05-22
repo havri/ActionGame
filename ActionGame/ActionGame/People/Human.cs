@@ -33,11 +33,12 @@ namespace ActionGame.People
         /// <summary>
         /// Distance from target where human decides he's there.
         /// </summary>
-        public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
+        //public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
+        public const float EpsilonDistance = TownQuarter.SquareWidth / 8f;
 
         public virtual TimeSpan CheckEnemiesInViewConeTimeout { get { return new TimeSpan(0, 0, 0, 0, 900); } }
         protected virtual TimeSpan KillEnemyReflexTimeout { get { return new TimeSpan(0, 0, 0, 0, 650); } }
-        protected virtual TimeSpan CheckEnemiesInQuarterTimeout { get { return new TimeSpan(0, 0, 10); } }
+        protected virtual TimeSpan CheckEnemiesInQuarterTimeout { get { return new TimeSpan(0, 0, 5); } }
 
         TimeSpan lastKillEnemyReflexTime = TimeSpan.Zero;
         TimeSpan lastCheckEnemiesInQuarterTime = TimeSpan.Zero;
@@ -126,7 +127,7 @@ namespace ActionGame.People
             this.game = game;
             health = 100;
             tools.AddRange(
-                from gunType in game.HumanDefaultGuns select new Gun (gunType, gunType.DefaultBulletCount, this)
+                from gunType in game.HumanDefaultGuns select new Gun (gunType, gunType.DefaultBulletCount, this, game)
                 );
             selectedToolIndex = 0;
             lastPosition = position.PositionInQuarter;
@@ -268,7 +269,7 @@ namespace ActionGame.People
                         Position.Quarter.BeLeftBy(this);
                         if (Position.Quarter.CurrentlyDrawed)
                         {
-                            Game.Drawer.StopDrawingObject(this);
+                            Game.Drawer.StopDrawingObject(this, Position.Quarter);
                         }
                         Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
                         float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
@@ -280,7 +281,7 @@ namespace ActionGame.People
                         newQuarter.BeEnteredBy(this);
                         if (newQuarter.CurrentlyDrawed)
                         {
-                            Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta);
+                            Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta, newQuarter);
                         }
                     }
                     else
@@ -296,11 +297,20 @@ namespace ActionGame.People
             bool moved = false;
             //Order of reflexes is important.
             if (!moved)
+            {
                 moved = KillEnemyReflex(gameTime);
+            }
             if (!moved && !gameLogicOnly)
+            {
                 moved = BalkReflex(gameTime);
+            }
 
-            //Solve tasks reflex
+            if(!SelectedTool.Usable)
+            {
+                SelectNextGun(1);
+            }
+
+            //Solve tasks
             if (!moved)
             {
                 if (tasks.Count != 0)
@@ -427,6 +437,11 @@ namespace ActionGame.People
             tasks.AddLast(task);
         }
 
+        public void AddUrgentTask(Task task)
+        {
+            tasks.AddFirst(task);
+        }
+
         public Tool SelectedTool
         { 
             get
@@ -448,7 +463,7 @@ namespace ActionGame.People
         {
             if (SelectedTool != null)
             {
-                SelectedTool.DoAction(gameTime, Position, (float)azimuth);
+                SelectedTool.DoAction(gameTime, new PositionInTown(Position.Quarter, FirstHeadPosition.XZToVector2()), (float)azimuth);
             }
         }
         public override void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
@@ -649,7 +664,7 @@ namespace ActionGame.People
             guard.AddTask(new InfinityWalkingTask(guard, targetQuarter.GetRandomWalkingWaypoints()));
             foreach(GunType gt in game.GuardDefaultGuns)
             {
-                guard.AddTool(new Gun(gt, gt.DefaultBulletCount, guard));
+                guard.AddTool(new Gun(gt, gt.DefaultBulletCount, guard, game));
             }
             return guard;
         }
@@ -671,10 +686,26 @@ namespace ActionGame.People
         {
             Position.Quarter.BeLeftBy(this);
             Position = new PositionInTown(targetQuarter,
-                targetQuarter.GetRandomSquare(x => (x == MapFillType.StraightRoad)).ToVector2() * TownQuarter.SquareWidth + Vector2.One * 0.5f * TownQuarter.SquareWidth);
+                targetQuarter.GetRandomSquare(x => (x == MapFillType.StraightRoad)).ToVector2() * TownQuarter.SquareWidth);
             Position.Quarter.BeEnteredBy(this);
             health = 100;
             tasks.Clear();
+        }
+
+
+        public virtual TimeSpan GuardAddTimeout
+        {
+            get
+            {
+                return new TimeSpan(0,0,0,10);
+            }
+        }
+        public virtual int GuardFullHealth
+        {
+            get
+            {
+                return 100;
+            }
         }
     }
 }

@@ -58,21 +58,6 @@ namespace ActionGame.Space
             Triangle itsDown = new Triangle(obj.UpperLeftCorner, obj.LowerLeftCorner, obj.LowerRightCorner);
 
             return myUp.IsInCollisionWith(itsUp) || myUp.IsInCollisionWith(itsDown) || myDown.IsInCollisionWith(itsUp) || myDown.IsInCollisionWith(itsDown);
-
-            /*return ZapCollisionDetect(obj);
-            
-            Line leftAxis = Line.FromTwoPoints(UpperLeftCorner, LowerLeftCorner);
-            Line rightAxis = Line.FromTwoPoints(UpperRightCorner, LowerRightCorner);
-            Line upperAxis = Line.FromTwoPoints(UpperLeftCorner, UpperRightCorner);
-            Line lowerAxis = Line.FromTwoPoints(LowerLeftCorner, LowerRightCorner);
-
-            return
-                ( !leftAxis.HasOnLeftSide(obj) && !rightAxis.HasOnRightSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj) ) // classic
-                || (!leftAxis.HasOnLeftSide(obj) && !rightAxis.HasOnRightSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // horizontal switched
-                || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnLeftSide(obj) && !lowerAxis.HasOnRightSide(obj)) // vertical switched
-                || (!leftAxis.HasOnRightSide(obj) && !rightAxis.HasOnLeftSide(obj) && !upperAxis.HasOnRightSide(obj) && !lowerAxis.HasOnLeftSide(obj)) // both switched
-                ;
-            */
         }
 
         public void CheckHits(bool gameLogicOnly, GameTime gameTime)
@@ -130,73 +115,6 @@ namespace ActionGame.Space
             {
                 return spacePartitioningFields;
             }
-        }
-
-        private bool ZapCollisionDetect(Quadrangle theObject)
-        {
-            List<Vector2> aRectangleAxis = new List<Vector2>();
-            aRectangleAxis.Add(UpperRightCorner - UpperLeftCorner);
-            aRectangleAxis.Add(UpperRightCorner - LowerRightCorner);
-            aRectangleAxis.Add(theObject.UpperLeftCorner - theObject.LowerLeftCorner);
-            aRectangleAxis.Add(theObject.UpperLeftCorner - theObject.UpperRightCorner);
-
-            foreach (Vector2 aAxis in aRectangleAxis)
-            {
-                if (!ZapIsAxisCollision(theObject, aAxis))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool ZapIsAxisCollision(Quadrangle theObject, Vector2 aAxis)
-        {
-            int[] aRectangleAScalars = new int[]
-            {
-                ZapGenerateScalar(theObject.UpperLeftCorner, aAxis),
-                ZapGenerateScalar(theObject.UpperRightCorner, aAxis),
-                ZapGenerateScalar(theObject.LowerLeftCorner, aAxis),
-                ZapGenerateScalar(theObject.LowerRightCorner, aAxis)
-            };
-
-            int[] aRectangleBScalars = new int[]
-            {
-                ZapGenerateScalar(UpperLeftCorner, aAxis),
-                ZapGenerateScalar(UpperRightCorner, aAxis),
-                ZapGenerateScalar(LowerLeftCorner, aAxis),
-                ZapGenerateScalar(LowerRightCorner, aAxis)
-            };
-
-            int aRectangleAMinimum = aRectangleAScalars.Min();
-            int aRectangleAMaximum = aRectangleAScalars.Max();
-            int aRectangleBMinimum = aRectangleBScalars.Min();
-            int aRectangleBMaximum = aRectangleBScalars.Max();
-
-            if (aRectangleBMinimum <= aRectangleAMaximum && aRectangleBMaximum >= aRectangleAMaximum)
-            {
-                return true;
-            }
-            else if (aRectangleAMinimum <= aRectangleBMaximum && aRectangleAMaximum >= aRectangleBMaximum)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-
-
-        private int ZapGenerateScalar(Vector2 theRectangleCorner, Vector2 theAxis)
-        {
-            float aNumerator = (theRectangleCorner.X * theAxis.X) + (theRectangleCorner.Y * theAxis.Y);
-            float aDenominator = (theAxis.X * theAxis.X) + (theAxis.Y * theAxis.Y);
-            float aDivisionResult = aNumerator / aDenominator;
-            Vector2 aCornerProjected = new Vector2(aDivisionResult * theAxis.X, aDivisionResult * theAxis.Y);
-
-            float aScalar = (theAxis.X * aCornerProjected.X) + (theAxis.Y * aCornerProjected.Y);
-            return (int)aScalar;
         }
     }
 }

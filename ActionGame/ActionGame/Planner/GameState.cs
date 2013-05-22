@@ -35,7 +35,7 @@ namespace ActionGame.Planner
 
         float EvalThisQuarter(QuarterState quarterState)
         {
-            int guardCount = (int)(quarterState.OwnershipDuration.TotalSeconds / TownQuarter.GuardAddTimeout.TotalSeconds);
+            int guardCount = (int)(quarterState.OwnershipDuration.TotalSeconds / game.Player.GuardAddTimeout.TotalSeconds);
             if (guardCount > TownQuarter.MaxGuardCount)
             {
                 guardCount = TownQuarter.MaxGuardCount;

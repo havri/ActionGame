@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.Space
 {
-    public class SpatialObject : GameObject, IDrawableObject
+    public class SpatialObject : GameObject, ITransformedDrawable
     {
         Model model;
         float verticalPosition;
@@ -66,6 +66,15 @@ namespace ActionGame.Space
                     effect.View = view;
                     effect.Projection = projection;
                     effect.EnableDefaultLighting();
+                    effect.LightingEnabled = true;
+                    if(this.Position.Quarter != null)
+                    {
+                        Matrix rotM = Matrix.CreateRotationY(Position.Quarter.CurrentDrawingAzimuthDelta);
+                        //default XNA constants - we want them transofmed...
+                        effect.DirectionalLight0.Direction = Vector3.Transform(new Vector3(-0.5265408f, -0.5735765f, -0.6275069f), rotM);
+                        effect.DirectionalLight1.Direction = Vector3.Transform(new Vector3(0.7198464f, 0.3420201f, 0.6040227f), rotM);
+                        effect.DirectionalLight2.Direction = Vector3.Transform(new Vector3(0.4545195f, -0.7660444f, 0.4545195f), rotM);
+                    }
                 }
                 mesh.Draw();
             }

@@ -41,7 +41,6 @@ namespace ActionGame.World
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York", "Hoboken", "Quadbeca", "Hell's Bathroom", "Upper South Side", "Bronxy", "Slovaktown", "Womanhattan", "Kilogramercy", "Chelocean", "Creeklyn", "Dragem", "Kings"
         });
         readonly static string emptyName = "Unnamed";
-        public readonly static TimeSpan GuardAddTimeout = new TimeSpan(0, 0, 0, 30);
         public const int MaxGuardCount = 15;
 
         TimeSpan lastTimeGuardAdded = TimeSpan.Zero;
@@ -110,6 +109,23 @@ namespace ActionGame.World
         readonly List<Human> awaitingEnter = new List<Human>();
         readonly ActionGame game;
         Flag flag;
+
+        public static readonly Vector3 DefaultLightPosition = new Vector3(0, 100000, 0);
+        public Vector3 LightPosition0
+        {
+            get
+            {
+                return Vector3.Transform(DefaultLightPosition, Matrix.CreateRotationY(-currentDrawingAzimuthDelta) * Matrix.CreateTranslation(currentDrawingPositionDelta.ToVector3(0)));
+            }
+        }
+        public Vector3 LightPosition1
+        {
+            get
+            {
+                return Vector3.Transform(DefaultLightPosition + QuarterSize.ToVector3(0), Matrix.CreateRotationY(-currentDrawingAzimuthDelta) * Matrix.CreateTranslation(currentDrawingPositionDelta.ToVector3(0)));
+            }
+        }
+
         public Flag Flag
         {
             get
@@ -171,7 +187,7 @@ namespace ActionGame.World
             mapBitmap = new MapFillType[bitmapSize.Width * bitmapSize.Height];
             for (int i = 0; i < mapBitmap.Length; i++)
                 mapBitmap[i] = MapFillType.Empty;
-            spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, SquareWidth, SquareWidth);
+            spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, SquareWidth * 4f, SquareWidth * 4f);
 
             try
             {
@@ -212,15 +228,20 @@ namespace ActionGame.World
             ownershipBeginTime = gameTime.TotalGameTime;
             if (boxes.Count == 0)
             {
-                Box[] addedBoxes = GenerateBoxes();
-                foreach (Box box in addedBoxes)
-                {
-                    spaceGrid.AddObject(box);
-                    if (currentlyDrawed)
-                    {
-                        game.Drawer.StartDrawingObject(box, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
-                    }
-                }
+                AddBoxesDuringTheGame();
+            }
+        }
+
+        private void AddBoxesDuringTheGame()
+        {
+            Box[] addedBoxes = GenerateBoxes();
+            foreach (Box box in addedBoxes)
+            {
+                spaceGrid.AddObject(box);
+            }
+            if (currentlyDrawed)
+            {
+                game.Drawer.StartDrawingObjects(addedBoxes, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
             }
         }
 
@@ -247,19 +268,13 @@ namespace ActionGame.World
         {
             currentDrawingAzimuthDelta = angle;
             currentDrawingPositionDelta = delta;
-            foreach (IDrawableObject o in GetAllDrawalbleObjects())
-            {
-                game.Drawer.StartDrawingObject(o, angle, delta);
-            }
+            game.Drawer.StartDrawingObjects( GetAllDrawalbleObjects(), angle, delta, this);
             currentlyDrawed = true;
         }
 
         public void RemoveFromDrawer()
         {
-            foreach (IDrawableObject o in GetAllDrawalbleObjects())
-            {
-                game.Drawer.StopDrawingObject(o);
-            }
+            game.Drawer.StopDrawingQuarter(this);
             currentlyDrawed = false;
         }
 
@@ -288,21 +303,27 @@ namespace ActionGame.World
         {
             updateProcessing = true;
             //Add guard if it's time
-            if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > GuardAddTimeout && guards.Count < MaxGuardCount)
+            if (owner != EmptyTownQuarterOwner.Instance && gameTime.TotalGameTime - lastTimeGuardAdded > owner.GuardAddTimeout && guards.Count < MaxGuardCount)
             {
-                int count = (int)((gameTime.TotalGameTime - lastTimeGuardAdded).TotalSeconds / GuardAddTimeout.TotalSeconds);
+                int count = (int)((gameTime.TotalGameTime - lastTimeGuardAdded).TotalSeconds / owner.GuardAddTimeout.TotalSeconds);
                 for (int i = 0; i < count; i++)
                 {
                     Human newGuard = owner.CreateAllyGuard(this);
-                    newGuard.BecomeShot(gameTime, 41, null);
+                    newGuard.BecomeShot(gameTime, 100 - owner.GuardFullHealth, null);
                     guards.Add(newGuard);
                     spaceGrid.AddObject(newGuard);
                     if (currentlyDrawed)
                     {
-                        game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                        game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
                     }
                 }
                 lastTimeGuardAdded = gameTime.TotalGameTime;
+            }
+
+            //Regenerate boxes
+            if (boxes.Count == 0)
+            {
+                AddBoxesDuringTheGame();
             }
 
             //Update humans
@@ -330,7 +351,7 @@ namespace ActionGame.World
                     if (bulletAddedTime.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime)
                     {
                         magicBullets.Remove(bulletAddedTime.Key);
-                        game.Drawer.StopDrawingObject(bulletAddedTime.Key);
+                        game.Drawer.StopDrawingObject(bulletAddedTime.Key, this);
                         bulletAddedTime.Key.Dispose();
                     }
                 }
@@ -369,9 +390,9 @@ namespace ActionGame.World
             get { return roadSignTexture; }
         }
 
-        private List<IDrawableObject> GetAllDrawalbleObjects()
+        private List<ITransformedDrawable> GetAllDrawalbleObjects()
         {
-            List<IDrawableObject> result = new List<IDrawableObject>();
+            List<ITransformedDrawable> result = new List<ITransformedDrawable>();
             result.AddRange(groundObjects);
             result.AddRange(magicPlates);
             result.AddRange(solidPlates);
@@ -420,7 +441,7 @@ namespace ActionGame.World
                     //solidObjects.Remove(obj);
                     boxes.Remove(obj as Box);
                 }
-                game.Drawer.StopDrawingObject(obj);
+                game.Drawer.StopDrawingObject(obj, this);
                 spaceGrid.RemoveObject(obj);
             }
             else
@@ -435,7 +456,7 @@ namespace ActionGame.World
             bulletAddedTimes.Add(new KeyValuePair<BulletVisualisation, TimeSpan>(bullet, gameTime.TotalGameTime));
             if (currentlyDrawed)
             {
-                game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
             }
         }
 

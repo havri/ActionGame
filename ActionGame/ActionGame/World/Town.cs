@@ -273,6 +273,7 @@ namespace ActionGame.World
                         ),
                     Game.Player.Azimuth - angle
                     );
+                Game.Drawer.MovePanorama(-delta , -angle);
 
                 //Assings player to new space grid
                 currentQuarter.SpaceGrid.AddObject(Game.Player);
@@ -334,6 +335,18 @@ namespace ActionGame.World
                     currentQuarter.FillDrawer();
                     currentQuarterDrawed = true;
                 }
+            }
+        }
+
+        public TownQuarter SecondaryDrawnQuarter
+        {
+            get
+            {
+                if (lastNearestInterfaceIndex >= 0 && currentQuarter != null)
+                {
+                    return currentQuarter.Interfaces[lastNearestInterfaceIndex].OppositeInterface.Quarter;
+                }
+                return null;
             }
         }
 

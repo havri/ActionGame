@@ -9,7 +9,7 @@ using System.Drawing;
 
 namespace ActionGame.Space
 {
-    public class Plate : Quadrangle, IDrawableObject, IDisposable
+    public class Plate : Quadrangle, ITransformedDrawable, IDisposable
     {
         readonly TownQuarter quarter;
         readonly VertexPositionNormalTexture[] frontVertices, backVertices;

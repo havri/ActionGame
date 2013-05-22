@@ -337,17 +337,23 @@ namespace ActionGame
         {
             if(running)
             {
+                base.Update(gameTime);
+                Debug.Write("UPS", 1d / gameTime.ElapsedGameTime.TotalSeconds);
+
                 // Allows the game to exit
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
                     this.Restart();
                     return;
                 }
-                base.Update(gameTime);
                 bool opponentInTheSameQuarter = opponent.Position.Quarter == town.CurrentQuarter;
                 if (!opponentInTheSameQuarter)
                 {
                     opponent.Position.Quarter.Update(gameTime, true);
+                }
+                if (town.SecondaryDrawnQuarter != null && town.SecondaryDrawnQuarter != opponent.Position.Quarter && town.SecondaryDrawnQuarter != player.Position.Quarter)
+                {
+                    town.SecondaryDrawnQuarter.Update(gameTime, false);
                 }
                 opponent.Update(gameTime, !opponentInTheSameQuarter);
                 player.Update(gameTime);
@@ -454,7 +460,7 @@ namespace ActionGame
         {
             if (running)
             {
-                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1, 1);
+                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.DarkOliveGreen, 1, 1);
                 base.Draw(gameTime);
             }
         }

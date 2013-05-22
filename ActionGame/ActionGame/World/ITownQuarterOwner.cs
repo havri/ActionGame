@@ -8,11 +8,9 @@ namespace ActionGame.World
 {
     public interface ITownQuarterOwner
     {
-        TownQuarterOwnerContent Content
-        {
-            get;
-        }
-
+        TownQuarterOwnerContent Content { get; }
         Human CreateAllyGuard(TownQuarter targetQuarter);
+        TimeSpan GuardAddTimeout { get; }
+        int GuardFullHealth { get; }
     }
 }

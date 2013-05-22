@@ -9,7 +9,7 @@ using ActionGame.World;
 
 namespace ActionGame.Space
 {
-    public class BulletVisualisation : IDrawableObject, IDisposable
+    public class BulletVisualisation : ITransformedDrawable, IDisposable
     {
         const float Width = 0.005f;
         public static readonly TimeSpan ShowTimeSpan = new TimeSpan(0, 0, 0, 0, 100);
@@ -29,7 +29,7 @@ namespace ActionGame.Space
             verticalPlate = new Plate(quarter, start.ToVector3(startHeight + Width), start.ToVector3(startHeight - Width), end.ToVector3(endHeight + Width), end.ToVector3(endHeight - Width), Texture, Texture, false);
         }
 
-        void IDrawableObject.Draw(Matrix view, Matrix projection, Matrix world)
+        void ITransformedDrawable.Draw(Matrix view, Matrix projection, Matrix world)
         {
             horizontalPlate.Draw(view, projection, world);
             verticalPlate.Draw(view, projection, world);

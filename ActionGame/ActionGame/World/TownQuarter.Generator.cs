@@ -111,7 +111,7 @@ namespace ActionGame.World
                 {
                     Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
                     GunType gunType = game.BoxDefaultGuns[game.Random.Next(game.BoxDefaultGuns.Count)];
-                    ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount),
+                    ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount, game),
                         game.Content.Load<SoundEffect>("Sounds/gunLoading"),
                         game.Content.Load<Model>("Objects/Decorations/ammoBox"),
                         new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),

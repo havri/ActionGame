@@ -8,11 +8,17 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame.Components
 {
+    /// <summary>
+    /// The camera component.
+    /// </summary>
     public class Camera : GameComponent
     {
         const float birdZPosition = 0.5f;
         static readonly TimeSpan changeTimeOut = new TimeSpan(0, 0, 0, 0, 140);
 
+        /// <summary>
+        /// Gets or sets the view transformation matrix.
+        /// </summary>
         public Matrix ViewMatrix {get;set;}
 
         
@@ -37,18 +43,26 @@ namespace ActionGame.Components
             }
         }
 
+        /// <summary>
+        /// Creates a new camera component.
+        /// </summary>
+        /// <param name="game">The game it is situated in</param>
         public Camera(ActionGame game)
             :base(game)
         { }
 
         /// <summary>
-        /// Gets current camera side.
+        /// Gets current camera position.
         /// </summary>
         public Vector3 Position
         {
             get { return cameraPosition; }
         }
 
+        /// <summary>
+        /// Updates the camera logic - switch mode and reads position from the holding human.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();

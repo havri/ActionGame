@@ -12,6 +12,9 @@ using ActionGame.Space;
 
 namespace ActionGame.People
 {
+    /// <summary>
+    /// Class describing the opponent.
+    /// </summary>
     public class Opponent : Human
     {
         static readonly TimeSpan TasksReplanTimeout = new TimeSpan(0, 2, 0);
@@ -22,6 +25,10 @@ namespace ActionGame.People
         protected override TimeSpan KillEnemyReflexTimeout { get { return new TimeSpan(0, 0, 0, 0, 70); } }
         protected override TimeSpan CheckEnemiesInQuarterTimeout { get { return new TimeSpan(0, 0, 1); } }
 
+        /// <summary>
+        /// Creates a new opponent human.
+        /// </summary>
+        /// <param name="game">The game</param>
         public Opponent(ActionGame game)
             : base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
@@ -30,7 +37,13 @@ namespace ActionGame.People
                 AddTool(gun);
             }
         }
-
+        /// <summary>
+        /// Loads and sets the opponent specific content and settings
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <param name="position">Postion</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, 0, azimuth, worldTransform);
@@ -47,7 +60,11 @@ namespace ActionGame.People
             Running = true;
 
         }
-
+        /// <summary>
+        /// Updates the opponent's logic - solves the tasks, plans the tasks asynchronously and call the humans behaviour process.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="gameLogicOnly">The simple mod update indicator</param>
         public override void Update(GameTime gameTime, bool gameLogicOnly)
         {
             bool willPlan = false;

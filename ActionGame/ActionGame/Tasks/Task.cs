@@ -57,7 +57,7 @@ namespace ActionGame.Tasks
         protected void RecomputeWaypoints(PositionInTown from, PositionInTown to)
         {
             wayPoints.Clear();
-            foreach (PathGraphVertex v in PathGraph.FindShortestPath(from, to))
+            foreach (PathGraphVertex v in PathGraph.FindShortestPath(from, to, !(holder is Opponent)))
             {
                 wayPoints.Enqueue(new WayPoint(v.Position));
             }

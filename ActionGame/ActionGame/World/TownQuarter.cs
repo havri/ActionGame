@@ -26,7 +26,7 @@ namespace ActionGame.World
         /// <summary>
         /// Number of walkers in  quarter.
         /// </summary>
-        const int WalkerCount = 15;
+        const int WalkerCount = 10;
         /// <summary>
         /// Number of each walker waypoints.
         /// </summary>
@@ -89,10 +89,19 @@ namespace ActionGame.World
             }
         }
         MapFillType[] mapBitmap;
+        Microsoft.Xna.Framework.Point flagPoint;
+        public Microsoft.Xna.Framework.Point FlagPoint
+        {
+            get
+            {
+                return flagPoint;
+            }
+        }
         /// <summary>
         /// Width of road and sidewalk. In meters.
         /// </summary>
         public const float SquareWidth = 4.5f;
+        const float GridFiledWidth = SquareWidth;
 
 
         /// <summary>
@@ -187,7 +196,7 @@ namespace ActionGame.World
             mapBitmap = new MapFillType[bitmapSize.Width * bitmapSize.Height];
             for (int i = 0; i < mapBitmap.Length; i++)
                 mapBitmap[i] = MapFillType.Empty;
-            spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, SquareWidth * 4f, SquareWidth * 4f);
+            spaceGrid = new Grid(bitmapSize.Width, bitmapSize.Height, GridFiledWidth, GridFiledWidth);
 
             try
             {
@@ -207,6 +216,7 @@ namespace ActionGame.World
         private void BuildFlag()
         {
             Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.StraightRoad);
+            flagPoint = square;
             Model flagModel = owner.Content.FlagModel;
             Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
             PositionInTown pos = new PositionInTown(this, ((square.ToVector2() + new Vector2(0.5f, 0.5f)) * SquareWidth) - (flagSize.XZToVector2() * 0.5f));
@@ -238,10 +248,10 @@ namespace ActionGame.World
             foreach (Box box in addedBoxes)
             {
                 spaceGrid.AddObject(box);
-            }
-            if (currentlyDrawed)
-            {
-                game.Drawer.StartDrawingObjects(addedBoxes, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
+                if (currentlyDrawed)
+                {
+                    game.Drawer.StartDrawingObject(box, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
+                }
             }
         }
 
@@ -268,13 +278,19 @@ namespace ActionGame.World
         {
             currentDrawingAzimuthDelta = angle;
             currentDrawingPositionDelta = delta;
-            game.Drawer.StartDrawingObjects( GetAllDrawalbleObjects(), angle, delta, this);
+            foreach (ITransformedDrawable obj in GetAllDrawalbleObjects())
+            {
+                game.Drawer.StartDrawingObject(obj , angle, delta);
+            }
             currentlyDrawed = true;
         }
 
         public void RemoveFromDrawer()
         {
-            game.Drawer.StopDrawingQuarter(this);
+            foreach (ITransformedDrawable obj in GetAllDrawalbleObjects())
+            {
+                game.Drawer.StopDrawingObject(obj);
+            }
             currentlyDrawed = false;
         }
 
@@ -309,12 +325,12 @@ namespace ActionGame.World
                 for (int i = 0; i < count; i++)
                 {
                     Human newGuard = owner.CreateAllyGuard(this);
-                    newGuard.BecomeShot(gameTime, 100 - owner.GuardFullHealth, null);
+                    newGuard.BecomeShoot(gameTime, 100 - owner.GuardFullHealth, null);
                     guards.Add(newGuard);
                     spaceGrid.AddObject(newGuard);
                     if (currentlyDrawed)
                     {
-                        game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
+                        game.Drawer.StartDrawingObject(newGuard, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
                     }
                 }
                 lastTimeGuardAdded = gameTime.TotalGameTime;
@@ -351,12 +367,18 @@ namespace ActionGame.World
                     if (bulletAddedTime.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime)
                     {
                         magicBullets.Remove(bulletAddedTime.Key);
-                        game.Drawer.StopDrawingObject(bulletAddedTime.Key, this);
+                        game.Drawer.StopDrawingObject(bulletAddedTime.Key);
                         bulletAddedTime.Key.Dispose();
                     }
                 }
                 bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
             }
+
+            /*if (gameTime.IsRunningSlowly && walkers.Count != 0)
+            {
+                walkers[0].Destroy();
+            }*/
+
             updateProcessing = false;
 
 
@@ -441,7 +463,7 @@ namespace ActionGame.World
                     //solidObjects.Remove(obj);
                     boxes.Remove(obj as Box);
                 }
-                game.Drawer.StopDrawingObject(obj, this);
+                game.Drawer.StopDrawingObject(obj);    
                 spaceGrid.RemoveObject(obj);
             }
             else
@@ -456,7 +478,7 @@ namespace ActionGame.World
             bulletAddedTimes.Add(new KeyValuePair<BulletVisualisation, TimeSpan>(bullet, gameTime.TotalGameTime));
             if (currentlyDrawed)
             {
-                game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta, this);
+                game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }
         }
 

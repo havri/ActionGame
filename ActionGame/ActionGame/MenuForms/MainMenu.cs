@@ -116,5 +116,10 @@ namespace ActionGame.MenuForms
                     };
             }
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("ActionGame - 3D action game in a bizzare city\n\nThis is a Bachelor Thesis implementation part.\n\nCharles University in Prague\nFaculty of Mathematics and Physics\n\n2013 Štěpán Havránek", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }

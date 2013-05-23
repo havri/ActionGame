@@ -18,15 +18,14 @@ namespace ActionGame.World
         /// <summary>
         /// Maximum interface count per one quarter
         /// </summary>
-        const int MaxQuarterDegree = 8;
+        const int MaxQuarterDegree = 5;
         /// <summary>
         /// Minimal space what's needed per one interface for quarter. In meters.
         /// </summary>
-        const float MinSideLengthPerInterface = 70;
+        const float MinSideLengthPerInterface = TownQuarter.SquareWidth * 4;
         const int MapImageWidth = 800;
         const int MapImageHeight = 600;
-        ///TODO: This constant can be calculated!
-        const float MinQuarterSideLength = 100;
+        const float MinQuarterSideLength = TownQuarter.SquareWidth * 21;
 
 
         public TownQuarter[] Quarters { get { return quarters; } }
@@ -115,8 +114,9 @@ namespace ActionGame.World
                     }
                     catch (NoSpaceForInterfaceException)
                     {
-                        width += MinSideLengthPerInterface / 2;
-                        height += MinSideLengthPerInterface / 2;
+                        float widthIncement = MinSideLengthPerInterface * (float)game.Random.NextDouble();
+                        width += widthIncement;
+                        height += MinSideLengthPerInterface - widthIncement;
                     }
                 }
                 while (quarters[i] == null);
@@ -184,6 +184,8 @@ namespace ActionGame.World
                 }
                 mapImage = mapRaster;
             }
+
+            GC.Collect();
 
             //Selecting starting quarter
             currentQuarter = quarters[0];

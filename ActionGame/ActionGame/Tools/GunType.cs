@@ -51,7 +51,7 @@ namespace ActionGame.Tools
         /// <summary>
         /// Shot action sound.
         /// </summary>
-        public SoundEffect ShotSount
+        public SoundEffect ShootSount
         {
             get { return shotSount; }
         } 

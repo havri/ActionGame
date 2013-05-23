@@ -65,11 +65,11 @@ namespace ActionGame.World
         /// <param name="from">Source position</param>
         /// <param name="to">Target position</param>
         /// <returns>Set of vertices forming result path</returns>
-        public static IEnumerable<PathGraphVertex> FindShortestPath(PositionInTown from, PositionInTown to)
+        public static IEnumerable<PathGraphVertex> FindShortestPath(PositionInTown from, PositionInTown to, bool keepInTheSameQuarter)
         {
             PathGraphVertex start = from.Quarter.FindNearestPathGraphVertex(from.PositionInQuarter);
             PathGraphVertex end = to.Quarter.FindNearestPathGraphVertex(to.PositionInQuarter);
-            return FindShortestPath(start, end);
+            return FindShortestPath(start, end, keepInTheSameQuarter);
         }
 
         /// <summary>
@@ -78,22 +78,34 @@ namespace ActionGame.World
         /// <param name="from">Source vertex</param>
         /// <param name="to">Target vertex</param>
         /// <returns>Set of vertices forming result path</returns>
-        public static IEnumerable<PathGraphVertex> FindShortestPath(PathGraphVertex from, PathGraphVertex to)
+        public static IEnumerable<PathGraphVertex> FindShortestPath(PathGraphVertex from, PathGraphVertex to, bool keepInTheSameQuarter)
         {
+            keepInTheSameQuarter = keepInTheSameQuarter && from.Position.Quarter == to.Position.Quarter;
+            TownQuarter fromQuarter = from.Position.Quarter;
+
             LinkedList<PathGraphVertex> resultPath = new LinkedList<PathGraphVertex>();
             HashSet<PathGraphVertex> closed = new HashSet<PathGraphVertex>();
-            HashSet<PathGraphVertex> open = new HashSet<PathGraphVertex>();
-            open.Add(from);
             Dictionary<PathGraphVertex, PathGraphVertex> cameFrom = new Dictionary<PathGraphVertex, PathGraphVertex>();
             Dictionary<PathGraphVertex, float> gScore = new Dictionary<PathGraphVertex, float>();
             gScore.Add(from, 0);
             Dictionary<PathGraphVertex, float> fScore = new Dictionary<PathGraphVertex, float>();
             fScore.Add(from, gScore[from] + HeuristicDistance(from, to));
+            HashSet<PathGraphVertex> open = new HashSet<PathGraphVertex>();
+            open.Add( from);
 
             while (open.Count != 0)
             {
-                ///TODO: This selection must be faster.
-                PathGraphVertex current = open.OrderBy(x => fScore[x]).First();
+                float lowestScore = float.MaxValue;
+                PathGraphVertex lowestVertex = null;
+                foreach (PathGraphVertex openedOne in open)
+                {
+                    float score = fScore[openedOne];
+                    if (score < lowestScore)
+                    {
+                        lowestVertex = openedOne;
+                    }
+                }
+                PathGraphVertex current = lowestVertex;//open.OrderBy(x => fScore[x]).First();
                 if (current == to)
                 {
                     PathGraphVertex t = to;
@@ -106,10 +118,11 @@ namespace ActionGame.World
                     return resultPath;
                 }
                 open.Remove(current);
+
                 closed.Add(current);
                 foreach (PathGraphVertex n in current.Neighbors)
                 {
-                    if (closed.Contains(n))
+                    if (closed.Contains(n) || (keepInTheSameQuarter && n.Position.Quarter != fromQuarter))
                     {
                         continue;
                     }
@@ -138,4 +151,21 @@ namespace ActionGame.World
             return u.Position.MinimalDistanceTo(v.Position);
         }
     }
+
+    class PathGraphVertexScoreComparer : IComparer<PathGraphVertex>
+    {
+        readonly Dictionary<PathGraphVertex, float> fScore;
+        public PathGraphVertexScoreComparer(Dictionary<PathGraphVertex, float> fScore)
+        {
+            this.fScore = fScore;
+        }
+
+
+
+        public int Compare(PathGraphVertex x, PathGraphVertex y)
+        {
+            return fScore[x].CompareTo(fScore[y]);
+        }
+    }
+
 }

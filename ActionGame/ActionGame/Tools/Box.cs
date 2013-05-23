@@ -13,22 +13,24 @@ namespace ActionGame.Tools
 {
     public abstract class Box : SpatialObject
     {
+        readonly ActionGame game;
         readonly SoundEffect takeSound;
 
-        public Box(SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
+        public Box(ActionGame game, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
             : base(model, position, 0, world)
         {
             this.takeSound = takeSound;
+            this.game = game;
         }
 
-        public override void BecomeShot(GameTime gameTime, int damage, Human by)
+        public override void BecomeShoot(GameTime gameTime, int damage, Human by)
         {
             Destroy();
         }
 
         protected void Take()
         {
-            takeSound.Play();
+            game.SoundPlayer.PlaySound(takeSound, Position);
         }
     }
 }

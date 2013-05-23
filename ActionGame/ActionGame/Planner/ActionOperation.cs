@@ -9,6 +9,9 @@ using ActionGame.World;
 
 namespace ActionGame.Planner
 {
+    /// <summary>
+    /// The action object action perform planning operation.
+    /// </summary>
     abstract class ActionOperation : Operation
     {
         readonly ActionObject actionObject;
@@ -26,7 +29,7 @@ namespace ActionGame.Planner
 
         public override GameState Operate(GameState currentState)
         {
-            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, actionObject.Position);
+            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, actionObject.Position, false);
             float length = PathGraph.GetLengthOfPath(path);
             GameState newState = currentState.Copy();
             float duration = length / Human.RunSpeed;

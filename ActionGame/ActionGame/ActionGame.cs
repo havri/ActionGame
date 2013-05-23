@@ -1,3 +1,5 @@
+//Needs define in Debug.cs too
+//#define debug
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,9 @@ namespace ActionGame
     public class ActionGame : Microsoft.Xna.Framework.Game
     {
         ContentRepository contentRepository;
+        /// <summary>
+        /// Gets the repository of all the content in the game - models, textures, sounds...
+        /// </summary>
         public ContentRepository ContentRepository
         {
             get
@@ -34,7 +39,9 @@ namespace ActionGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-
+        /// <summary>
+        /// Gets the settings of this game run.
+        /// </summary>
         public GameSettings Settings
         {
             get
@@ -51,7 +58,11 @@ namespace ActionGame
         Debug debug;
         Drawer drawer;
         Town town;
+        SoundPlayer soundPlayer;
         readonly Random random = new Random();
+        /// <summary>
+        /// Gets the shared random generator.
+        /// </summary>
         public Random Random
         {
             get
@@ -60,7 +71,9 @@ namespace ActionGame
             }
         }
 
-
+        /// <summary>
+        /// Gets the town entity representing the whole game world.
+        /// </summary>
         public Town Town
         {
             get
@@ -99,30 +112,55 @@ namespace ActionGame
                 return drawer;
             }
         }
+        /// <summary>
+        /// Gets the sound player component
+        /// </summary>
+        public SoundPlayer SoundPlayer
+        {
+            get
+            {
+                return soundPlayer;
+            }
+        }
 
         Dictionary<string, GunType> gunTypes;
         readonly List<GunType> humanDefaultGuns = new List<GunType>();
+        /// <summary>
+        /// Gets the list of guns that every human has at the beginnig.
+        /// </summary>
         public List<GunType> HumanDefaultGuns
         {
             get { return humanDefaultGuns; }
         }
         readonly List<GunType> boxDefaultGuns = new List<GunType>();
+        /// <summary>
+        /// Gets the list of guns which are available only in boxes
+        /// </summary>
         public List<GunType> BoxDefaultGuns
         {
             get { return boxDefaultGuns; }
         }
         readonly List<GunType> playerDefaultGuns = new List<GunType>();
+        /// <summary>
+        /// Gets the list of guns that both players have at the beginning.
+        /// </summary>
         public List<GunType> PlayerDefaultGuns
         {
             get { return playerDefaultGuns; }
         }
         readonly List<GunType> guardDefaultGuns = new List<GunType>();
+        /// <summary>
+        /// Gets the list of guns that every guard has after his born.
+        /// </summary>
         public List<GunType> GuardDefaultGuns
         {
             get { return guardDefaultGuns; }
         }
 
         SoundEffectInstance backgroundSound;
+        /// <summary>
+        /// Gets the opponent.
+        /// </summary>
         public Opponent Opponent { get { return opponent; } }
 
         public new GraphicsDevice GraphicsDevice
@@ -131,6 +169,9 @@ namespace ActionGame
         }
 
         bool running = true;
+        /// <summary>
+        /// Creates instance of the whole game.
+        /// </summary>
         public ActionGame()
         {
             Content.RootDirectory = "Content";
@@ -147,21 +188,33 @@ namespace ActionGame
             PreInitialize();
         }
 
+        /// <summary>
+        /// Prepares the game for its initialization.
+        /// </summary>
         private void PreInitialize()
         {
             contentRepository = new ContentRepository(this);
             if (running)
             {
                 camera = new Camera(this);
+#if debug
                 debug = new Debug(this);
+#endif
                 drawer = new Drawer(this, settings.ScreenSize.Width, settings.ScreenSize.Height);
+                soundPlayer = new SoundPlayer(this);
                 Components.Clear();
                 Components.Add(camera);
                 Components.Add(drawer);
-                Components.Add(debug);
+#if degub
+                //Components.Add(debug);
+#endif
             }
         }
 
+        /// <summary>
+        /// Shows the main menu window and handles its output - the settings and whether the game should start.
+        /// </summary>
+        /// <param name="videoEnabled">Enables the video settings tab</param>
         private void ShowMainMenuDialog(bool videoEnabled)
         {
             this.IsMouseVisible = true;
@@ -181,6 +234,9 @@ namespace ActionGame
             this.IsMouseVisible = false;
         }
 
+        /// <summary>
+        /// Loads gun types setting from attached xml file.
+        /// </summary>
         void LoadGunTypes()
         {
             try
@@ -280,7 +336,7 @@ namespace ActionGame
                     loadingForm.SetValue(0);
                     Point playerPoint = town.CurrentQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                     PositionInTown playerPosition = new PositionInTown(town.CurrentQuarter, playerPoint.ToVector2() * TownQuarter.SquareWidth + Vector2.One * 0.5f * TownQuarter.SquareWidth);
-                    player.Load(Content.Load<Model>("Objects/Humans/human0"), playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
+                    player.Load(contentRepository.Player, playerPosition, MathHelper.PiOver2, drawer.WorldTransformMatrix);
                     town.CurrentQuarter.SpaceGrid.AddObject(player);
                     town.CurrentQuarter.SetOwner(player, gameTime);
                     player.AddEnemy(opponent);
@@ -290,7 +346,7 @@ namespace ActionGame
                     TownQuarter oppQuarter = (from q in town.Quarters where q != town.CurrentQuarter orderby random.Next() select q).First();
                     Point oppPoint = oppQuarter.GetRandomSquare(s => s == MapFillType.Sidewalk);
                     PositionInTown oppPosition = new PositionInTown(oppQuarter, oppPoint.ToVector2() * TownQuarter.SquareWidth);
-                    opponent.Load(Content.Load<Model>("Objects/Humans/alphaBotYellow"), oppPosition, 0, drawer.WorldTransformMatrix);
+                    opponent.Load(contentRepository.Opponent, oppPosition, 0, drawer.WorldTransformMatrix);
                     oppQuarter.BeEnteredBy(opponent);
                     oppQuarter.SetOwner(opponent, gameTime);
                     opponent.AddEnemy(player);
@@ -351,7 +407,7 @@ namespace ActionGame
                 {
                     opponent.Position.Quarter.Update(gameTime, true);
                 }
-                if (town.SecondaryDrawnQuarter != null && town.SecondaryDrawnQuarter != opponent.Position.Quarter && town.SecondaryDrawnQuarter != player.Position.Quarter)
+                if (town.SecondaryDrawnQuarter != null && town.SecondaryDrawnQuarter != opponent.Position.Quarter && town.SecondaryDrawnQuarter != player.Position.Quarter && !gameTime.IsRunningSlowly)
                 {
                     town.SecondaryDrawnQuarter.Update(gameTime, false);
                 }
@@ -401,6 +457,9 @@ namespace ActionGame
             }
         }
 
+        /// <summary>
+        /// Prepares the game for its end.
+        /// </summary>
         private void PrepareEnd()
         {
             running = false;
@@ -414,6 +473,9 @@ namespace ActionGame
             this.ResetElapsedTime();
         }
 
+        /// <summary>
+        /// Restarts the whole game logic.
+        /// </summary>
         private void Restart()
         {
             PrepareEnd();
@@ -421,12 +483,21 @@ namespace ActionGame
             PrepareStart();
         }
 
+        /// <summary>
+        /// Prepares the game for start. It does pre-initializing and initializing.
+        /// </summary>
         private void PrepareStart()
         {
             PreInitialize();
             Initialize();
         }
 
+        /// <summary>
+        /// Seareches for the available respawn quarter for the given playerDefaultGuns.
+        /// </summary>
+        /// <param name="quarterOwner">The given player that has to be respawned</param>
+        /// <param name="gameTime">Game time</param>
+        /// <returns>Quarter where the given player can be respawned</returns>
         TownQuarter FindAndRespawnQuartersFor(ITownQuarterOwner quarterOwner, GameTime gameTime)
         {
             TownQuarter newPosQuarter = null;

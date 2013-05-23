@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ActionGame.Components
 {
+    /// <summary>
+    /// Describes types of the camera modes.
+    /// </summary>
     enum CameraMode
     {
         FirstPersonLook,

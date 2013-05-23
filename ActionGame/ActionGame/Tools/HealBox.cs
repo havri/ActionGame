@@ -13,8 +13,8 @@ namespace ActionGame.Tools
     {
         readonly int healPercentage;
 
-        public HealBox(int healPercentage, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
-            : base(takeSound, model, position, world)
+        public HealBox(int healPercentage, ActionGame game, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
+            : base(game, takeSound, model, position, world)
         {
             this.healPercentage = healPercentage;
         }

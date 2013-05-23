@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// The base of almost all objects in the game. It carries information about position and size and provides projection into a quadrangle.
+    /// </summary>
     public class GameObject : Quadrangle
     {
         PositionInTown position;
@@ -21,7 +24,12 @@ namespace ActionGame.Space
                 size = value;
             }
         }
-
+        /// <summary>
+        /// Creates a new game object
+        /// </summary>
+        /// <param name="position">Position</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="size">Size (width, length)</param>
         public GameObject(PositionInTown position, double azimuth, Vector2 size)
         {
             Load(position, azimuth, size);
@@ -73,19 +81,29 @@ namespace ActionGame.Space
         {
             get { return (position.PositionInQuarter + size).Rotate(azimuth, Pivot.PositionInQuarter); }
         }
-
+        /// <summary>
+        /// Chages the objects position and azimuth.
+        /// </summary>
+        /// <param name="newPosition">The new position</param>
+        /// <param name="azimuth">The new azimuth</param>
         public void MoveTo(PositionInTown newPosition, double azimuth)
         {
             position = newPosition;
             this.azimuth = azimuth;
         }
-
+        /// <summary>
+        /// Chages the objects position inside the same quarter and azimuth.
+        /// </summary>
+        /// <param name="newPositionInQuarter">The new position</param>
+        /// <param name="azimuth">The new azimuth</param>
         public void MoveTo(Vector2 newPositionInQuarter, double azimuth)
         {
             position.PositionInQuarter = newPositionInQuarter;
             this.azimuth = azimuth;
         }
-
+        /// <summary>
+        /// Gets the object's  position.
+        /// </summary>
         public PositionInTown Position
         {
             get

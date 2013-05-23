@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ActionGame.Extensions;
 using ActionGame.People;
+using System.Text.RegularExpressions;
 
 namespace ActionGame.Components
 {
@@ -19,7 +20,7 @@ namespace ActionGame.Components
         public const float ViewDistance = 1000f;
         static readonly TimeSpan MessageTimeout = new TimeSpan(0, 0, 0, 5);
 
-        readonly Dictionary<TownQuarter, DrawnObjectsCollection> objectGroups = new Dictionary<TownQuarter, DrawnObjectsCollection>();
+        readonly Dictionary<ITransformedDrawable, Matrix> objects = new Dictionary<ITransformedDrawable, Matrix>();
         readonly Matrix projectionMatrix;
         readonly Matrix worldMatrix = Matrix.Identity;
         Texture2D toolPanelBackground;
@@ -43,7 +44,7 @@ namespace ActionGame.Components
         /// <summary>
         /// Constructs new drawing component.
         /// </summary>
-        /// <param name="game">Game for context</param>
+        /// <param name="game">Game for the context</param>
         /// <param name="resolutionWidth">Window width</param>
         /// <param name="resolutionHeight">Window height</param>
         public Drawer(ActionGame game, float resolutionWidth, float resolutionHeight)
@@ -60,61 +61,60 @@ namespace ActionGame.Components
             }
         }
 
+        /// <summary>
+        /// Initializes the component the drawer.
+        /// </summary>
         public override void Initialize()
         {
             base.Initialize();
         }
 
+        /// <summary>
+        /// Gets the world transformation matrix. It is the identity matrix in our game.
+        /// </summary>
         public Matrix WorldTransformMatrix
         {
             get { return worldMatrix; }
         }
 
-        public void StartDrawingObjects(IEnumerable<ITransformedDrawable> objs, float azimuthDelta, Vector2 positionDelta, TownQuarter quarter)
+        /// <summary>
+        /// Starts drawing an object with specified transformation.
+        /// </summary>
+        /// <param name="obj">The object for drawing</param>
+        /// <param name="azimuthDelta">Y rotation</param>
+        /// <param name="positionDelta">Translate delta</param>
+        public void StartDrawingObject(ITransformedDrawable obj, float azimuthDelta, Vector2 positionDelta)
         {
-            if (objectGroups.ContainsKey(quarter))
-            {
-                objectGroups[quarter].Add(objs);
-            }
-            else
-            {
-                DrawnObjectsCollection dObj = new DrawnObjectsCollection(objs, azimuthDelta, positionDelta);
-                objectGroups.Add(quarter, dObj);
-            }
+            Matrix transform = Matrix.CreateRotationY(-azimuthDelta) * Matrix.CreateTranslation(positionDelta.ToVector3(0));
+            objects.Add(obj, transform);
         }
 
-        public void StartDrawingObject(ITransformedDrawable obj, float azimuthDelta, Vector2 positionDelta, TownQuarter quarter)
+        /// <summary>
+        /// Ends drawing of specified object.
+        /// </summary>
+        /// <param name="obj">The drawed object</param>
+        public void StopDrawingObject(ITransformedDrawable obj)
         {
-            if (objectGroups.ContainsKey(quarter))
-            {
-                objectGroups[quarter].Add(obj);
-            }
-            else
-            {
-                DrawnObjectsCollection dObj = new DrawnObjectsCollection(new ITransformedDrawable[] { obj }, azimuthDelta, positionDelta);
-                objectGroups.Add(quarter, dObj);
-            }
+            objects.Remove(obj);
         }
 
-        public void StopDrawingObject(ITransformedDrawable obj, TownQuarter quarter)
-        {
-            if (objectGroups.ContainsKey(quarter))
-            {
-                objectGroups[quarter].Remove(obj);
-            }
-        }
-
-        public void StopDrawingQuarter(TownQuarter quarter)
-        {
-            objectGroups.Remove(quarter);
-        }
-
+        /// <summary>
+        /// Show message on the screen for a while.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="text">The message</param>
         public void ShowMessage(GameTime gameTime, String text)
         {
             showMessage = true;
             messageShowBegin = gameTime.TotalGameTime;
             message = text;
         }
+        /// <summary>
+        /// Blinks the specified texture on the screen.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="effect">The texture</param>
+        /// <param name="duration">Blink duration</param>
         public void ShowFullscreenEffect(GameTime gameTime, Texture2D effect, TimeSpan duration)
         {
             fullscreenEffect = effect;
@@ -123,6 +123,10 @@ namespace ActionGame.Components
             showFullscreenEffect = true;
         }
 
+        /// <summary>
+        /// Updates the drawing logic.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -141,9 +145,14 @@ namespace ActionGame.Components
             ShowQuatterMap = Keyboard.GetState().IsKeyDown(Game.Settings.ShowQuarterMap);
             ShowTownGraph = Keyboard.GetState().IsKeyDown(Game.Settings.ShowTownMap);
 
-            Debug.Write("Drawed objects", objectGroups.Count.ToString());
+            Debug.Write("Drawed objects", objects.Count.ToString());
         }
 
+        /// <summary>
+        /// Creates a new progress bar for drawing.
+        /// </summary>
+        /// <param name="texture">Filling texture for the bar</param>
+        /// <returns>A progress bar instance</returns>
         public ProgressBar CreateProgressBar(Texture2D texture)
         {
             ProgressBar pb = new ProgressBar(texture);
@@ -151,11 +160,19 @@ namespace ActionGame.Components
             return pb;
         }
 
+        /// <summary>
+        /// Cancels drawing of specified progress bar.
+        /// </summary>
+        /// <param name="progressBar">The canceled progress bar</param>
         public void DestroyProgressBar(ProgressBar progressBar)
         {
             progressBars.Remove(progressBar);
         }
 
+        /// <summary>
+        /// Draws the whole game scene - every object, messages, effects...
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
@@ -166,10 +183,9 @@ namespace ActionGame.Components
 
             panorama.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
-            foreach (DrawnObjectsCollection dObj in objectGroups.Values)
+            foreach (KeyValuePair<ITransformedDrawable, Matrix> dObj in objects)
             {
-                //dObj.Object.Draw(Game.Camera.ViewMatrix, projectionMatrix, dObj.TransformMatrix * worldMatrix);
-                dObj.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
+                dObj.Key.Draw(Game.Camera.ViewMatrix, projectionMatrix, dObj.Value * worldMatrix);
             }
             Game.Player.Draw(Game.Camera.ViewMatrix, projectionMatrix, worldMatrix);
 
@@ -258,12 +274,20 @@ namespace ActionGame.Components
             set { currentQuarter = value; }
         }
 
+        /// <summary>
+        /// Gets or sets whether the quarter map has to be shown.
+        /// </summary>
         public bool ShowQuatterMap
         { get; set; }
-
+        /// <summary>
+        /// Gets or sets whether the town map has to be shown.
+        /// </summary>
         public bool ShowTownGraph
         { get; set; }
 
+        /// <summary>
+        /// Loads its needed content.
+        /// </summary>
         protected override void LoadContent()
         {
             base.LoadContent();
@@ -280,11 +304,20 @@ namespace ActionGame.Components
             messageBackground = Game.Content.Load<Texture2D>("Textures/green");
         }
 
+        /// <summary>
+        /// Moves the panorama surrounding object.
+        /// </summary>
+        /// <param name="positionDelta">Translate delta</param>
+        /// <param name="azimuthDelta">Y rotation angle</param>
         public void MovePanorama(Vector2 positionDelta, float azimuthDelta)
         {
             panorama.MoveTo(Game.Player.Position.PositionInQuarter - panorama.Size.XZToVector2() * 0.5f, panorama.Azimuth + azimuthDelta);
         }
 
+        /// <summary>
+        /// Disposes the drawing component.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

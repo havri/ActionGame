@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ActionGame.Planner
 {
+    /// <summary>
+    /// The capturing a quarter flag planning operation.
+    /// </summary>
     class CaptureFlagOperation : ActionOperation
     {
         readonly int quarterIndex;

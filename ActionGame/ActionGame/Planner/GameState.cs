@@ -7,6 +7,9 @@ using ActionGame.World;
 
 namespace ActionGame.Planner
 {
+    /// <summary>
+    /// Simplified description of the game state used in task planning.
+    /// </summary>
     class GameState
     {
         readonly ActionGame game;
@@ -16,11 +19,18 @@ namespace ActionGame.Planner
         public float Damage { get; set; }
         public float Health { get; set; }
 
+        /// <summary>
+        /// Creates a new game state.
+        /// </summary>
+        /// <param name="game">The game</param>
         public GameState(ActionGame game)
         {
             this.game = game;
         }
-
+        /// <summary>
+        /// Evaluates the utility value of this state for the opponent.
+        /// </summary>
+        /// <returns></returns>
         public float Evaluate()
         {
             if (QuarterStates.All(qs => qs.Ownership == QuarterOwnership.My))
@@ -66,6 +76,10 @@ namespace ActionGame.Planner
             return quarterIndex / QuarterStates.Length;
         }
 
+        /// <summary>
+        /// Creates copy of this state into a new object.
+        /// </summary>
+        /// <returns>The copy of this state</returns>
         public GameState Copy()
         {
             QuarterState[] qs = new QuarterState[QuarterStates.Length];
@@ -80,6 +94,10 @@ namespace ActionGame.Planner
             return gs;
         }
 
+        /// <summary>
+        /// Recalculates this state after a specific time.
+        /// </summary>
+        /// <param name="timeSpan">The time delta</param>
         public void AddTime(TimeSpan timeSpan)
         {
             for (int i = 0; i < QuarterStates.Length; i++)
@@ -87,7 +105,10 @@ namespace ActionGame.Planner
                 QuarterStates[i].OwnershipDuration += timeSpan;
             }
         }
-
+        /// <summary>
+        /// Returns list operation which can be perform in this state.
+        /// </summary>
+        /// <returns>List of available operations</returns>
         public Operation[] GetAvailableOperations()
         {
             List<Operation> operations = new List<Operation>();

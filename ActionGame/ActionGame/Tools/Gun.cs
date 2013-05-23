@@ -54,13 +54,13 @@ namespace ActionGame.Tools
                     PositionInTown secondaryPosition = new PositionInTown(secondaryQuarter, Vector3.Transform(position.PositionInQuarter.ToVector3(0), Matrix.CreateTranslation(-positionDelta.ToVector3(0)) * Matrix.CreateRotationY(azimuthDelta)).XZToVector2());
                     float secondaryAzimuth = azimuth - azimuthDelta;
                     PerformShoot(gameTime, secondaryPosition, secondaryAzimuth, false);
-                    /*if (secondaryQuarter != Game.Opponent.Position.Quarter)
+                    if (secondaryQuarter != Game.Opponent.Position.Quarter && gameTime.IsRunningSlowly)
                     {
                         secondaryQuarter.Update(gameTime, true);
-                    }*/
+                    }
                 }
-                
-                type.ShotSount.Play();
+
+                Game.SoundPlayer.PlaySound(type.ShootSount, position);
                 lastTimeShot = gameTime.TotalGameTime;
                 bullets--;
             }
@@ -148,7 +148,7 @@ namespace ActionGame.Tools
             if (nearest != null)
             {
                 Debug.Write("Shot", nearest.ToString());
-                nearest.BecomeShot(gameTime, type.Damage, Holder);
+                nearest.BecomeShoot(gameTime, type.Damage, Holder);
                 return true;
             }
             return false;

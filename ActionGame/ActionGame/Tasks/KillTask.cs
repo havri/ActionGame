@@ -41,7 +41,7 @@ namespace ActionGame.Tasks
                 Box nearestToolBox = Holder.Position.Quarter.GetNearestBox(Holder.Position, true);
                 if (nearestToolBox != null)
                 {
-                    Holder.AddUrgentTask(new MoveTask(Holder, nearestToolBox.Position));
+                    Holder.AddUrgentTask(new MoveTask(Holder, nearestToolBox.Pivot));
                 }
             }
             int neededHealth = target.Health - (Holder.SelectedTool is Gun ? ((Gun)Holder.SelectedTool).Type.Damage : 0);
@@ -50,7 +50,7 @@ namespace ActionGame.Tasks
                 Box nearestHealBox = Holder.Position.Quarter.GetNearestBox(Holder.Position, false);
                 if (nearestHealBox != null)
                 {
-                    Holder.AddUrgentTask(new MoveTask(Holder, nearestHealBox.Position));
+                    Holder.AddUrgentTask(new MoveTask(Holder, nearestHealBox.Pivot));
                 }
             }
 

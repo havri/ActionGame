@@ -22,17 +22,14 @@ namespace ActionGame.World
 
         private void Generate(int degree)
         {
-            ///TODO: Use bitmap to deny X crossroads.
-
-            ///TODO: Load textures from central repository
-            Texture2D roadTexture = game.Content.Load<Texture2D>("Textures/Ground/road0");
-            Texture2D sidewalkTexture = game.Content.Load<Texture2D>("Textures/Ground/sidewalk0");
-            Texture2D grassTexture = game.Content.Load<Texture2D>("Textures/Ground/grass0");
+            Texture2D roadTexture = game.ContentRepository.Road;
+            Texture2D sidewalkTexture = game.ContentRepository.Sidewalks[game.Random.Next(game.ContentRepository.Sidewalks.Length)];
+            Texture2D grassTexture = game.ContentRepository.Grass;
 
 
             if (bitmapSize.Width < 4 * BlockWidth || bitmapSize.Height < 4 * BlockWidth)
             {
-                throw new ArgumentOutOfRangeException("Specified size is to small.");
+                throw new ArgumentOutOfRangeException("Specified size is too small.");
             }
 
             GenerateInterfaces(degree, roadTexture, sidewalkTexture);
@@ -49,41 +46,14 @@ namespace ActionGame.World
             }
             IList<PathGraphVertex> pathVertecies = GeneratePathGraph(emptyRectanglesInsideRoads);
 
-            ///TODO: This test cas slow generation process.
-            if (!PathGraph.IsConnected(pathVertecies))
+            /*if (!PathGraph.IsConnected(pathVertecies))
             {
                 throw new PathGraphNotConnectedException("Path graph generated inside this town quarter has two or more components.");
-            }
+            }*/
             
             foreach (PathGraphVertex v in pathVertecies)
             {
                 spaceGrid.AddPathGraphVertex(v);
-                //showing path graph
-                /*
-                const float pointHeight = 0.01f;
-                Plate vplate = new Plate(
-                        this,
-                        v.Position.PositionInQuarter.Go(0.2f, 0).ToVector3(pointHeight),
-                        v.Position.PositionInQuarter.Go(0.2f, MathHelper.PiOver2).ToVector3(pointHeight),
-                        v.Position.PositionInQuarter.Go(0.2f, -MathHelper.PiOver2).ToVector3(pointHeight),
-                        v.Position.PositionInQuarter.Go(0.2f, MathHelper.Pi).ToVector3(pointHeight),
-                        game.Content.Load<Texture2D>("Textures/blue"),
-                        game.Content.Load<Texture2D>("Textures/blue"));
-                magicPlates.AddLast(vplate);
-                foreach (var n in v.Neighbors)
-                { 
-                    const float height = 0.3f;//m
-                    Plate plate = new Plate(
-                        this,
-                        v.Position.PositionInQuarter.ToVector3(height),
-                        n.Position.PositionInQuarter.ToVector3(height),
-                        v.Position.PositionInQuarter.ToVector3(0),
-                        n.Position.PositionInQuarter.ToVector3(0),
-                        game.Content.Load<Texture2D>("Textures/blue"),
-                        game.Content.Load<Texture2D>("Textures/blue"));
-                    magicPlates.AddLast(plate);
-                }
-                */
             }
             pathGraph = pathVertecies;
 
@@ -109,11 +79,12 @@ namespace ActionGame.World
             {
                 for (int i = 0; i < game.Settings.AmmoBoxCount; i++)
                 {
-                    Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
+                    Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) != MapFillType.Empty && !occupiedPositions.Contains(pos));
                     GunType gunType = game.BoxDefaultGuns[game.Random.Next(game.BoxDefaultGuns.Count)];
                     ToolBox tb = new ToolBox( new Gun(gunType, gunType.DefaultBulletCount, game),
-                        game.Content.Load<SoundEffect>("Sounds/gunLoading"),
-                        game.Content.Load<Model>("Objects/Decorations/ammoBox"),
+                        game,
+                        game.ContentRepository.GunLoadSound,
+                        game.ContentRepository.ToolBox,
                         new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                         game.Drawer.WorldTransformMatrix
                         );
@@ -125,10 +96,11 @@ namespace ActionGame.World
 
             for (int i = 0; i < game.Settings.HealBoxCount; i++)
             {
-                Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) == MapFillType.Sidewalk && !occupiedPositions.Contains(pos));
+                Point p = GetRandomSquare(pos => mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y) != MapFillType.Empty && !occupiedPositions.Contains(pos));
                 HealBox hb = new HealBox(game.Random.Next(50,100),
-                    game.Content.Load<SoundEffect>("Sounds/heal"),
-                    game.Content.Load<Model>("Objects/Decorations/healthBox"),
+                    game,
+                    game.ContentRepository.HealSound,
+                    game.ContentRepository.HealBox,
                     new PositionInTown(this, new Vector2(p.X * SquareWidth, p.Y * SquareWidth)),
                     game.Drawer.WorldTransformMatrix
                     );
@@ -142,6 +114,11 @@ namespace ActionGame.World
         public Point GetRandomSquare(Predicate<MapFillType> where)
         {
             return GetRandomSquare(pos => where(mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y)));
+        }
+
+        public Point GetRandomSquare(Predicate<MapFillType> fillTypeCondition, Predicate<Point> pointCondition)
+        {
+            return GetRandomSquare(pos => fillTypeCondition(mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y)) && pointCondition(pos));
         }
 
         public Point GetRandomSquare(Predicate<Point> where)
@@ -204,9 +181,9 @@ namespace ActionGame.World
             float grassWidth = 13.5f; //m
             foreach (Rectangle emptyRect in emptyRectaglesInsideSidewalks)
             {
-                int xCount = (int)(emptyRect.Width * SquareWidth / grassWidth);
-                int yCount = (int)(emptyRect.Height * SquareWidth / grassWidth);
-                Vector2 size = new Vector2(emptyRect.Width * SquareWidth / xCount, emptyRect.Height * SquareWidth / yCount);
+                int xCount = (int)((emptyRect.Width * SquareWidth) / grassWidth) + 1;
+                int yCount = (int)((emptyRect.Height * SquareWidth) / grassWidth) + 1;
+                Vector2 size = new Vector2((emptyRect.Width * SquareWidth) / xCount, (emptyRect.Height * SquareWidth) / yCount);
                 for (int x = 0; x < xCount; x++)
                 {
                     for (int y = 0; y < yCount; y++)
@@ -229,15 +206,12 @@ namespace ActionGame.World
             if (pathGraph.Count > 2)
             {
                 HashSet<Point> points = new HashSet<Point>();
-                Model[] models = new Model[]{
-                    game.Content.Load<Model>("Objects\\Humans\\human0")
-                };
-                Point point= GetRandomSquare((Point p) => mapBitmap.Index2D(bitmapSize.Height, p.X, p.Y) == MapFillType.Sidewalk && !points.Contains(p));
+                Model[] models = game.ContentRepository.Walkers;
+                Point point = GetRandomSquare((p) => mapBitmap.Index2D(bitmapSize.Height, p.X, p.Y) == MapFillType.Sidewalk && !points.Contains(p));
                 points.Add(point);
                 for (int i = 0; i < WalkerCount; i++)
                 {
                     IEnumerable<PositionInTown> waypoints = GetRandomWalkingWaypoints();
-                    ///TODO: Take human model from central repository.
                     Human walker = new Human(game, models[game.Random.Next(models.Length)], waypoints.First(), 0, game.Drawer.WorldTransformMatrix);
                     InfinityWalkingTask task = new InfinityWalkingTask(walker, waypoints);
                     walker.AddTask(task);
@@ -606,8 +580,7 @@ namespace ActionGame.World
 
                 //wall generator
                 {
-                    ///TODO: load textures from central repository
-                    Texture2D wallTexture = game.Content.Load<Texture2D>("Textures/Spatial/wall0");
+                    Texture2D wallTexture = game.ContentRepository.InterfaceWall;
                     float wallWidth = 6f; //m
                     const float wallHeight = 4.5f;
                     int count = (int)((BlockWidth - 1) * SquareWidth / wallWidth); //minus sidewalk
@@ -916,7 +889,6 @@ namespace ActionGame.World
                 Rectangle[] newEmptyRectangles = AddSplittingRoad(ref emptyRectangle, roadTexture);
                 foreach (Rectangle emptyRect in newEmptyRectangles)
                 {
-                    ///TODO: This can be faster. Using linked list simply join results...
                     result.AddRange(
                         GenerateInnerRoadNetwork(roadTexture, emptyRect)
                         );

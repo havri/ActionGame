@@ -9,6 +9,9 @@ using ActionGame.World;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// Bullet object. Straight visible line in the space.
+    /// </summary>
     public class BulletVisualisation : ITransformedDrawable, IDisposable
     {
         const float Width = 0.005f;
@@ -18,6 +21,15 @@ namespace ActionGame.Space
         readonly Plate horizontalPlate;
         readonly Plate verticalPlate;
 
+        /// <summary>
+        /// Creates a new bullet visualisation.
+        /// </summary>
+        /// <param name="quarter">Town quarter where the bullet is located</param>
+        /// <param name="start">Starting position</param>
+        /// <param name="azimuth">The flight direction</param>
+        /// <param name="range">The flight range</param>
+        /// <param name="startHeight">Starting height</param>
+        /// <param name="endHeight">Ending height</param>
         public BulletVisualisation(TownQuarter quarter, Vector2 start, float azimuth, float range, float startHeight, float endHeight)
         {
             Vector2 end = start.Go(range, azimuth);
@@ -29,6 +41,12 @@ namespace ActionGame.Space
             verticalPlate = new Plate(quarter, start.ToVector3(startHeight + Width), start.ToVector3(startHeight - Width), end.ToVector3(endHeight + Width), end.ToVector3(endHeight - Width), Texture, Texture, false);
         }
 
+        /// <summary>
+        /// Draws this bullet.
+        /// </summary>
+        /// <param name="view">View transformation matrix</param>
+        /// <param name="projection">Projection transformation matrix</param>
+        /// <param name="world">World transformation matrix</param>
         void ITransformedDrawable.Draw(Matrix view, Matrix projection, Matrix world)
         {
             horizontalPlate.Draw(view, projection, world);

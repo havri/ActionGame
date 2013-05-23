@@ -9,6 +9,9 @@ using ActionGame.People;
 
 namespace ActionGame.QSP
 {
+    /// <summary>
+    /// The space partitioning structure based on square grid system.
+    /// </summary>
     public class Grid
     {
         readonly ISet<Quadrangle> objects;
@@ -17,6 +20,13 @@ namespace ActionGame.QSP
         readonly int width, height;
         readonly float fieldWidth, fieldHeight;
 
+        /// <summary>
+        /// Creates a new grid of specifies size.
+        /// </summary>
+        /// <param name="width">Width of the whole grid</param>
+        /// <param name="height">Height of the whole grid</param>
+        /// <param name="fieldWidth">Width of one field</param>
+        /// <param name="fieldHeight">Height of one field</param>
         public Grid(int width, int height, float fieldWidth, float fieldHeight)
         {
             fields = new GridField[width * height];
@@ -32,6 +42,10 @@ namespace ActionGame.QSP
             outside = new GridField();
         }
 
+        /// <summary>
+        /// Register set of objects.
+        /// </summary>
+        /// <param name="objects">The objects</param>
         public void Fill(IEnumerable<Quadrangle> objects)
         {
             foreach (Quadrangle obj in objects)
@@ -39,7 +53,9 @@ namespace ActionGame.QSP
                 AddObject(obj);
             }
         }
-
+        /// <summary>
+        /// Updates the grid logic - recomputes field classification of every object in the grid.
+        /// </summary>
         public void Update()
         {
             foreach (Quadrangle obj in objects)
@@ -65,6 +81,11 @@ namespace ActionGame.QSP
             return fields[y * width + x];
         }
 
+        /// <summary>
+        /// Gets filed inside a specific rectangle inside the grid.
+        /// </summary>
+        /// <param name="window">The window rectangle</param>
+        /// <returns>Set of field inside the window</returns>
         public IEnumerable<GridField> GetFields(Rectangle window)
         { 
             GridField[] result = new GridField[window.Height * window.Width];
@@ -78,6 +99,10 @@ namespace ActionGame.QSP
             return result;
         }
 
+        /// <summary>
+        /// Registers a new path graph vertex into the grid.
+        /// </summary>
+        /// <param name="vertex">The path graph vertex</param>
         public void AddPathGraphVertex(PathGraphVertex vertex)
         {
             int x = (int)(vertex.Position.PositionInQuarter.X / fieldWidth);
@@ -85,6 +110,11 @@ namespace ActionGame.QSP
             GetField(x, y).AddPathGraphVertex(vertex);
         }
 
+        /// <summary>
+        /// Gets all the fields where the specified object should belong to.
+        /// </summary>
+        /// <param name="obj">The object</param>
+        /// <returns>Set of fields</returns>
         public IEnumerable<GridField> GetFieldsByObject(Quadrangle obj)
         {
             Vector2[] corners = new Vector2[] {
@@ -132,7 +162,12 @@ namespace ActionGame.QSP
             }
             return result;
         }
-
+        /// <summary>
+        /// Says whether the object is in collision with any of the registered objects satisfiing the predicate.
+        /// </summary>
+        /// <param name="obj">The tested object</param>
+        /// <param name="predicate">The select predicate</param>
+        /// <returns>True if there is a collision</returns>
         public static bool IsInCollision(Quadrangle obj, Func<Quadrangle, bool> predicate)
         {
             foreach (GridField field in obj.SpacePartitioningFields)
@@ -144,7 +179,11 @@ namespace ActionGame.QSP
             }
             return false;
         }
-
+        /// <summary>
+        /// Says whether the object is in collision with any of the registered objects.
+        /// </summary>
+        /// <param name="obj">The tested object</param>
+        /// <returns>True if there is a collision</returns>
         public static bool IsInCollision(Quadrangle obj)
         {
             foreach (GridField field in obj.SpacePartitioningFields)
@@ -156,12 +195,18 @@ namespace ActionGame.QSP
             }
             return false;
         }
-
+        /// <summary>
+        /// Registers a new object.
+        /// </summary>
+        /// <param name="obj">The object</param>
         public void AddObject(Quadrangle obj)
         {
             objects.Add(obj);
         }
-
+        /// <summary>
+        /// Unregisters a new object.
+        /// </summary>
+        /// <param name="obj">The object</param>
         public void RemoveObject(Quadrangle obj)
         {
             objects.Remove(obj);
@@ -171,7 +216,11 @@ namespace ActionGame.QSP
                 field.RemoveObject(obj);
             }
         }
-
+        /// <summary>
+        /// Gets the nearest path graph vertex from the specified position.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
         {
             PathGraphVertex res = null;
@@ -181,7 +230,10 @@ namespace ActionGame.QSP
             {
                 foreach (PathGraphVertex vertex in field.PathGraphVertices)
                 {
-                    fallDownResult = vertex;
+                    if (fallDownResult == null)
+                    {
+                        fallDownResult = vertex;
+                    }
                     Vector2 way = (from - vertex.Position.PositionInQuarter);
                     float direction = (way.GetAngle() + 1 * MathHelper.PiOver2) % MathHelper.TwoPi;
                     Quadrangle pathObj = Quadrangle.CreateBand(vertex.Position.PositionInQuarter, direction, 0.5f, way.Length());
@@ -200,52 +252,12 @@ namespace ActionGame.QSP
             return fallDownResult;
         }
 
-        IEnumerable<GridField> GetFieldsByRounds(Vector2 from)
-        {
-            int x = (int)(from.X / fieldWidth);
-            int y = (int)(from.Y / fieldHeight);
-
-            yield return GetField(x, y);
-
-            int r = 1;
-            bool found;
-            do
-            {
-                found = false;
-                foreach (int v in new int[] { y - r, y + r })
-                {
-                    if (v >= 0 && v < height)
-                    {
-                        for (int h = x - r; h <= x + r; h++)
-                        {
-                            if (h >= 0 && h < width)
-                            {
-                                found = true;
-                                yield return GetField(h, v);
-                            }
-                        }
-                    }
-                }
-
-                foreach (int h in new int[] { y - r + 1, y + r - 1 })
-                {
-                    if (h >= 0 && h < width)
-                    {
-                        for (int v = y - r; v <= y + r; v++)
-                        {
-                            if (v >= 0 && v < height)
-                            {
-                                found = true;
-                                yield return GetField(h, v);
-                            }
-                        }
-                    }
-                }
-                r++;
-            }
-            while (found);
-        }
-
+        
+        /// <summary>
+        /// Gets all the objects that are in collision withe the specified object.
+        /// </summary>
+        /// <param name="subject">The tested object</param>
+        /// <returns>Set off colliding objects</returns>
         public IEnumerable<Quadrangle> GetAllCollisions(Quadrangle subject)
         {
             IEnumerable<GridField> affectedFields = GetFieldsByObject(subject);

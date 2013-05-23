@@ -11,6 +11,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame.People
 {
+    /// <summary>
+    /// The player human class.
+    /// </summary>
     public class Player : Human
     {
         const float MouseXSensitivityCoef = 0.5f;
@@ -25,6 +28,10 @@ namespace ActionGame.People
         readonly Dictionary<Keys, TimeSpan> lastKeyPressedGameTime = new Dictionary<Keys, TimeSpan>();
         ActionObject usedActionObject = null;
 
+        /// <summary>
+        /// Creates a new player human.
+        /// </summary>
+        /// <param name="game">The game</param>
         public Player(ActionGame game)
             :base(game, null, new PositionInTown(null, Vector2.Zero), 0, Matrix.Identity)
         {
@@ -38,6 +45,13 @@ namespace ActionGame.People
             Running = true;
         }
 
+        /// <summary>
+        /// Loads and sets the player's specific content and settings.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <param name="position">Position</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">The world transform matrix</param>
         public new void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, azimuth, worldTransform);
@@ -52,6 +66,10 @@ namespace ActionGame.People
             };
         }
 
+        /// <summary>
+        /// Updates the player's logic - reads input and do actions. It suppresses the human's automatic behaviour.
+        /// </summary>
+        /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();
@@ -59,6 +77,7 @@ namespace ActionGame.People
             float seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (Math.Abs(Health) + 1 > 0 && System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Game.Window.Handle) as System.Windows.Forms.Form))
             {
+                Vector2 actualLastPosition = this.Position.PositionInQuarter;
                 if (keyboardState.IsKeyDown(Keys.LeftControl) && keyboardState.IsKeyDown(GodModeSwitch) && gameTime.TotalGameTime - lastKeyPressedGameTime[GodModeSwitch] > KeyPressedTimeout)
                 {
                     InGodMode = !InGodMode;
@@ -66,15 +85,22 @@ namespace ActionGame.People
                 }
 
                 if (keyboardState.IsKeyDown(Game.Settings.StepLeft))
+                {
                     Step(true, seconds);
+                }
                 if (keyboardState.IsKeyDown(Game.Settings.StepRight))
+                {
                     Step(false, seconds);
+                }
                 if (keyboardState.IsKeyDown(Game.Settings.Forward))
                 {
                     Go(seconds);
                 }
                 if (keyboardState.IsKeyDown(Game.Settings.Backward))
+                {
                     GoBack(seconds);
+                }
+
                 if (keyboardState.IsKeyDown(Game.Settings.TurnLeft))
                     Rotate(true, seconds);
                 if (keyboardState.IsKeyDown(Game.Settings.TurnRight))
@@ -127,6 +153,7 @@ namespace ActionGame.People
                     //lastMousePosition = new Point(mouseState.X, mouseState.Y);
                 }
                 Mouse.SetPosition(defaultMousePosition.X, defaultMousePosition.Y);
+                LastPosition = actualLastPosition;
             }
 
             CheckHits(false, gameTime);
@@ -135,6 +162,12 @@ namespace ActionGame.People
             //base.Update(gameTime);
         }
 
+        /// <summary>
+        /// Solves a collision with the specified object.
+        /// </summary>
+        /// <param name="something">The hit object</param>
+        /// <param name="gameLogicOnly">The simple mode indicator</param>
+        /// <param name="gameTime">Game time</param>
         public override void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
         {
             if (something is ToolBox)
@@ -151,9 +184,9 @@ namespace ActionGame.People
             }
         }
 
-        public override void BecomeShot(GameTime gameTime, int damage, Human by)
+        public override void BecomeShoot(GameTime gameTime, int damage, Human by)
         {
-            base.BecomeShot(gameTime, damage, by);
+            base.BecomeShoot(gameTime, damage, by);
             Game.Drawer.ShowFullscreenEffect(gameTime, Game.ContentRepository.HurtFullscreenEffect, HurtFullscreenEffectDuration);
         }
 

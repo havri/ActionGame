@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ActionGame
 {
+    /// <summary>
+    /// Simple structure carrying game setting values.
+    /// </summary>
     public struct GameSettings
     {
         public int TownQuarterCount { get; set; }

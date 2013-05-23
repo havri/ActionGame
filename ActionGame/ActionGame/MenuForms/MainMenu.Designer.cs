@@ -47,6 +47,7 @@
             this.fullScreenChb = new System.Windows.Forms.CheckBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.keyselectorsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label18 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.mouseInvertXCB = new System.Windows.Forms.CheckBox();
@@ -58,7 +59,6 @@
             this.mouseXSensTB = new System.Windows.Forms.TrackBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playBtn = new System.Windows.Forms.Button();
-            this.keyselectorsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.gameSettingsPage.SuspendLayout();
@@ -98,6 +98,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -148,7 +149,7 @@
             0});
             this.healingBoxesNB.Name = "healingBoxesNB";
             this.healingBoxesNB.Size = new System.Drawing.Size(40, 20);
-            this.healingBoxesNB.TabIndex = 5;
+            this.healingBoxesNB.TabIndex = 1;
             this.healingBoxesNB.Value = new decimal(new int[] {
             1,
             0,
@@ -174,7 +175,7 @@
             0});
             this.ammoBoxesNB.Name = "ammoBoxesNB";
             this.ammoBoxesNB.Size = new System.Drawing.Size(40, 20);
-            this.ammoBoxesNB.TabIndex = 4;
+            this.ammoBoxesNB.TabIndex = 2;
             this.ammoBoxesNB.Value = new decimal(new int[] {
             3,
             0,
@@ -194,7 +195,7 @@
             // 
             this.quartersCountNB.Location = new System.Drawing.Point(140, 14);
             this.quartersCountNB.Maximum = new decimal(new int[] {
-            10,
+            8,
             0,
             0,
             0});
@@ -205,7 +206,7 @@
             0});
             this.quartersCountNB.Name = "quartersCountNB";
             this.quartersCountNB.Size = new System.Drawing.Size(40, 20);
-            this.quartersCountNB.TabIndex = 3;
+            this.quartersCountNB.TabIndex = 0;
             this.quartersCountNB.Value = new decimal(new int[] {
             4,
             0,
@@ -261,7 +262,7 @@
             this.resolutionCmb.Location = new System.Drawing.Point(84, 29);
             this.resolutionCmb.Name = "resolutionCmb";
             this.resolutionCmb.Size = new System.Drawing.Size(121, 21);
-            this.resolutionCmb.TabIndex = 3;
+            this.resolutionCmb.TabIndex = 1;
             this.resolutionCmb.Text = "1280x800";
             this.resolutionCmb.TextChanged += new System.EventHandler(this.resolutionCmb_TextChanged);
             // 
@@ -313,9 +314,18 @@
             this.groupBox3.Location = new System.Drawing.Point(3, 199);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(570, 364);
-            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Keyboard";
+            // 
+            // keyselectorsFlowPanel
+            // 
+            this.keyselectorsFlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.keyselectorsFlowPanel.Location = new System.Drawing.Point(6, 32);
+            this.keyselectorsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.keyselectorsFlowPanel.Name = "keyselectorsFlowPanel";
+            this.keyselectorsFlowPanel.Size = new System.Drawing.Size(558, 243);
+            this.keyselectorsFlowPanel.TabIndex = 0;
             // 
             // label18
             // 
@@ -340,7 +350,7 @@
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(570, 196);
-            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mouse";
             // 
@@ -350,7 +360,7 @@
             this.mouseInvertXCB.Location = new System.Drawing.Point(114, 121);
             this.mouseInvertXCB.Name = "mouseInvertXCB";
             this.mouseInvertXCB.Size = new System.Drawing.Size(94, 17);
-            this.mouseInvertXCB.TabIndex = 9;
+            this.mouseInvertXCB.TabIndex = 2;
             this.mouseInvertXCB.Text = "Horizontal axis";
             this.mouseInvertXCB.UseVisualStyleBackColor = true;
             // 
@@ -360,7 +370,7 @@
             this.mouseInvertYCB.Location = new System.Drawing.Point(114, 144);
             this.mouseInvertYCB.Name = "mouseInvertYCB";
             this.mouseInvertYCB.Size = new System.Drawing.Size(82, 17);
-            this.mouseInvertYCB.TabIndex = 8;
+            this.mouseInvertYCB.TabIndex = 3;
             this.mouseInvertYCB.Text = "Vertikal axix";
             this.mouseInvertYCB.UseVisualStyleBackColor = true;
             // 
@@ -391,7 +401,7 @@
             this.mouseYSensTB.Name = "mouseYSensTB";
             this.mouseYSensTB.Size = new System.Drawing.Size(145, 45);
             this.mouseYSensTB.SmallChange = 5;
-            this.mouseYSensTB.TabIndex = 5;
+            this.mouseYSensTB.TabIndex = 1;
             this.mouseYSensTB.Value = 60;
             // 
             // label6
@@ -412,7 +422,7 @@
             this.mouseXSensTB.Name = "mouseXSensTB";
             this.mouseXSensTB.Size = new System.Drawing.Size(145, 45);
             this.mouseXSensTB.SmallChange = 5;
-            this.mouseXSensTB.TabIndex = 1;
+            this.mouseXSensTB.TabIndex = 0;
             this.mouseXSensTB.Value = 60;
             // 
             // panel1
@@ -434,15 +444,6 @@
             this.playBtn.Text = "Play!";
             this.playBtn.UseVisualStyleBackColor = true;
             this.playBtn.Click += new System.EventHandler(this.playBtn_Click);
-            // 
-            // keyselectorsFlowPanel
-            // 
-            this.keyselectorsFlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.keyselectorsFlowPanel.Location = new System.Drawing.Point(6, 32);
-            this.keyselectorsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.keyselectorsFlowPanel.Name = "keyselectorsFlowPanel";
-            this.keyselectorsFlowPanel.Size = new System.Drawing.Size(558, 243);
-            this.keyselectorsFlowPanel.TabIndex = 27;
             // 
             // MainMenu
             // 

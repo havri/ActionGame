@@ -16,8 +16,8 @@ namespace ActionGame.Tools
         /// </summary>
         readonly Tool tool;
 
-        public ToolBox(Tool toolInside, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
-            : base(takeSound, model, position, world)
+        public ToolBox(Tool toolInside, ActionGame game, SoundEffect takeSound, Model model, PositionInTown position, Matrix world)
+            : base(game, takeSound, model, position, world)
         {
             tool = toolInside;
         }

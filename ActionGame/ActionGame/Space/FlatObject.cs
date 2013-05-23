@@ -19,6 +19,13 @@ namespace ActionGame.Space
         readonly short[] indexes;
         readonly BasicEffect quadEffect;
 
+        /// <summary>
+        /// Creates a new flat object.
+        /// </summary>
+        /// <param name="position">Position of the object</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="size">Size (width, lenght)</param>
+        /// <param name="texture">Used texture</param>
         public FlatObject(PositionInTown position, double azimuth, Vector2 size, Texture2D texture)
             : base(position, azimuth, size)
         {
@@ -36,13 +43,13 @@ namespace ActionGame.Space
                 vertices[i].Normal = Vector3.Up;
             }
 
-            vertices[0].Position = LowerLeftCorner.ToVector3(vertikalPosition);
+            vertices[0].Position = LowerLeftCorner.ToVector3(verticalPosition);
             vertices[0].TextureCoordinate = textureLowerLeft;
-            vertices[1].Position = UpperLeftCorner.ToVector3(vertikalPosition);
+            vertices[1].Position = UpperLeftCorner.ToVector3(verticalPosition);
             vertices[1].TextureCoordinate = textureUpperLeft;
-            vertices[2].Position = LowerRightCorner.ToVector3(vertikalPosition);
+            vertices[2].Position = LowerRightCorner.ToVector3(verticalPosition);
             vertices[2].TextureCoordinate = textureLowerRight;
-            vertices[3].Position = UpperRightCorner.ToVector3(vertikalPosition);
+            vertices[3].Position = UpperRightCorner.ToVector3(verticalPosition);
             vertices[3].TextureCoordinate = textureUpperRight;
 
             indexes[0] = 0;
@@ -58,6 +65,12 @@ namespace ActionGame.Space
             quadEffect.Texture = texture;
         }
 
+        /// <summary>
+        /// Draws the ground object
+        /// </summary>
+        /// <param name="view">View transformation matrix</param>
+        /// <param name="projection">Projection transformation matrix</param>
+        /// <param name="world">World transformation matrix</param>
         public void Draw(Matrix view, Matrix projection, Matrix world)
         {
             quadEffect.World = world;
@@ -76,7 +89,7 @@ namespace ActionGame.Space
             quadEffect.Dispose();
         }
 
-        private float vertikalPosition
+        private float verticalPosition
         {
             get
             {

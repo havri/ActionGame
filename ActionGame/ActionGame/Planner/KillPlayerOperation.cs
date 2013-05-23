@@ -8,6 +8,9 @@ using ActionGame.World;
 
 namespace ActionGame.Planner
 {
+    /// <summary>
+    /// The killing the player planning operation.
+    /// </summary>
     class KillPlayerOperation : Operation
     {
         public KillPlayerOperation(ActionGame game)
@@ -25,7 +28,7 @@ namespace ActionGame.Planner
         public override GameState Operate(GameState currentState)
         {
             GameState newState = currentState.Copy();
-            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, Game.Player.Position);
+            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, Game.Player.Position, false);
             float length = PathGraph.GetLengthOfPath(path);
             float duration = length / Human.RunSpeed;
             newState.AddTime(TimeSpan.FromSeconds(duration));

@@ -9,6 +9,9 @@ using ActionGame.World;
 
 namespace ActionGame.Planner
 {
+    /// <summary>
+    /// The take box inside a quarter planning operation.
+    /// </summary>
     class TakeBoxOperation : Operation
     {
         readonly Box box;
@@ -26,7 +29,7 @@ namespace ActionGame.Planner
 
         public override GameState Operate(GameState currentState)
         {
-            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, box.Position);
+            IEnumerable<PathGraphVertex> path = PathGraph.FindShortestPath(currentState.Position, box.Position, false);
             float length = PathGraph.GetLengthOfPath(path);
             GameState newState = currentState.Copy();
             float duration = length / Human.RunSpeed;

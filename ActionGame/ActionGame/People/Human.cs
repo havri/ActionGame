@@ -14,6 +14,9 @@ using ActionGame.Components;
 
 namespace ActionGame.People
 {
+    /// <summary>
+    /// Class that represents human (or robot) in the game. It has reflexes, task and generally behaviour.
+    /// </summary>
     public class Human : SpatialObject, ITownQuarterOwner
     {
         /// <summary>
@@ -33,8 +36,7 @@ namespace ActionGame.People
         /// <summary>
         /// Distance from target where human decides he's there.
         /// </summary>
-        //public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
-        public const float EpsilonDistance = TownQuarter.SquareWidth / 8f;
+        public const float EpsilonDistance = TownQuarter.SquareWidth / 4f;
 
         public virtual TimeSpan CheckEnemiesInViewConeTimeout { get { return new TimeSpan(0, 0, 0, 0, 900); } }
         protected virtual TimeSpan KillEnemyReflexTimeout { get { return new TimeSpan(0, 0, 0, 0, 650); } }
@@ -67,6 +69,10 @@ namespace ActionGame.People
             get
             {
                 return lastPosition;
+            }
+            set
+            {
+                lastPosition = value;
             }
         }
         protected ActionGame Game { get { return game; } }
@@ -121,6 +127,14 @@ namespace ActionGame.People
         static readonly TimeSpan StuckTimeout = new TimeSpan(0, 0, 0, 3);
 
 
+        /// <summary>
+        /// Creates a new instance of human
+        /// </summary>
+        /// <param name="game">The game</param>
+        /// <param name="model">Model</param>
+        /// <param name="position">Position</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public Human(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(model, position, azimuth, worldTransform)
         {
@@ -135,6 +149,13 @@ namespace ActionGame.People
             lastTimeSawEnemy = TimeSpan.Zero;
         }
 
+        /// <summary>
+        /// Loads the human specific content. This can be used if the content wasn't specified in the construct.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <param name="position">Position</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public void Load(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
         {
             base.Load(model, position, 0, azimuth, worldTransform);
@@ -158,12 +179,16 @@ namespace ActionGame.People
             lastPosition = Position.PositionInQuarter;
             MoveTo(Position.PositionInQuarter.Go(WalkSpeed * seconds, azimuth + (toLeft ? -MathHelper.PiOver2 : MathHelper.PiOver2)), Azimuth);
         }
+                
 
         protected void Rotate(bool toLeft, float seconds)
         {
             azimuth += (toLeft ? -1 : 1) * RotateAngle * seconds;
         }
 
+        /// <summary>
+        /// Gets the position of camera in first person see mode.
+        /// </summary>
         public Vector3 FirstHeadPosition
         {
             get
@@ -172,7 +197,9 @@ namespace ActionGame.People
                 return ret.ToVector3(Size.Y);
             }
         }
-
+        /// <summary>
+        /// Gets the position of camera in third person mode.
+        /// </summary>
         public Vector3 ThirdHeadPosition
         {
             get
@@ -182,14 +209,21 @@ namespace ActionGame.People
                 return ret.ToVector3(Size.Y + yDist);*/
             }
         }
-
+        /// <summary>
+        /// Calculates point that the human is looking at.
+        /// </summary>
+        /// <param name="from">The eyes position</param>
+        /// <param name="distance">Looking distance</param>
+        /// <returns>The watched point</returns>
         Vector3 GetLookingAtCoordinates(Vector3 from, float distance)
         {
             float distance2D = (float)Math.Cos(lookAngle) * distance;
             Vector2 ret = from.XZToVector2().Go(distance2D, azimuth);
             return ret.ToVector3((float)Math.Sin(lookAngle) * distance + from.Y);
         }
-
+        /// <summary>
+        /// Gets the point that the human is looking at.
+        /// </summary>
         public Vector3 LookingAt
         {
             get
@@ -202,7 +236,11 @@ namespace ActionGame.People
         {
             return (Azimuth + MathHelper.TwoPi + MathHelper.TwoPi - direction) % MathHelper.TwoPi > maxDeltaAngle;
         }
-
+        /// <summary>
+        /// Rotates the human toward the specified destination.
+        /// </summary>
+        /// <param name="destination">The destination</param>
+        /// <param name="seconds">Moving duration</param>
         public void TurnThisWay(PositionInTown destination, float seconds)
         {
             if (destination.Quarter == Position.Quarter)
@@ -267,10 +305,7 @@ namespace ActionGame.People
                         //Changes home quarter
                         TownQuarter newQuarter = rightIface.OppositeInterface.Quarter;
                         Position.Quarter.BeLeftBy(this);
-                        if (Position.Quarter.CurrentlyDrawed)
-                        {
-                            Game.Drawer.StopDrawingObject(this, Position.Quarter);
-                        }
+                        Game.Drawer.StopDrawingObject(this);
                         Vector2 posDelta = Town.ResolveQuarterPositionDelta(rightIface);
                         float azDelta = Town.ResolveQuarterAzimuthDelta(rightIface.SidePosition, rightIface.OppositeInterface.SidePosition);
                         MoveTo(
@@ -281,7 +316,7 @@ namespace ActionGame.People
                         newQuarter.BeEnteredBy(this);
                         if (newQuarter.CurrentlyDrawed)
                         {
-                            Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta, newQuarter);
+                            Game.Drawer.StartDrawingObject(this, newQuarter.CurrentDrawingAzimuthDelta, newQuarter.CurrentDrawingPositionDelta);
                         }
                     }
                     else
@@ -291,7 +326,11 @@ namespace ActionGame.People
                 }
             }
         }
-
+        /// <summary>
+        /// Updates the human's logic. Solves the behaviour.
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="gameLogicOnly"></param>
         public virtual void Update(GameTime gameTime, bool gameLogicOnly)
         {
             bool moved = false;
@@ -332,7 +371,7 @@ namespace ActionGame.People
             CheckEnemiesInMyQuarter(gameTime);
             CheckHits(gameLogicOnly, gameTime);
         }
-
+        
         private void CheckEnemiesInMyQuarter(GameTime gameTime)
         {
             if (gameTime.TotalGameTime - lastCheckEnemiesInQuarterTime > CheckEnemiesInQuarterTimeout && (!HasAnythingToDo || tasks.First.Value.TargetQuarter != Position.Quarter || (!(tasks.First.Value is KillTask) && !(tasks.First.Value is TemporaryTask<KillTask>))))
@@ -432,16 +471,26 @@ namespace ActionGame.People
             return new Quadrangle(ul, ur, UpperLeftCorner, UpperRightCorner);
         }
 
+        /// <summary>
+        /// Adds a task to this human.
+        /// </summary>
+        /// <param name="task">The added task</param>
         public void AddTask(Task task)
         {
             tasks.AddLast(task);
         }
 
+        /// <summary>
+        /// Adds a task that has to be solved with high priority.
+        /// </summary>
+        /// <param name="task">The added task</param>
         public void AddUrgentTask(Task task)
         {
             tasks.AddFirst(task);
         }
-
+        /// <summary>
+        /// Gets the right now selected tool
+        /// </summary>
         public Tool SelectedTool
         { 
             get
@@ -458,7 +507,10 @@ namespace ActionGame.People
             jumpLength %= tools.Count;
             selectedToolIndex = (selectedToolIndex + jumpLength + tools.Count) % tools.Count;
         }
-
+        /// <summary>
+        /// Performs the selected tool action.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public void DoToolAction(GameTime gameTime)
         {
             if (SelectedTool != null)
@@ -466,6 +518,12 @@ namespace ActionGame.People
                 SelectedTool.DoAction(gameTime, new PositionInTown(Position.Quarter, FirstHeadPosition.XZToVector2()), (float)azimuth);
             }
         }
+        /// <summary>
+        /// Solves collision with specified object.
+        /// </summary>
+        /// <param name="something">The collision object</param>
+        /// <param name="gameLogicOnly">Simple mode indicator</param>
+        /// <param name="gameTime">Game time</param>
         public override void Hit(Quadrangle something, bool gameLogicOnly, GameTime gameTime)
         {
             if (something is ToolBox)
@@ -538,8 +596,13 @@ namespace ActionGame.People
             tools.Add(tool);
             selectedToolIndex = tools.Count - 1;
         }
-
-        public override void BecomeShot(GameTime gameTime, int damage, Human by)
+        /// <summary>
+        /// Shoots the human.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="damage">Damage of the shoot in percents</param>
+        /// <param name="by">The shooter</param>
+        public override void BecomeShoot(GameTime gameTime, int damage, Human by)
         {
             if (inGodMode)
             {
@@ -571,7 +634,10 @@ namespace ActionGame.People
                 tools.RemoveAt(selectedToolIndex);
             }
         }
-
+        /// <summary>
+        /// Adds an enemy to this human.
+        /// </summary>
+        /// <param name="enemy">The enemy</param>
         public void AddEnemy(Human enemy)
         {
             if(!enemies.Contains(enemy))
@@ -581,7 +647,10 @@ namespace ActionGame.People
                 RemoveFriend(enemy);
             }
         }
-
+        /// <summary>
+        /// Adds a friend to this human.
+        /// </summary>
+        /// <param name="enemy">The friend</param>
         public void AddFriend(Human friend)
         {
             if (!friends.Contains(friend))
@@ -592,7 +661,10 @@ namespace ActionGame.People
             }
         }
 
-
+        /// <summary>
+        /// Removes person from enemy list.
+        /// </summary>
+        /// <param name="enemy">The ex-enemy</param>
         public void RemoveEnemy(Human enemy)
         {
             if (enemies.Contains(enemy))
@@ -601,7 +673,10 @@ namespace ActionGame.People
                 enemies.Remove(enemy);
             }
         }
-
+        /// <summary>
+        /// Removes person from friends list.
+        /// </summary>
+        /// <param name="enemy">The ex-friend</param>
         public void RemoveFriend(Human friend)
         {
             if (friends.Contains(friend))
@@ -610,7 +685,9 @@ namespace ActionGame.People
                 friends.Remove(friend);
             }
         }
-
+        /// <summary>
+        /// Destroys the human.
+        /// </summary>
         public override void Destroy()
         {
             foreach (Human hasMe in new List<Human>(hasMeAsEnemy))
@@ -623,17 +700,25 @@ namespace ActionGame.People
             }
             base.Destroy();
         }
-
+        /// <summary>
+        /// Says to human that an action is available for him.
+        /// </summary>
+        /// <param name="actionObject">Nearby corresponding action object</param>
         public void RegisterAvailableAction(ActionObject actionObject)
         {
             availableActionObjects.Add(actionObject);
         }
-
+        /// <summary>
+        /// Says to human that an action is not available for him anymore.
+        /// </summary>
+        /// <param name="actionObject">Ex-nearby corresponding action object</param>
         public void UnregisterAvailableAction(ActionObject actionObject)
         {
             availableActionObjects.Remove(actionObject);
         }
-
+        /// <summary>
+        /// Gets indicator if any action is available.
+        /// </summary>
         public bool HasAvailableAnyAction
         {
             get
@@ -650,7 +735,11 @@ namespace ActionGame.People
             }
         }
 
-
+        /// <summary>
+        /// Creates a new guard for this human.
+        /// </summary>
+        /// <param name="targetQuarter">Quarted that has to be guarded</param>
+        /// <returns>The guard</returns>
         public Human CreateAllyGuard(TownQuarter targetQuarter)
         {
             PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.StraightRoad).ToVector2() * TownQuarter.SquareWidth);
@@ -668,12 +757,16 @@ namespace ActionGame.People
             }
             return guard;
         }
-
+        /// <summary>
+        /// Removes all the tasks.
+        /// </summary>
         public void ClearTasks()
         {
             tasks.Clear();
         }
-
+        /// <summary>
+        /// Gets indicator whether there are any tasks in the task list.
+        /// </summary>
         public bool HasAnythingToDo
         {
             get
@@ -681,18 +774,23 @@ namespace ActionGame.People
                 return tasks.Count != 0;
             }
         }
-
+        /// <summary>
+        /// Respawns the human into a specified quarter.
+        /// </summary>
+        /// <param name="targetQuarter">The destination quarter</param>
         public void RespawnInto(TownQuarter targetQuarter)
         {
             Position.Quarter.BeLeftBy(this);
             Position = new PositionInTown(targetQuarter,
-                targetQuarter.GetRandomSquare(x => (x == MapFillType.StraightRoad)).ToVector2() * TownQuarter.SquareWidth);
+                targetQuarter.GetRandomSquare(fillType => fillType == MapFillType.StraightRoad, point => point != targetQuarter.FlagPoint).ToVector2() * TownQuarter.SquareWidth);
             Position.Quarter.BeEnteredBy(this);
             health = 100;
             tasks.Clear();
         }
 
-
+        /// <summary>
+        /// Gets the guard appearing timeout.
+        /// </summary>
         public virtual TimeSpan GuardAddTimeout
         {
             get
@@ -700,6 +798,9 @@ namespace ActionGame.People
                 return new TimeSpan(0,0,0,10);
             }
         }
+        /// <summary>
+        /// Gets the full health value for new guards
+        /// </summary>
         public virtual int GuardFullHealth
         {
             get

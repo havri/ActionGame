@@ -10,6 +10,9 @@ using ActionGame.Components;
 
 namespace ActionGame.Objects
 {
+    /// <summary>
+    /// Town quarter flag action object. It can be captured. This is its action.
+    /// </summary>
     public class Flag : ActionObject
     {
         const float ActionDistance = 1.5f;
@@ -19,17 +22,32 @@ namespace ActionGame.Objects
         TimeSpan takeBeginTime = TimeSpan.Zero;
         ProgressBar drawedProgressBar;
 
+        /// <summary>
+        /// Creates a new flag action object
+        /// </summary>
+        /// <param name="game">The game</param>
+        /// <param name="model">Model</param>
+        /// <param name="position">Position</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public Flag(ActionGame game, Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(game, ActionDistance, model, position, azimuth, worldTransform)
         {
             
         }
 
+        /// <summary>
+        /// Gets the whole action duration.
+        /// </summary>
         public override TimeSpan ActionDuration
         {
             get { return TakeTheFlagTimeout; }
         }
 
+        /// <summary>
+        /// Update its logic. This handles the proper capturing.
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

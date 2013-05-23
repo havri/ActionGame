@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Needs define in ActionGame.cs too
+//#define debug
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,18 +9,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame
 {
+    /// <summary>
+    /// The debuging component. It provides debug messages to be writen on the screen during the game.
+    /// </summary>
     class Debug : DrawableGameComponent
     {
         static Dictionary<string, string> writings = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Adds a debug message in the dictonary. 
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="text">Message</param>
         public static void Write(string key, string text)
         {
+#if debug
             if (writings.ContainsKey(key))
                 writings[key] = text;
             else
                 writings.Add(key, text);
+#endif
         }
 
+        /// <summary>
+        /// Adds a debug message in the dictonary. 
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="obj">Message object</param>
         public static void Write(string key, object obj)
         {
             Write(key, obj.ToString());
@@ -31,12 +48,19 @@ namespace ActionGame
         ActionGame game;
         SpriteFont font;
 
+        /// <summary>
+        /// Creates a new debug component.
+        /// </summary>
+        /// <param name="game">The game</param>
         public Debug(ActionGame game)
             : base(game)
         {
             this.game = game;
         }
 
+        /// <summary>
+        /// Loads the content needed for this component.
+        /// </summary>
         protected override void LoadContent()
         {
             font = game.Content.Load<SpriteFont>("Fonts/SpriteFont1");
@@ -44,6 +68,10 @@ namespace ActionGame
             base.LoadContent();
         }
 
+        /// <summary>
+        /// Draws the all debug messages in the dictonary.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Draw(GameTime gameTime)
         {
             frameCounter++;
@@ -61,6 +89,10 @@ namespace ActionGame
             game.SpriteBatch.End();
         }
 
+        /// <summary>
+        /// Updates its content - calculates the FPS value.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             elapsedTime += gameTime.ElapsedGameTime;

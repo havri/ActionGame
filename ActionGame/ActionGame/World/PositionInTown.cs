@@ -30,7 +30,6 @@ namespace ActionGame.World
             }
             else
             {
-                ///TODO: This is used as heuristic in A* graph search. Set this not breaking validity and monotone. Or verify this establishment.
                 return TownQuarter.SquareWidth;
             }
         }

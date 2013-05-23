@@ -12,6 +12,9 @@ using ActionGame.QSP;
 
 namespace ActionGame.Tasks
 {
+    /// <summary>
+    /// Task for killing people.
+    /// </summary>
     public class KillTask : Task
     {
         static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 3);
@@ -28,12 +31,20 @@ namespace ActionGame.Tasks
         }
         bool goStraightToTarget = false;
 
+        /// <summary>
+        /// Creates a new kill task.
+        /// </summary>
+        /// <param name="holder">The holder of the task</param>
+        /// <param name="target">The target human that has to be killed</param>
         public KillTask(Human holder, Human target)
             : base(holder)
         {
             this.target = target; 
         }
-
+        /// <summary>
+        /// Updates the kill task logic.  It navigates the holder to the target and waits for him to shoot the target. If the holder has not a usable gun, it leads him to search for a toolbox. It can also lead him to for a healbox if it is needed.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             if (Holder.SelectedTool is Gun && ((Gun)Holder.SelectedTool).Type.Range < TownQuarter.SquareWidth)
@@ -90,11 +101,18 @@ namespace ActionGame.Tasks
             }
         }
 
+        /// <summary>
+        /// Says whether the target is dead.
+        /// </summary>
+        /// <returns>True if the target was killed.</returns>
         public override bool IsComplete()
         {
             return target.Health <= 0;
         }
 
+        /// <summary>
+        /// Gets the target's current town quarter.
+        /// </summary>
         public override TownQuarter TargetQuarter
         {
             get { return target.Position.Quarter; }

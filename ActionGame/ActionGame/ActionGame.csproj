@@ -193,7 +193,6 @@
     <Compile Include="Space\BulletVisualisation.cs" />
     <Compile Include="Space\FlatObject.cs" />
     <Compile Include="Space\ITransformedDrawable.cs" />
-    <Compile Include="Space\Line.cs" />
     <Compile Include="Space\LineSegment.cs" />
     <Compile Include="Space\Plate.cs" />
     <Compile Include="Space\RangeF.cs" />

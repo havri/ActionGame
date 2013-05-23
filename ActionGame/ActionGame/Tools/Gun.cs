@@ -13,15 +13,31 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.Tools
 {
+    /// <summary>
+    /// The weapon object. It is an instance of a specific gun type.
+    /// </summary>
     public class Gun : Tool
     {
         private readonly GunType type;
         private int bullets;
         TimeSpan lastTimeShot;
 
+        /// <summary>
+        /// Creates a new gun.
+        /// </summary>
+        /// <param name="type">The type of this gun</param>
+        /// <param name="bullets">The number of available ammo</param>
+        /// <param name="game">The game</param>
         public Gun(GunType type, int bullets, ActionGame game)
             : this(type, bullets, null, game)
         { }
+        /// <summary>
+        /// Creates a new gun
+        /// </summary>
+        /// <param name="type">The type of this gun</param>
+        /// <param name="bullets">The number of available ammo</param>
+        /// <param name="handler">The holder of this gun</param>
+        /// <param name="game">The game</param>
         public Gun(GunType type, int bullets, Human handler, ActionGame game)
             : base (type.Icon, handler, game)
         {
@@ -29,16 +45,29 @@ namespace ActionGame.Tools
             this.bullets = bullets;
         }
 
+        /// <summary>
+        /// Adds more ammo.
+        /// </summary>
+        /// <param name="bullets">The number of added bullets</param>
         public void Load(int bullets)
         {
             this.bullets += bullets;
         }
 
+        /// <summary>
+        /// Gets the number of available bullets.
+        /// </summary>
         public int Bullets
         {
             get { return bullets; }
         }
 
+        /// <summary>
+        /// Performs a gun action - the shoot. It Releases the bullet into the space and calls the bullet collision resolving.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="position">The gun position in the shoot moment</param>
+        /// <param name="azimuth">The shoot direction</param>
         public override void DoAction(GameTime gameTime, PositionInTown position, float azimuth)
         {
             if (gameTime.TotalGameTime - lastTimeShot >= type.ShotTimeout && Usable)
@@ -66,6 +95,14 @@ namespace ActionGame.Tools
             }
         }
 
+        /// <summary>
+        /// Performes the bullet releasing in the shoot process
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="position">Start position</param>
+        /// <param name="azimuth">Flight direction</param>
+        /// <param name="visualiseBullet">Whether the bullet should be visualised indicator</param>
+        /// <returns>True if the bullet hit something</returns>
         bool PerformShoot(GameTime gameTime, PositionInTown position, float azimuth, bool visualiseBullet)
         {
             const float bulletWidth = 0.02f;
@@ -153,7 +190,9 @@ namespace ActionGame.Tools
             }
             return false;
         }
-
+        /// <summary>
+        /// Gets the type of this gun.
+        /// </summary>
         public GunType Type
         {
             get
@@ -161,12 +200,16 @@ namespace ActionGame.Tools
                 return type;
             }
         }
-
+        /// <summary>
+        /// Gets the text for the toolbar - number of available ammo or nothing.
+        /// </summary>
         public override string ToolBarText
         {
             get { return (type.InfinityBullets ? String.Empty : bullets.ToString()); }
         }
-
+        /// <summary>
+        /// Gets information if it is usable. It returns false if there is no ammo anymore.
+        /// </summary>
         public override bool Usable
         {
             get

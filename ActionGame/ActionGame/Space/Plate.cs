@@ -9,6 +9,9 @@ using System.Drawing;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// Describes a plate object in the game. It is flat object defined by 3D corners.
+    /// </summary>
     public class Plate : Quadrangle, ITransformedDrawable, IDisposable
     {
         readonly TownQuarter quarter;
@@ -19,6 +22,17 @@ namespace ActionGame.Space
         Vector3 ul, ur, ll, lr;
         Texture2D front, back;
 
+        /// <summary>
+        /// Creates a new plate.
+        /// </summary>
+        /// <param name="homeQuarter">Town quarter where is it located</param>
+        /// <param name="upperLeft">Upper left corner</param>
+        /// <param name="upperRight">Upper right corner</param>
+        /// <param name="lowerLeft">Lower left corner</param>
+        /// <param name="lowerRight">Lower right corner</param>
+        /// <param name="front">Front side texture</param>
+        /// <param name="back">Back side texture</param>
+        /// <param name="enableDefaultLightning">Determines if the default lightning is used</param>
         public Plate(TownQuarter homeQuarter, Vector3 upperLeft, Vector3 upperRight, Vector3 lowerLeft, Vector3 lowerRight, Texture2D front, Texture2D back, bool enableDefaultLightning)
             :base(upperLeft.XZToVector2(), upperRight.XZToVector2(), lowerLeft.XZToVector2(), lowerRight.XZToVector2())
         {
@@ -36,6 +50,11 @@ namespace ActionGame.Space
             BuildEffects(enableDefaultLightning);
         }
 
+        /// <summary>
+        /// Sets the front side texture.
+        /// </summary>
+        /// <param name="front">The used texture</param>
+        /// <param name="enableDefaultLightning">Determines if the default lightning is used</param>
         public void SetFront(Texture2D front, bool enableDefaultLightning)
         {
             frontQuadEffect.Dispose();
@@ -101,6 +120,12 @@ namespace ActionGame.Space
             backQuadEffect.Texture = back;
         }
 
+        /// <summary>
+        /// Draws the plate on the screen.
+        /// </summary>
+        /// <param name="view">View transformation matrix</param>
+        /// <param name="projection">Projection  transformation matrix</param>
+        /// <param name="world">World transformation matrix</param>
         public void Draw(Matrix view, Matrix projection, Matrix world)
         {
             frontQuadEffect.World = world;

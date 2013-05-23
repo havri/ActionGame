@@ -24,7 +24,7 @@ namespace ActionGame.Components
         }
 
         /// <summary>
-        /// Plays specified sound at specified place. Automaticly set the volume.
+        /// Plays specified sound at specified place. It automaticly sets the volume.
         /// </summary>
         /// <param name="sound">The specified sound</param>
         /// <param name="position">The specified position</param>
@@ -33,7 +33,7 @@ namespace ActionGame.Components
             if (game.Player.Position.Quarter == position.Quarter)
             { 
                 float quarterDiagonalLength = (new Vector2(position.Quarter.BitmapSize.Width, position.Quarter.BitmapSize.Height) * TownQuarter.SquareWidth).Length();
-                sound.Play(position.MinimalDistanceTo(game.Player.Position) / quarterDiagonalLength, 0f, 0f);
+                sound.Play(1f- (position.MinimalDistanceTo(game.Player.Position) / quarterDiagonalLength), 0f, 0f);
             }
         }
     }

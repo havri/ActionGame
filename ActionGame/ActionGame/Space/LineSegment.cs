@@ -6,27 +6,44 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// Structure describing geometrical line segment.
+    /// </summary>
     struct LineSegment
     {
+        /// <summary>
+        /// Gets or sets the vertex A.
+        /// </summary>
         public Vector2 A
         {
             get { return a; }
             set { a = value; }
         }
         Vector2 a;
+        /// <summary>
+        /// Gets or sets the vertex B.
+        /// </summary>
         public Vector2 B
         {
             get { return b; }
             set { b = value; }
         }
         Vector2 b;
-
+        /// <summary>
+        /// Creates new line segment.
+        /// </summary>
+        /// <param name="a">A vertex</param>
+        /// <param name="b">B vertex</param>
         public LineSegment(Vector2 a, Vector2 b)
         {
             this.a = a;
             this.b = b;
         }
-
+        /// <summary>
+        /// Determines if this line segment is crossing the given one.
+        /// </summary>
+        /// <param name="lineSegment">The given line segment</param>
+        /// <returns>True if they are crossing</returns>
         public bool IsCrossing(LineSegment lineSegment)
         { 
             Vector2 i;
@@ -34,10 +51,11 @@ namespace ActionGame.Space
         }
 
         /// <summary>
-        /// From http://thirdpartyninjas.com/blog/2010/02/23/line-segment-intersection-update/
+        /// Determines if this line segment is crossing the given one.
+        /// Inspired by http://thirdpartyninjas.com/blog/2010/02/23/line-segment-intersection-update/
         /// </summary>
-        /// <param name="lineSegment"></param>
-        /// <returns></returns>
+        /// <param name="lineSegment">The given line segment</param>
+        /// <returns>True if they are crossing</returns>
         public bool IsCrossing(LineSegment lineSegment, out Vector2 intersection)
         {
             intersection = Vector2.Zero;

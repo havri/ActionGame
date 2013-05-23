@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// Simple triangle structure. It is formed by points A, B and C.
+    /// </summary>
     struct Triangle
     {
         public Vector2 A { get { return a; } set { a = value; } }
@@ -45,7 +48,11 @@ namespace ActionGame.Space
             else
                 return false;
         }
-
+        /// <summary>
+        /// Says whether this triangle collides with the given triangle.
+        /// </summary>
+        /// <param name="triangle">The given triangle</param>
+        /// <returns>True if they are in collision</returns>
         public bool IsInCollisionWith(Triangle triangle)
         {
             LineSegment ab1 = new LineSegment(A, B);

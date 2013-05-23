@@ -11,24 +11,45 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace ActionGame.Space
 {
+    /// <summary>
+    /// Three-dimensional object in the space.
+    /// </summary>
     public class SpatialObject : GameObject, ITransformedDrawable
     {
         Model model;
         float verticalPosition;
         float verticalSize;
 
+        /// <summary>
+        /// Creates a new spatial object.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <param name="position">Posistion</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public SpatialObject(Model model, PositionInTown position, double azimuth, Matrix worldTransform)
             : base(position, azimuth, (model == null ? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()))
         {
             Load(model, position, 0, azimuth, worldTransform);
         }
-
+        /// <summary>
+        /// Creates a new spatial object.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <param name="quarter">Town quarter</param>
+        /// <param name="positionInQuarter">Position inside the town quarter</param>
+        /// <param name="azimuth">Azimuth</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public SpatialObject(Model model, TownQuarter quarter, Vector3 positionInQuarter, double azimuth, Matrix worldTransform)
             : base(new PositionInTown(quarter, positionInQuarter.XZToVector2()), azimuth, (model == null? Vector2.Zero : model.GetSize(worldTransform).XZToVector2()) )
         {
             Load(model, new PositionInTown(quarter, positionInQuarter.XZToVector2()), positionInQuarter.Y, azimuth, worldTransform);
         }
-
+        /// <summary>
+        /// Changes the object's model
+        /// </summary>
+        /// <param name="newModel">The new used model</param>
+        /// <param name="worldTransform">World transform matrix</param>
         public void SetModel(Model newModel, Matrix worldTransform)
         {
             Load(newModel, Position, verticalPosition, Azimuth, worldTransform);
@@ -46,7 +67,12 @@ namespace ActionGame.Space
             }
             base.Load(position, azimuth, size.XZToVector2());
         }
-
+        /// <summary>
+        /// Drawes the object on the screen.
+        /// </summary>
+        /// <param name="view">View transform matrix</param>
+        /// <param name="projection">Projection transform matrix</param>
+        /// <param name="world">World transform matrix</param>
         public void Draw(Matrix view, Matrix projection, Matrix world)
         {
             Matrix[] transforms = new Matrix[model.Bones.Count];
@@ -81,17 +107,23 @@ namespace ActionGame.Space
         }
 
 
-
+        /// <summary>
+        /// Gets 3D positino in the quarter.
+        /// </summary>
         public Vector3 PositionInQuarter
         {
             get { return base.Position.PositionInQuarter.ToVector3(verticalPosition); }
         }
-
+        /// <summary>
+        /// Gets size of bounding box of this objects.
+        /// </summary>
         public Vector3 Size
         {
             get { return base.Size.ToVector3(verticalSize); }
         }
-
+        /// <summary>
+        /// Destroys the object.
+        /// </summary>
         public virtual void Destroy()
         {
             Position.Quarter.DestroyObject(this);

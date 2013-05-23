@@ -11,6 +11,9 @@ using ActionGame.QSP;
 
 namespace ActionGame.Tasks
 {
+    /// <summary>
+    /// Task for performing the action object's action.
+    /// </summary>
     class ActionObjectTask : Task
     {
         static readonly TimeSpan RecomputeWaypointsTimeout = new TimeSpan(0, 0, 3);
@@ -20,12 +23,21 @@ namespace ActionGame.Tasks
         TimeSpan actionStart = TimeSpan.Zero;
         bool started = false;
         bool complete = false;
+        /// <summary>
+        /// Creates a new action object task.
+        /// </summary>
+        /// <param name="actionObject">The specified action object</param>
+        /// <param name="holder">The holder of this task</param>
         public ActionObjectTask(ActionObject actionObject, Human holder)
             :base(holder)
         {
             this.actionObject = actionObject;
         }
 
+        /// <summary>
+        /// Updates the task logic. Leads the human toward the action object and then lets him perform the action.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             if (gameTime.TotalGameTime - lastUpdatedWaypoints > RecomputeWaypointsTimeout && actionObject.Position.Quarter == Holder.Position.Quarter)
@@ -79,12 +91,17 @@ namespace ActionGame.Tasks
                 }
             }
         }
-
+        /// <summary>
+        /// Says whether the task is complete.
+        /// </summary>
+        /// <returns>True if the action was performed yet</returns>
         public override bool IsComplete()
         {
             return complete;
         }
-
+        /// <summary>
+        /// Gets the target quarter - quarter the action object is located.
+        /// </summary>
         public override World.TownQuarter TargetQuarter
         {
             get { return actionObject.Position.Quarter; }

@@ -30,6 +30,10 @@ namespace ActionGame.World
         public PathGraphVertex LeftPathGraphVertex { get; set; }
         public PathGraphVertex RightPathGraphVertex { get; set; }
 
+        /// <summary>
+        /// Gets the real position of the interface in the quarter.
+        /// </summary>
+        /// <returns>The real position in the quarter</returns>
         public Vector2 Position()
         {
             Vector2 ret = Vector2.Zero;

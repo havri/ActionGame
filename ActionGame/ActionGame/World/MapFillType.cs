@@ -7,6 +7,6 @@ namespace ActionGame
 {
     public enum MapFillType
     {
-        Empty, StraightRoad, Sidewalk
+        Empty, Road, Sidewalk
     }
 }

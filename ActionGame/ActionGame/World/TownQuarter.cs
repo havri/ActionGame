@@ -36,6 +36,9 @@ namespace ActionGame.World
         /// </summary>
         const int PictureMapRoadWidth = 15;
 
+
+
+
         const float BetweenBuildingSpace = 4f;
         readonly static List<string> nameRepository = new List<string>(new string[] {
             "Downtown", "Czech Quarter", "New Prague", "White Hills", "New Land", "Little Side", "Little Troy", "Old York", "Hoboken", "Quadbeca", "Hell's Bathroom", "Upper South Side", "Bronxy", "Slovaktown", "Womanhattan", "Kilogramercy", "Chelocean", "Creeklyn", "Dragem", "Kings"
@@ -54,9 +57,7 @@ namespace ActionGame.World
                 return ownershipBeginTime;
             }
         }
-        /// <summary>
-        /// Object what makes ground textures.
-        /// </summary>
+        
         readonly LinkedList<FlatObject> groundObjects = new LinkedList<FlatObject>();
         readonly LinkedList<Plate> magicPlates = new LinkedList<Plate>();
         readonly HashSet<BulletVisualisation> magicBullets = new HashSet<BulletVisualisation>();
@@ -64,9 +65,7 @@ namespace ActionGame.World
         readonly List<Human> walkers = new List<Human>(WalkerCount);
         readonly List<Human> guards = new List<Human>();
         readonly List<Plate> roadSignsPointingToMe = new List<Plate>();
-        /// <summary>
-        /// Really spatial objects - buildings, etc.
-        /// </summary>
+        
         readonly LinkedList<SpatialObject> solidObjects = new LinkedList<SpatialObject>();
         readonly LinkedList<Plate> solidPlates = new LinkedList<Plate>();
         readonly List<Box> boxes = new List<Box>();
@@ -90,6 +89,9 @@ namespace ActionGame.World
         }
         MapFillType[] mapBitmap;
         Microsoft.Xna.Framework.Point flagPoint;
+        /// <summary>
+        /// Gets the bitmap point position of the flag.
+        /// </summary>
         public Microsoft.Xna.Framework.Point FlagPoint
         {
             get
@@ -119,22 +121,9 @@ namespace ActionGame.World
         readonly ActionGame game;
         Flag flag;
 
-        public static readonly Vector3 DefaultLightPosition = new Vector3(0, 100000, 0);
-        public Vector3 LightPosition0
-        {
-            get
-            {
-                return Vector3.Transform(DefaultLightPosition, Matrix.CreateRotationY(-currentDrawingAzimuthDelta) * Matrix.CreateTranslation(currentDrawingPositionDelta.ToVector3(0)));
-            }
-        }
-        public Vector3 LightPosition1
-        {
-            get
-            {
-                return Vector3.Transform(DefaultLightPosition + QuarterSize.ToVector3(0), Matrix.CreateRotationY(-currentDrawingAzimuthDelta) * Matrix.CreateTranslation(currentDrawingPositionDelta.ToVector3(0)));
-            }
-        }
-
+        /// <summary>
+        /// Gets the quarter flag action object.
+        /// </summary>
         public Flag Flag
         {
             get
@@ -142,6 +131,9 @@ namespace ActionGame.World
                 return flag;
             }
         }
+        /// <summary>
+        /// Gets current rotation tranformation angle for drawing.
+        /// </summary>
         public float CurrentDrawingAzimuthDelta
         {
             get
@@ -149,6 +141,9 @@ namespace ActionGame.World
                 return currentDrawingAzimuthDelta;
             }
         }
+        /// <summary>
+        /// Gets current translation transformation for drawing.
+        /// </summary>
         public Vector2 CurrentDrawingPositionDelta
         {
             get
@@ -169,9 +164,6 @@ namespace ActionGame.World
         /// </summary>
         /// <param name="size">Size of quarter without joining interface</param>
         /// <param name="degree">Number of quarter's interfaces (joining streets)</param>
-        /// <param name="content">ContentManager for loading objects</param>
-        /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="graphicsDevice">Graphics device for creating textures</param>
         public TownQuarter(ActionGame game, Vector2 size, int degree)
         {
             owner = EmptyTownQuarterOwner.Instance;
@@ -213,9 +205,12 @@ namespace ActionGame.World
             spaceGrid.Fill(GetAllSolidObjects());
         }
 
+        /// <summary>
+        /// Builds the flag inside the quarter.
+        /// </summary>
         private void BuildFlag()
         {
-            Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.StraightRoad);
+            Microsoft.Xna.Framework.Point square = GetRandomSquare(m => m == MapFillType.Road);
             flagPoint = square;
             Model flagModel = owner.Content.FlagModel;
             Vector3 flagSize = flagModel.GetSize(game.Drawer.WorldTransformMatrix);
@@ -224,6 +219,11 @@ namespace ActionGame.World
             solidObjects.AddLast(flag);
         }
 
+        /// <summary>
+        /// Sets the new owner of the quarter.
+        /// </summary>
+        /// <param name="newOwner">The new owner</param>
+        /// <param name="gameTime">Game time</param>
         public void SetOwner(ITownQuarterOwner newOwner, GameTime gameTime)
         {
             lastTimeGuardAdded = gameTime.TotalGameTime;
@@ -255,6 +255,10 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Registers a roadsign that is pointing to this quarter
+        /// </summary>
+        /// <param name="roadSign">The roadsign</param>
         public void RegisterNewRoadSign(Plate roadSign)
         {
             roadSignsPointingToMe.Add(roadSign);
@@ -272,8 +276,8 @@ namespace ActionGame.World
         /// Configures drawer for drawing this quarter joined to others.
         /// </summary>
         /// <param name="drawer">Display drawer</param>
-        /// <param name="delta">Defines difference of quarter placement from drawing center</param>
-        /// <param name="position">Defines position of joining interface - determines whole quarter azimuth</param>
+        /// <param name="delta">Defines the rotation transform</param>
+        /// <param name="delta">Defines difference of quarter placement from drawing center - translation transform</param>
         public void FillDrawer(float angle, Vector2 delta)
         {
             currentDrawingAzimuthDelta = angle;
@@ -285,6 +289,9 @@ namespace ActionGame.World
             currentlyDrawed = true;
         }
 
+        /// <summary>
+        /// Removes the whole quarter from drawing component.
+        /// </summary>
         public void RemoveFromDrawer()
         {
             foreach (ITransformedDrawable obj in GetAllDrawalbleObjects())
@@ -294,11 +301,16 @@ namespace ActionGame.World
             currentlyDrawed = false;
         }
 
+        /// <summary>
+        /// Gets the quarter map.
+        /// </summary>
         public Texture2D Map
         {
             get { return map; }
         }
-
+        /// <summary>
+        /// Gets the quarter size in meters.
+        /// </summary>
         public Vector2 QuarterSize
         {
             get 
@@ -315,6 +327,11 @@ namespace ActionGame.World
             roadSignTexture.Dispose();
         }
 
+        /// <summary>
+        /// Updates the quarter logic - updates walkers, guards, adds new guards, boxes, solves bullets.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="gameLogicOnly">Indicator whether only simplified update has to be perform</param>
         public void Update(GameTime gameTime, bool gameLogicOnly)
         {
             updateProcessing = true;
@@ -374,13 +391,7 @@ namespace ActionGame.World
                 bulletAddedTimes.RemoveAll(x => x.Value + BulletVisualisation.ShowTimeSpan < gameTime.TotalGameTime);
             }
 
-            /*if (gameTime.IsRunningSlowly && walkers.Count != 0)
-            {
-                walkers[0].Destroy();
-            }*/
-
             updateProcessing = false;
-
 
             SolveAwaitings();
         }
@@ -407,6 +418,9 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Gets roadsign texture for this quarter.
+        /// </summary>
         public Texture2D RoadSignTexture
         {
             get { return roadSignTexture; }
@@ -444,11 +458,19 @@ namespace ActionGame.World
             return result;
         }
 
+        /// <summary>
+        /// Finds the nearest path graph vertex from specified position. The resulted vertex has to be visible from the searched position - nothing has to be in the way.
+        /// </summary>
+        /// <param name="from">The given position</param>
+        /// <returns>The nearest path graph vertex with clear way</returns>
         public PathGraphVertex FindNearestPathGraphVertex(Vector2 from)
         {
             return spaceGrid.FindNearestPathGraphVertex(from);
         }
-
+        /// <summary>
+        /// Destroys and removes object from this quarter evidence.
+        /// </summary>
+        /// <param name="obj">The destroyed object</param>
         public void DestroyObject(SpatialObject obj)
         {
             if (!updateProcessing)
@@ -471,7 +493,11 @@ namespace ActionGame.World
                 awaitingDestroy.Add(obj);
             }
         }
-
+        /// <summary>
+        /// Adds bullet into the quarter - only for visualisation for a short time.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
+        /// <param name="bullet">The bullet visualisation object</param>
         public void AddBullet(GameTime gameTime, BulletVisualisation bullet)
         {
             magicBullets.Add(bullet);
@@ -481,7 +507,10 @@ namespace ActionGame.World
                 game.Drawer.StartDrawingObject(bullet, currentDrawingAzimuthDelta, currentDrawingPositionDelta);
             }
         }
-
+        /// <summary>
+        /// Unregisters the given human from this quarter evidence without destroying.
+        /// </summary>
+        /// <param name="human">The given human</param>
         public void BeLeftBy(Human human)
         {
             if (!updateProcessing)
@@ -493,7 +522,10 @@ namespace ActionGame.World
                 awaitingLeave.Add(human);
             }
         }
-
+        /// <summary>
+        /// Registers the given human from this quarter evidence without destroying.
+        /// </summary>
+        /// <param name="human">The given human</param>
         public void BeEnteredBy(Human human)
         {
             if (!updateProcessing)
@@ -507,7 +539,7 @@ namespace ActionGame.World
         }
 
         /// <summary>
-        /// Finds nearest box in this quarter. If the position parameter is situated in another quarter, the returned box will not be actually the nearest.
+        /// Finds the nearest box in this quarter. If the position parameter is situated in another quarter, the returned box will not be actually the nearest.
         /// </summary>
         /// <param name="position">You're position</param>
         /// <param name="toolBox">What are you seeking for: True for tool box; False for heal box</param>

@@ -6,11 +6,19 @@ using Microsoft.Xna.Framework;
 
 namespace ActionGame.World
 {
+    /// <summary>
+    /// Structure for describing the position inside the town. It contains the town quarter reference and position inside the qurter.
+    /// </summary>
     public struct PositionInTown
     {
         private Vector2 positionInQuarter;
         private TownQuarter quarter;
 
+        /// <summary>
+        /// Creates a new position in the town
+        /// </summary>
+        /// <param name="quarter">The quarter</param>
+        /// <param name="position">Position inside the quarter</param>
         public PositionInTown(TownQuarter quarter, Vector2 position)
         {
             this.positionInQuarter = position;
@@ -18,7 +26,7 @@ namespace ActionGame.World
         }
 
         /// <summary>
-        /// Computes euclid heuristic distance between two locations. If they are in the same quarter, returns true value in meters. Otherwise returns minimal value needed for way through quarter interfaces.
+        /// Computes euclid heuristic distance between two locations. If they are in the same quarter, returns true value in meters. Otherwise returns minimal value taht is neede needed for way through quarter interfaces.
         /// </summary>
         /// <param name="otherPosition">Destination location</param>
         /// <returns>Distance in meters.</returns>
@@ -33,6 +41,9 @@ namespace ActionGame.World
                 return TownQuarter.SquareWidth;
             }
         }
+        /// <summary>
+        /// Gets the position inside the quarter
+        /// </summary>
         public Vector2 PositionInQuarter
         {
             get
@@ -44,6 +55,9 @@ namespace ActionGame.World
                 positionInQuarter = value;
             }
         }
+        /// <summary>
+        /// Gets the quarter.
+        /// </summary>
         public TownQuarter Quarter
         {
             get

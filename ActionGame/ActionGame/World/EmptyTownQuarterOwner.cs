@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ActionGame.World
 {
+    /// <summary>
+    /// The quarter empty owner. Used in the cases when the quarter is not owned by any of the players.
+    /// </summary>
     class EmptyTownQuarterOwner : ITownQuarterOwner
     {
         TownQuarterOwnerContent content;
@@ -25,7 +28,10 @@ namespace ActionGame.World
         {
             get { return EmptyTownQuarterOwner.instance; }
         } 
-
+        /// <summary>
+        /// Loads the quarter owner stuff.
+        /// </summary>
+        /// <param name="contentManager">Content manager of the game</param>
         internal static void LoadContent(ContentManager contentManager)
         {
             instance = new EmptyTownQuarterOwner(new TownQuarterOwnerContent

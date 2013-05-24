@@ -540,7 +540,7 @@ namespace ActionGame.People
                 {
                     if (something == lastHitObject && gameTime.TotalGameTime - firstTimeHitObject > StuckTimeout)
                     {
-                        Point newPoint = Position.Quarter.GetRandomSquare(mft => mft == MapFillType.StraightRoad);
+                        Point newPoint = Position.Quarter.GetRandomSquare(mft => mft == MapFillType.Road);
                         MoveTo(newPoint.ToVector2() * TownQuarter.SquareWidth + Vector2.One * TownQuarter.SquareWidth * 0.5f, azimuth);
                         lastHitObject  = null;
                         if(tasks.Count != 0)
@@ -742,7 +742,7 @@ namespace ActionGame.People
         /// <returns>The guard</returns>
         public Human CreateAllyGuard(TownQuarter targetQuarter)
         {
-            PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.StraightRoad).ToVector2() * TownQuarter.SquareWidth);
+            PositionInTown pos = new PositionInTown(targetQuarter, targetQuarter.GetRandomSquare(x => x == MapFillType.Road).ToVector2() * TownQuarter.SquareWidth);
             Human guard = new Human(game, Content.AllyHumanModel, pos, 0, game.Drawer.WorldTransformMatrix);
             foreach (Human enemy in enemies)
                 guard.AddEnemy(enemy);
@@ -782,7 +782,7 @@ namespace ActionGame.People
         {
             Position.Quarter.BeLeftBy(this);
             Position = new PositionInTown(targetQuarter,
-                targetQuarter.GetRandomSquare(fillType => fillType == MapFillType.StraightRoad, point => point != targetQuarter.FlagPoint).ToVector2() * TownQuarter.SquareWidth);
+                targetQuarter.GetRandomSquare(fillType => fillType == MapFillType.Road, point => point != targetQuarter.FlagPoint).ToVector2() * TownQuarter.SquareWidth);
             Position.Quarter.BeEnteredBy(this);
             health = 100;
             tasks.Clear();

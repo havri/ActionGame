@@ -27,10 +27,15 @@ namespace ActionGame.World
         const int MapImageHeight = 600;
         const float MinQuarterSideLength = TownQuarter.SquareWidth * 21;
 
-
+        /// <summary>
+        /// Gets the set of all the quarter in the town
+        /// </summary>
         public TownQuarter[] Quarters { get { return quarters; } }
         readonly TownQuarter[] quarters;
         TownQuarter currentQuarter;
+        /// <summary>
+        /// Gets or sets the current quarter where the player is located and is drawed from the origin.
+        /// </summary>
         public TownQuarter CurrentQuarter
         {
             get
@@ -54,6 +59,11 @@ namespace ActionGame.World
 
         readonly Image mapImage;
 
+        /// <summary>
+        /// Creates and generates the whole town.
+        /// </summary>
+        /// <param name="game">The game</param>
+        /// <param name="loadingFrom">Loading form where the generating progress will be shown</param>
         public Town(ActionGame game, Loading loadingFrom)
             : base(game)
         {
@@ -228,6 +238,10 @@ namespace ActionGame.World
             return bmp;
         }
 
+        /// <summary>
+        /// Gets the town map in current state.
+        /// </summary>
+        /// <returns>Town map picture</returns>
         public Texture2D CreateTownMap()
         {
             Texture2D map;
@@ -244,6 +258,10 @@ namespace ActionGame.World
 
         static readonly TimeSpan quarterChangeTimeOut = new TimeSpan(0, 0, 1);
         TimeSpan lastQuarterChange;
+        /// <summary>
+        /// Updates the town logic. It looks for the quarter the player is located in and for the nearby quarter that should be drawn as well.
+        /// </summary>
+        /// <param name="gameTime">Game time</param>
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -293,6 +311,9 @@ namespace ActionGame.World
             currentQuarter.Update(gameTime, false);
         }
 
+        /// <summary>
+        /// Removes the recently drawed quarters from the drawer component.
+        /// </summary>
         public void ClearDrawer()
         {
             if (lastNearestInterfaceIndex >= 0)
@@ -303,6 +324,9 @@ namespace ActionGame.World
             currentQuarter.RemoveFromDrawer();
         }
 
+        /// <summary>
+        /// Fills the drawer with the selected quarters.
+        /// </summary>
         void FillDrawer()
         {
             
@@ -340,6 +364,9 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Gets the secondary drawed quarter
+        /// </summary>
         public TownQuarter SecondaryDrawnQuarter
         {
             get
@@ -352,6 +379,11 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Calculates space translation between two quarters.
+        /// </summary>
+        /// <param name="iface">The interface symbolizing the two quarters join</param>
+        /// <returns>The position delta</returns>
         public static Vector2 ResolveQuarterPositionDelta(TownQuarterInterface iface)
         {
             Vector2 delta = Vector2.Zero;
@@ -447,7 +479,11 @@ namespace ActionGame.World
             }
             return delta;
         }
-
+        /// <summary>
+        /// Calculates space rotate transformation between two quarters.
+        /// </summary>
+        /// <param name="iface">The interface symbolizing the two quarters join</param>
+        /// <returns>The azimuth delta</returns>
         public static float ResolveQuarterAzimuthDelta(TownQuarterInterfacePosition mainQuarterPosition, TownQuarterInterfacePosition neighborQuarterPosition)
         {
             float angle = 0; //clockwise

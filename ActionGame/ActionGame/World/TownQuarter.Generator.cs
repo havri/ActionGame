@@ -20,6 +20,10 @@ namespace ActionGame.World
     public partial class TownQuarter : IDisposable
     {
 
+        /// <summary>
+        /// Generates the whole quarter.
+        /// </summary>
+        /// <param name="degree">Number of interface the quarter has to have</param>
         private void Generate(int degree)
         {
             Texture2D roadTexture = game.ContentRepository.Road;
@@ -70,6 +74,10 @@ namespace ActionGame.World
             GenerateWalkers();
         }
 
+        /// <summary>
+        /// Generate toolboxes and healboxes into the quarter.
+        /// </summary>
+        /// <returns>List of the added boxes</returns>
         private Box[] GenerateBoxes()
         {
             Box[] addedBoxes = new Box[game.Settings.AmmoBoxCount + game.Settings.HealBoxCount];
@@ -110,17 +118,30 @@ namespace ActionGame.World
             }
             return addedBoxes;
         }
-
+        /// <summary>
+        /// Gets a random bitmap position that satisfy the given condition.
+        /// </summary>
+        /// <param name="where">The point fill type condition</param>
+        /// <returns>Point in the quarter bitmap</returns>
         public Point GetRandomSquare(Predicate<MapFillType> where)
         {
             return GetRandomSquare(pos => where(mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y)));
         }
-
+        /// <summary>
+        /// Gets a random bitmap position that satisfy the given condition.
+        /// </summary>
+        /// <param name="fillTypeCondition">The point fill type condition</param>
+        /// <param name="pointCondition">The point condition</param>
+        /// <returns>Point in the quarter bitmap</returns>
         public Point GetRandomSquare(Predicate<MapFillType> fillTypeCondition, Predicate<Point> pointCondition)
         {
             return GetRandomSquare(pos => fillTypeCondition(mapBitmap.Index2D(bitmapSize.Height, pos.X, pos.Y)) && pointCondition(pos));
         }
-
+        /// <summary>
+        /// Gets a random bitmap position that satisfy the given condition.
+        /// </summary>
+        /// <param name="where">The point condition</param>
+        /// <returns>Point in the quarter bitmap</returns>
         public Point GetRandomSquare(Predicate<Point> where)
         {
             Random rand = new Random();
@@ -144,6 +165,9 @@ namespace ActionGame.World
             return Point.Zero;
         }
 
+        /// <summary>
+        /// Generates texture with the text for the roadsings pointing to this quarter.
+        /// </summary>
         private void GenerateRoadSignPicture()
         {
             //Stuff from Content Manager doesn't need manual disposing.
@@ -176,6 +200,11 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Generates ground grass.
+        /// </summary>
+        /// <param name="grassTexture">Grass texture</param>
+        /// <param name="emptyRectaglesInsideSidewalks">The target rectangles for the grass filling</param>
         private void GenerateGrass(Texture2D grassTexture, List<Rectangle> emptyRectaglesInsideSidewalks)
         {
             float grassWidth = 13.5f; //m
@@ -195,12 +224,18 @@ namespace ActionGame.World
                 }
             }
         }
-
+        /// <summary>
+        /// Gets random set of walking waypoints for walkers and guards.
+        /// </summary>
+        /// <returns>Set of positions</returns>
         public IEnumerable<PositionInTown> GetRandomWalkingWaypoints()
         {
             return pathGraph.OrderBy(x => game.Random.Next()).Take(WalkerWayPointCount).Select(x => x.Position);
         }
 
+        /// <summary>
+        /// Generates the walkers
+        /// </summary>
         void GenerateWalkers()
         {
             if (pathGraph.Count > 2)
@@ -220,7 +255,11 @@ namespace ActionGame.World
             }
         }
 
-
+        /// <summary>
+        /// Generates the path graph part situated in this quarter.
+        /// </summary>
+        /// <param name="emptyRectanglesInsideRoads">The inner empty rectangles - the path are around them</param>
+        /// <returns>List of path graph vertices</returns>
         IList<PathGraphVertex> GeneratePathGraph(List<Rectangle> emptyRectanglesInsideRoads)
         {
             List<Point> pointsOfInterests = new List<Point>();
@@ -329,6 +368,11 @@ namespace ActionGame.World
             return innerVertices;
         }
 
+        /// <summary>
+        /// Scans the given line in the quarter bitmap and resolves the path graph vertices there.
+        /// </summary>
+        /// <param name="vertexLines">Dictonary of scaned position events</param>
+        /// <param name="sweepDirection">Direction of the scanned line</param>
         private void SweepPathVertices(Dictionary<int, SortedDictionary<int, PathGraphVertex>> vertexLines, AxisDirection sweepDirection)
         { 
             foreach(KeyValuePair<int, SortedDictionary<int, PathGraphVertex>> vertexLine in vertexLines)
@@ -436,6 +480,10 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Generates inner buildings.
+        /// </summary>
+        /// <param name="emptyRectaglesInsideSidewalks">Empty rectangle that have to be filled with the buildings.</param>
         private void GenerateBuildings(List<Rectangle> emptyRectaglesInsideSidewalks)
         {
             Model[] buildingModels = game.ContentRepository.InnerBuildings;
@@ -449,6 +497,11 @@ namespace ActionGame.World
             }
         }
 
+        /// <summary>
+        /// Fills the concrete rectangle with buildings.
+        /// </summary>
+        /// <param name="buildingModels">Available building models</param>
+        /// <param name="target">Target rectangle</param>
         private void FillByBuildings(Model[] buildingModels, RectangleF target)
         {
             Matrix worldTransform = game.Drawer.WorldTransformMatrix;
@@ -492,12 +545,9 @@ namespace ActionGame.World
         /// <summary>
         /// Generates road and sidewalks interfaces - street for joining with other quarters.
         /// </summary>
-        /// <param name="degree">Number of'quarters neigbors - degree of vertex</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
-        /// <param name="roadTexture">Used road model</param>
-        /// <param name="sidewalkTexture">Used sidewalk model</param>
-        /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="content">Content manager for loading models</param>
+        /// <param name="degree">Number of'quarters neighbors - degree of vertex</param>
+        /// <param name="roadTexture">Used road texture</param>
+        /// <param name="sidewalkTexture">Used sidewalk texture</param>
         private void GenerateInterfaces(int degree, Texture2D roadTexture, Texture2D sidewalkTexture)
         {
             Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges = new Dictionary<TownQuarterInterfacePosition, List<Range>>(4);
@@ -567,7 +617,7 @@ namespace ActionGame.World
                     if (direction == AxisDirection.Vertical)
                         iface.BitmapPosition = rx;
 
-                    mapBitmap[rx * bitmapSize.Height + ry] = MapFillType.StraightRoad;
+                    mapBitmap[rx * bitmapSize.Height + ry] = MapFillType.Road;
                     mapBitmap[slx * bitmapSize.Height + sly] = MapFillType.Sidewalk;
                     mapBitmap[srx * bitmapSize.Height + sry] = MapFillType.Sidewalk;
                     FlatObject road = new FlatObject(new PositionInTown(this, new Vector2(rx * SquareWidth, ry * SquareWidth)), 0, new Vector2(SquareWidth, SquareWidth), roadTexture);
@@ -677,7 +727,7 @@ namespace ActionGame.World
         }
 
         /// <summary>
-        /// Fills empty range of town quarter border by buildings. It takes it by dimension X - first fit.
+        /// Fills empty range of town quarter border with buildings. It takes it by dimension X - first fit.
         /// </summary>
         /// <param name="buildingModels">Availible models</param>
         /// <param name="borderPosition">Position of border - specifies side of rectangle</param>
@@ -740,12 +790,7 @@ namespace ActionGame.World
         /// Generates sidewalks what surround quarter border road and weren't generated by interfaces.
         /// </summary>
         /// <param name="emptyRanges">Ranges for sidewalks placement</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
-        /// <param name="xSize">Width of quarter bitmap</param>
-        /// <param name="ySize">Height of quarter bitmap</param>
-        /// <param name="sidewalkModel">Used sidewalk model</param>
-        /// <param name="sidewalkModelWidth">Sidewalk model width</param>
-        /// <param name="worldTransform">World transform matrix</param>
+        /// <param name="sidewalkModel">Used sidewalk texture</param>
         private void GenerateRestOfBorderSidewalks(Dictionary<TownQuarterInterfacePosition, List<Range>> emptyRanges, Texture2D sidewalkTexture)
         {
             // Corners
@@ -815,10 +860,6 @@ namespace ActionGame.World
         /// <summary>
         /// Creates picture of quarter map and saves as Texture2D
         /// </summary>
-        /// <param name="graphicsDevice">Device for texture store</param>
-        /// <param name="xSize">Quarter bitmap width</param>
-        /// <param name="ySize">Quarter bitmap height</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
         private void GenerateMapPicture()
         {
             const int namePixelHeight = 14;
@@ -835,7 +876,7 @@ namespace ActionGame.World
                             case MapFillType.Empty:
                                 c = System.Drawing.Color.Green;
                                 break;
-                            case MapFillType.StraightRoad:
+                            case MapFillType.Road:
                                 c = System.Drawing.Color.Gray;
                                 break;
                             case MapFillType.Sidewalk:
@@ -871,12 +912,8 @@ namespace ActionGame.World
         /// <summary>
         /// Generates inner road network into target rectangle. Runs recursively. Exponential.
         /// </summary>
-        /// <param name="roadTexture">Road square model</param>
-        /// <param name="roadModelWidth">Road square size</param>
+        /// <param name="roadTexture">Road texture</param>
         /// <param name="emptyRectangle">Target rectangle</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
-        /// <param name="xSize">Quarter bitmap width</param>
-        /// <param name="ySize">Quarter bitmap height</param>
         /// <returns>Another list of empty rectangles for next filling</returns>
         private List<Rectangle> GenerateInnerRoadNetwork(Texture2D roadTexture, Rectangle emptyRectangle)
         {
@@ -906,12 +943,7 @@ namespace ActionGame.World
         /// Splits the given rectangle with a road.
         /// </summary>
         /// <param name="target">Splited rectangle</param>
-        /// <param name="roadTexture">Road model</param>
-        /// <param name="roadModelWidth">Road model size</param>
-        /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
-        /// <param name="xSize">Quarter bitmap width</param>
-        /// <param name="ySize">Quarter bitmap height</param>
+        /// <param name="roadTexture">Road texture</param>
         /// <returns>Array of new empty rectangles inside the splited rectangle</returns>
         private Rectangle[] AddSplittingRoad(ref Rectangle target, Texture2D roadTexture)
         {
@@ -947,7 +979,7 @@ namespace ActionGame.World
                         throw new InvalidOperationException("Unknown AxisDirection for splitting.");
                 }
 
-                mapBitmap[bitmapIndex] = MapFillType.StraightRoad;
+                mapBitmap[bitmapIndex] = MapFillType.Road;
                 FlatObject road = new FlatObject(new PositionInTown(this, position), 0, new Vector2(SquareWidth, SquareWidth), roadTexture);
                 groundObjects.AddLast(road);
             }
@@ -971,7 +1003,6 @@ namespace ActionGame.World
         /// Generates border road network.
         /// </summary>
         /// <param name="roadTexture">Road texture</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
         /// <returns>Empty rectangle inside the bitmap</returns>
         private Rectangle GenerateBorderRoads(Texture2D roadTexture)
         {
@@ -986,7 +1017,7 @@ namespace ActionGame.World
                 foreach (int y in new int[] { 0, yCount - 1 })
                 {
                     int Y = y + yOffset;
-                    mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
+                    mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Road;
                     FlatObject road = new FlatObject(new PositionInTown(this, new Vector2(X * SquareWidth, Y * SquareWidth)), 0, new Vector2(SquareWidth, SquareWidth), roadTexture);
                     groundObjects.AddLast(road);
                 }
@@ -997,7 +1028,7 @@ namespace ActionGame.World
                 foreach (int x in new int[] { 0, xCount - 1 })
                 {
                     int X = x + xOffset;
-                    mapBitmap[X * bitmapSize.Height + Y] = MapFillType.StraightRoad;
+                    mapBitmap[X * bitmapSize.Height + Y] = MapFillType.Road;
                     FlatObject road = new FlatObject(new PositionInTown(this, new Vector2(X * SquareWidth, Y * SquareWidth)), 0, new Vector2(SquareWidth, SquareWidth), roadTexture);
                     groundObjects.AddLast(road);
                 }
@@ -1010,8 +1041,6 @@ namespace ActionGame.World
         /// </summary>
         /// <param name="target">Target side rectangle</param>
         /// <param name="sidewalkTexture">Used texture</param>
-        /// <param name="worldTransform">World transform matrix</param>
-        /// <param name="mapBitmap">Quarter bitmap</param>
         /// <returns>Rest of the target rectangle what's empty</returns>
         private Rectangle GenerateSidewalks(Rectangle target, Texture2D sidewalkTexture)
         {
@@ -1040,7 +1069,9 @@ namespace ActionGame.World
 
             return new Rectangle(target.X + 1, target.Y + 1, target.Width - 2, target.Height - 2);
         }
-
+        /// <summary>
+        /// Builds the roadsigns for the neighbor quarters.
+        /// </summary>
         public void BuildInterfaceRoadSigns()
         {
             const float vPosition = 8;

@@ -6,8 +6,16 @@ using ActionGame.Exceptions;
 
 namespace ActionGame.World
 {
+    /// <summary>
+    /// Path graph class. It contains set of static function for work with the path graph vertices.
+    /// </summary>
     public class PathGraph
     {
+        /// <summary>
+        /// Scans the graph whether it is connected.
+        /// </summary>
+        /// <param name="graph">The set of vertices that have pointer to their neighbor vertices</param>
+        /// <returns>True if the graph is connected</returns>
         public static bool IsConnected(IEnumerable<PathGraphVertex> graph)
         {
             Dictionary<PathGraphVertex, bool> visited = new Dictionary<PathGraphVertex,bool>();
@@ -64,6 +72,7 @@ namespace ActionGame.World
         /// </summary>
         /// <param name="from">Source position</param>
         /// <param name="to">Target position</param>
+        /// <param name="keepInTheSameQuarter">Indicator whether the searching has to use only vertices from the same quarter as the from position is in</param>
         /// <returns>Set of vertices forming result path</returns>
         public static IEnumerable<PathGraphVertex> FindShortestPath(PositionInTown from, PositionInTown to, bool keepInTheSameQuarter)
         {
@@ -77,6 +86,7 @@ namespace ActionGame.World
         /// </summary>
         /// <param name="from">Source vertex</param>
         /// <param name="to">Target vertex</param>
+        /// <param name="keepInTheSameQuarter">Indicator whether the searching has to use only vertices from the same quarter as the from position is in</param>
         /// <returns>Set of vertices forming result path</returns>
         public static IEnumerable<PathGraphVertex> FindShortestPath(PathGraphVertex from, PathGraphVertex to, bool keepInTheSameQuarter)
         {
@@ -151,21 +161,4 @@ namespace ActionGame.World
             return u.Position.MinimalDistanceTo(v.Position);
         }
     }
-
-    class PathGraphVertexScoreComparer : IComparer<PathGraphVertex>
-    {
-        readonly Dictionary<PathGraphVertex, float> fScore;
-        public PathGraphVertexScoreComparer(Dictionary<PathGraphVertex, float> fScore)
-        {
-            this.fScore = fScore;
-        }
-
-
-
-        public int Compare(PathGraphVertex x, PathGraphVertex y)
-        {
-            return fScore[x].CompareTo(fScore[y]);
-        }
-    }
-
 }

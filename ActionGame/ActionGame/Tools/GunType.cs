@@ -57,7 +57,16 @@ namespace ActionGame.Tools
         } 
         private readonly SoundEffect shotSount;
 
-
+        /// <summary>
+        /// Creates a new gun type
+        /// </summary>
+        /// <param name="damage">The one bullet damage</param>
+        /// <param name="range">The shootSount range</param>
+        /// <param name="infinity">Whether it does not need ammo indicator</param>
+        /// <param name="shotTimeout">Timeout between two shoot</param>
+        /// <param name="defaultBulletCount">The default number of bullets loaded in the gun</param>
+        /// <param name="icon">The gun's icon</param>
+        /// <param name="shot">Shoot soundeffect</param>
         public GunType(int damage, float range, bool infinity, TimeSpan shotTimeout, int defaultBulletCount, Texture2D icon, SoundEffect shot)
         {
             this.damage = damage;
